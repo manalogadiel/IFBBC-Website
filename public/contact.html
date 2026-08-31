@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Inicbulan Fundamental Baptist Bible Church</title>
+  <meta name="description" content="Contact IFBBC in Bauan, Batangas. Reach us through Facebook, email, or visit us at Purok Munlawin, Barangay Inicbulan.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/pages.css">
+</head>
+<body>
+
+  <main id="main-content">
+
+    <!-- ══ PAGE HERO ════════════════════════════════════════ -->
+    <section class="page-hero" style="background:var(--c-bg);" aria-labelledby="contact-title">
+      <div class="container">
+        <p class="page-hero-eyebrow">We'd love to hear from you</p>
+        <h1 class="page-hero-title" id="contact-title">Contact</h1>
+        <p class="page-hero-desc">
+          Reach out to us through any of the channels below. We typically respond
+          within one to two business days.
+        </p>
+      </div>
+    </section>
+
+    <!-- ══ CONTACT GRID ══════════════════════════════════════ -->
+    <section class="section" style="background:var(--c-surface);" aria-label="Contact information and form">
+      <div class="container">
+        <div class="contact-grid">
+
+          <!-- Contact info -->
+          <div>
+            <h2 style="font-family:var(--font-heading);font-size:var(--text-3xl);color:var(--c-ink);margin-bottom:var(--sp-8);">
+              Find Us
+            </h2>
+            <ul class="contact-info-list" aria-label="Contact details">
+              <li class="contact-info-item">
+                <div class="contact-info-icon" aria-hidden="true">📍</div>
+                <div>
+                  <p class="contact-info-label">Address</p>
+                  <address class="contact-info-value" style="font-style:normal;">
+                    Purok Munlawin, Barangay Inicbulan<br>
+                    Bauan, Batangas 4201, Philippines
+                  </address>
+                </div>
+              </li>
+              <li class="contact-info-item">
+                <div class="contact-info-icon" aria-hidden="true">✉️</div>
+                <div>
+                  <p class="contact-info-label">Email</p>
+                  <p class="contact-info-value">
+                    <a href="mailto:iffbc2021@gmail.com">iffbc2021@gmail.com</a>
+                  </p>
+                </div>
+              </li>
+              <li class="contact-info-item">
+                <div class="contact-info-icon" aria-hidden="true">📘</div>
+                <div>
+                  <p class="contact-info-label">Facebook</p>
+                  <p class="contact-info-value">
+                    <a href="https://www.facebook.com/inicbulanfundamental.baptistbiblechurch"
+                       target="_blank" rel="noopener noreferrer">
+                      inicbulanfundamental.baptistbiblechurch
+                    </a>
+                  </p>
+                </div>
+              </li>
+              <li class="contact-info-item">
+                <div class="contact-info-icon" aria-hidden="true">▶️</div>
+                <div>
+                  <p class="contact-info-label">YouTube</p>
+                  <p class="contact-info-value">
+                    <a href="https://www.youtube.com/@ifbbc"
+                       target="_blank" rel="noopener noreferrer">
+                      youtube.com/@ifbbc
+                    </a>
+                  </p>
+                </div>
+              </li>
+            </ul>
+
+            <div style="margin-top:var(--sp-10);">
+              <h3 style="font-family:var(--font-heading);font-size:var(--text-xl);color:var(--c-ink);margin-bottom:var(--sp-4);">Service Times</h3>
+              <p style="font-size:var(--text-sm);color:var(--c-text);max-width:100%;line-height:1.8;">
+                Sunday 9:00 AM — Life Group<br>
+                Sunday 10:00 AM — Worship Service<br>
+                Wednesday 6:00 PM — Prayer Meeting<br>
+                Friday 6:00 PM — Cottage Service<br>
+                Saturday 2:00 PM — Missions
+              </p>
+            </div>
+          </div>
+
+          <!-- Contact form -->
+          <div>
+            <h2 style="font-family:var(--font-heading);font-size:var(--text-3xl);color:var(--c-ink);margin-bottom:var(--sp-8);">
+              Send a Message
+            </h2>
+
+            <div id="contact-message" aria-live="polite"></div>
+
+            <form id="contact-form" class="prayer-form-wrap" novalidate>
+              <div class="form-group">
+                <label class="form-label" for="contact-name">
+                  Name <span class="required" aria-label="required">*</span>
+                </label>
+                <input class="form-input" type="text" id="contact-name" name="name"
+                       required maxlength="100" autocomplete="name"
+                       aria-required="true" placeholder="Your full name">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="contact-email">
+                  Email <span class="required" aria-label="required">*</span>
+                </label>
+                <input class="form-input" type="email" id="contact-email" name="email"
+                       required maxlength="200" autocomplete="email"
+                       aria-required="true" placeholder="your@email.com">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="contact-subject">Subject</label>
+                <input class="form-input" type="text" id="contact-subject" name="subject"
+                       maxlength="200" placeholder="What's this about?">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="contact-message-text">
+                  Message <span class="required" aria-label="required">*</span>
+                </label>
+                <textarea class="form-textarea" id="contact-message-text" name="message"
+                          rows="5" required maxlength="2000"
+                          aria-required="true"
+                          placeholder="How can we help?"></textarea>
+              </div>
+
+              <!-- Using mailto: for simplicity — no server-side email required -->
+              <button type="submit" class="btn btn--primary btn--block" id="contact-submit-btn">
+                Send Message
+              </button>
+
+              <p class="form-hint" style="margin-top:var(--sp-3);text-align:center;">
+                This will open your email app with the message pre-filled.
+              </p>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/js/nav.js"></script>
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name    = document.getElementById('contact-name').value.trim();
+      const email   = document.getElementById('contact-email').value.trim();
+      const subject = document.getElementById('contact-subject').value.trim() || 'Message from website';
+      const message = document.getElementById('contact-message-text').value.trim();
+
+      if (!name || !email || !message) {
+        document.getElementById('contact-message').innerHTML =
+          '<div class="alert alert--error">Please fill in all required fields.</div>';
+        return;
+      }
+
+      const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+      const mailto = `mailto:iffbc2021@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+    });
+  </script>
+</body>
+</html>

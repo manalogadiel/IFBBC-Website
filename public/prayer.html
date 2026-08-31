@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prayer Wall — Inicbulan Fundamental Baptist Bible Church</title>
+  <meta name="description" content="Share your prayer requests with the IFBBC community. Submit privately to pastoral staff or publicly to the prayer wall.">
+  <!-- Prevent search engine indexing of personal prayer requests -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/pages.css">
+</head>
+<body class="page-prayer">
+
+  <main id="main-content">
+
+    <!-- ══ PAGE HERO ════════════════════════════════════════ -->
+    <section class="page-hero" style="background:var(--c-bg);" aria-labelledby="prayer-title">
+      <div class="container">
+        <p class="page-hero-eyebrow">Bring your burdens to God</p>
+        <h1 class="page-hero-title" id="prayer-title">Prayer Wall</h1>
+        <p class="page-hero-desc">
+          We believe in the power of prayer. Share your request here — privately with
+          our pastoral staff, or publicly with the church community who will pray with you.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--c-surface);" aria-label="Prayer request submission and wall">
+      <div class="container">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-12);align-items:start;">
+
+          <!-- ── Submit Form ─────────────────────────────── -->
+          <div>
+            <h2 style="font-family:var(--font-heading);font-size:var(--text-3xl);color:var(--c-ink);margin-bottom:var(--sp-6);">
+              Submit a Request
+            </h2>
+
+            <div class="prayer-privacy-note">
+              🔒 Your prayer request is handled with care. Private requests are seen only by
+              our pastoral staff — never displayed publicly. Public requests are reviewed before
+              appearing on the wall.
+            </div>
+
+            <div id="form-message" aria-live="polite"></div>
+
+            <form id="prayer-form" class="prayer-form-wrap" novalidate>
+              <!-- Prayer text -->
+              <div class="form-group">
+                <label class="form-label" for="prayer-text">
+                  Your Prayer Request <span class="required" aria-label="required">*</span>
+                </label>
+                <textarea
+                  class="form-textarea"
+                  id="prayer-text"
+                  name="text"
+                  rows="5"
+                  maxlength="1500"
+                  required
+                  placeholder="Share what's on your heart…"
+                  aria-required="true"
+                  aria-describedby="text-hint"></textarea>
+                <p class="form-hint" id="text-hint">Maximum 1,500 characters.</p>
+              </div>
+
+              <!-- Visibility -->
+              <div class="form-group">
+                <fieldset>
+                  <legend class="form-label">
+                    Who should see this? <span class="required" aria-label="required">*</span>
+                  </legend>
+                  <div class="radio-group">
+                    <label class="radio-option">
+                      <input type="radio" name="visibility" id="vis-private" value="private" required>
+                      <span class="radio-label">
+                        <strong>Private — Pastoral Staff Only</strong>
+                        Only our pastors will read this request. It will never appear on the public wall.
+                      </span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="visibility" id="vis-public" value="public">
+                      <span class="radio-label">
+                        <strong>Public — Prayer Wall</strong>
+                        After pastoral review, your request will appear on the public prayer wall.
+                      </span>
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+
+              <!-- Name options (shown only if Public) -->
+              <div id="name-options" style="display:none;">
+                <div class="form-group">
+                  <fieldset>
+                    <legend class="form-label">How should your name appear?</legend>
+                    <div class="radio-group">
+                      <label class="radio-option">
+                        <input type="radio" name="nameChoice" value="anonymous" checked>
+                        <span class="radio-label"><strong>Anonymous</strong></span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="nameChoice" value="friend">
+                        <span class="radio-label"><strong>A friend of the church</strong></span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="nameChoice" value="name">
+                        <span class="radio-label"><strong>Use my name</strong></span>
+                      </label>
+                    </div>
+                  </fieldset>
+                </div>
+
+                <!-- Custom name input -->
+                <div class="form-group" id="custom-name" style="display:none;">
+                  <label class="form-label" for="prayer-name">Your name (as it will appear)</label>
+                  <input class="form-input" type="text" id="prayer-name" name="customName"
+                         maxlength="60" placeholder="e.g. Juan D." autocomplete="name">
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn--primary btn--block" id="submit-prayer-btn">
+                Submit Prayer Request
+              </button>
+            </form>
+          </div>
+
+          <!-- ── Public Prayer Wall ──────────────────────── -->
+          <div>
+            <h2 style="font-family:var(--font-heading);font-size:var(--text-3xl);color:var(--c-ink);margin-bottom:var(--sp-2);">
+              Prayer Wall
+            </h2>
+            <p style="font-size:var(--text-sm);color:var(--c-muted);margin-bottom:var(--sp-6);max-width:100%;">
+              Approved public requests from our church family. Join us in praying for one another.
+            </p>
+            <div class="prayer-wall" id="prayer-wall" aria-label="Public prayer requests" aria-live="polite">
+              <div class="spinner"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SCRIPTURE ═════════════════════════════════════════ -->
+    <section class="section section--sm" style="background:var(--c-ink);" aria-label="Scripture">
+      <div class="container container--sm" style="text-align:center;">
+        <blockquote>
+          <p style="font-family:var(--font-heading);font-style:italic;font-size:clamp(var(--text-xl),3vw,var(--text-3xl));color:white;line-height:1.4;margin-bottom:var(--sp-4);">
+            "Do not be anxious about anything, but in every situation, by prayer and petition,
+            with thanksgiving, present your requests to God."
+          </p>
+          <cite style="font-size:var(--text-sm);color:rgba(255,255,255,0.6);font-style:normal;">
+            Philippians 4:6
+          </cite>
+        </blockquote>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/js/nav.js"></script>
+  <script src="/js/prayer.js"></script>
+</body>
+</html>
