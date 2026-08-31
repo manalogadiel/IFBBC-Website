@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — IFBBC</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/pages.css">
+</head>
+<body>
+
+  <div class="admin-login-page">
+    <div class="admin-login-card">
+      <div class="admin-login-brand">
+        <svg viewBox="0 0 100 85" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:52px;height:52px;color:var(--c-blue);margin:0 auto var(--sp-3);">
+          <path d="M8 26 C8 26 10 66 48 72 L50 72 L50 24 C34 18 10 24 8 26Z" fill="currentColor" opacity="0.85"/>
+          <path d="M8 22 L8 17 L15 17" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.9"/>
+          <path d="M8 75 L8 70 L15 70" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.9"/>
+          <path d="M92 26 C92 26 90 66 52 72 L50 72 L50 24 C66 18 90 24 92 26Z" fill="currentColor" opacity="0.85"/>
+          <path d="M92 22 L92 17 L85 17" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.9"/>
+          <path d="M92 75 L92 70 L85 70" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.9"/>
+          <line x1="50" y1="24" x2="50" y2="72" stroke="currentColor" stroke-width="2.5" opacity="0.5"/>
+          <rect x="45" y="2" width="10" height="32" rx="2" fill="currentColor"/>
+          <rect x="34" y="11" width="32" height="9" rx="2" fill="currentColor"/>
+        </svg>
+        <h1 class="admin-login-title">Admin Panel</h1>
+        <p class="admin-login-sub">IFBBC Church Administration</p>
+      </div>
+
+      <div id="login-message" aria-live="polite"></div>
+
+      <form id="admin-login-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="admin-password">Password</label>
+          <input class="form-input" type="password" id="admin-password" name="password"
+                 required autocomplete="current-password"
+                 placeholder="Enter admin password" aria-required="true">
+        </div>
+        <button type="submit" class="btn btn--primary btn--block btn--lg">Sign In</button>
+      </form>
+
+      <div style="text-align:center;margin-top:var(--sp-6);">
+        <a href="/" style="font-size:var(--text-sm);color:var(--c-muted);">← Back to website</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
