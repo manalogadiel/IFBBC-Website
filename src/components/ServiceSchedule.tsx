@@ -103,7 +103,7 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit })
     <section id="schedule" className="pt-12 pb-16 md:pt-16 md:pb-24 scroll-mt-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8 pb-12 border-b border-slate-200/80 dark:border-white/5">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 md:mb-16 gap-4 sm:gap-6 md:gap-8 pb-6 sm:pb-8 md:pb-12 border-b border-slate-200/80 dark:border-white/5">
           <div>
             <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block mb-2">
               Liturgical Order // 03
@@ -113,7 +113,7 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit })
             </h2>
           </div>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-md leading-[1.68] text-pretty">
-            Join us throughout the week for worship, discipleship, fervent prayer, cottage fellowship, and active missions in Bauan and Batangas.
+            Join us throughout the week as we gather for biblical preaching, departmental life groups, corporate prayer, and youth fellowship.
           </p>
         </div>
 

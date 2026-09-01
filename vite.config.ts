@@ -8,7 +8,7 @@ export default defineConfig({
     port: 3000,
     open: false,
     watch: {
-      ignored: ['**/.agents/**', '**/dist/**', '**/node_modules/**']
+      ignored: ['**/.agents/**', '**/dist/**', '**/node_modules/**', '**/public/**', '**/*.mp4', '**/*.mov']
     }
   }
 });

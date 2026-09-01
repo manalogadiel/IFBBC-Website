@@ -32,21 +32,33 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit, onOpenPrayer }) => 
     { name: 'Location', href: '#location' },
   ];
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    setMobileMenuOpen(false);
+  const scrollToTarget = (href: string) => {
     if (href === '#' || !href) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
     const targetElement = document.querySelector(href);
     if (targetElement) {
-      const navOffset = 70;
-      const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navOffset;
+      const navOffset = 80;
+      const elementPosition = targetElement.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navOffset;
+
       window.scrollTo({
-        top: targetPosition,
+        top: offsetPosition,
         behavior: 'smooth',
       });
+    }
+  };
+
+  const handleNavClick = (e: React.MouseEvent<HTMLElement>, href: string) => {
+    e.preventDefault();
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+      setTimeout(() => {
+        scrollToTarget(href);
+      }, 120);
+    } else {
+      scrollToTarget(href);
     }
   };
 
@@ -66,11 +78,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit, onOpenPrayer }) => 
             onClick={(e) => handleNavClick(e, '#')}
             className="flex items-center gap-3 group focus:outline-none shrink-0"
           >
-            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-sm ring-1 ring-slate-200/80 dark:ring-white/10 flex items-center justify-center transition-transform duration-500 group-hover:scale-105 shrink-0 bg-slate-900">
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center transition-all duration-500 group-hover:scale-105 shrink-0 bg-slate-900">
               <img
                 src="/logo.jpg"
                 alt="IFBBC Logo"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover object-center filter hue-rotate-[38deg] saturate-[1.35] contrast-[1.08] brightness-[1.02] transition-all"
               />
             </div>
             <div className="flex flex-col shrink-0">
@@ -180,15 +192,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit, onOpenPrayer }) => 
           >
             <nav className="flex flex-col divide-y divide-slate-100 dark:divide-white/5">
               {navLinks.map((link) => (
-                <a
+                <button
                   key={link.name}
-                  href={link.href}
+                  type="button"
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className="text-sm font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 hover:text-royal-500 dark:hover:text-cobalt-400 py-3 transition-colors flex items-center justify-between"
+                  className="text-sm font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 hover:text-royal-500 dark:hover:text-cobalt-400 py-3.5 transition-colors flex items-center justify-between text-left w-full cursor-pointer"
                 >
                   <span>{link.name}</span>
-                  <ArrowUpRight className="w-4 h-4 opacity-40" />
-                </a>
+                  <ArrowUpRight className="w-4 h-4 opacity-40 text-royal-500 dark:text-cobalt-400" />
+                </button>
               ))}
             </nav>
 

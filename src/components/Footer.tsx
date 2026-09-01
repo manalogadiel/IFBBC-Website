@@ -25,11 +25,11 @@ export const Footer: React.FC = () => {
           {/* Brand & Mission Statement (Span 4) */}
           <div className="lg:col-span-4 space-y-5">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-sm ring-1 ring-slate-200/80 dark:ring-white/10 flex items-center justify-center shrink-0 bg-slate-900">
+              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center shrink-0 bg-slate-900">
                 <img
                   src="/logo.jpg"
                   alt="IFBBC Logo"
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover object-center filter hue-rotate-[38deg] saturate-[1.35] contrast-[1.08] brightness-[1.02]"
                 />
               </div>
               <span className="text-base font-black tracking-tight text-slate-900 dark:text-white uppercase">
