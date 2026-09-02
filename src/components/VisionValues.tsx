@@ -17,6 +17,40 @@ import {
   ArrowRight,
   Quote
 } from 'lucide-react';
+import { PurposeCard } from './ui/PurposeCard';
+
+const PURPOSE_PILLARS = [
+  {
+    title: 'Worship',
+    image: '/Purpose - Worship.jpg',
+    description: 'Exalting God through reverent, Spirit-led corporate worship — praising Him in spirit and truth every Lord's Day.',
+  },
+  {
+    title: 'Fellowship',
+    image: '/Purpose - Fellowship.jpg',
+    description: 'Building authentic covenant community through genuine koinonia, mutual encouragement, and bearing one another's burdens.',
+  },
+  {
+    title: 'Evangelism',
+    image: '/Purpose - Evangelism.jpg',
+    description: 'Proclaiming the Gospel of Jesus Christ locally in Bauan and supporting global church planting and mission outreach.',
+  },
+  {
+    title: 'Discipleship',
+    image: '/Purpose - Discipleship.jpg',
+    description: 'Equipping believers through Life Groups, mentorship pathways, and systematic verse-by-verse Bible study.',
+  },
+  {
+    title: 'Leadership',
+    image: '/Purpose - Leadership.jpg',
+    description: 'Training faithful servant-leaders who shepherd with integrity, accountability, and a passion for God's flock.',
+  },
+  {
+    title: 'Ministries',
+    image: '/Purpose - Ministries.jpg',
+    description: 'Deploying spiritual gifts through intentional ministry teams — from music to ushering to audiovisual service.',
+  },
+];
 
 interface CoreValue {
   number: string;
@@ -261,21 +295,24 @@ export const VisionValues: React.FC = () => {
             </p>
           </div>
 
-          {/* Purpose Banner */}
-          <div className="lg:col-span-7 ambient-card rounded-3xl p-8 sm:p-12 space-y-4">
-            <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
-              Our Purpose
-            </span>
-            <p className="text-base sm:text-lg text-slate-800 dark:text-slate-200 font-medium leading-[1.68] text-pretty">
-              A church that values <span className="font-bold text-royal-500 dark:text-cobalt-400">Worship</span>, grows in <span className="font-bold text-royal-500 dark:text-cobalt-400">Fellowship</span>, engages in <span className="font-bold text-royal-500 dark:text-cobalt-400">Evangelism</span>, equips through <span className="font-bold text-royal-500 dark:text-cobalt-400">Discipleship</span>, trains <span className="font-bold text-royal-500 dark:text-cobalt-400">Leaders</span>, and develops <span className="font-bold text-royal-500 dark:text-cobalt-400">Ministries</span>.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 font-mono text-[11px] text-slate-500 dark:text-slate-400">
-              <span className="bg-slate-50 dark:bg-obsidian-850 p-2.5 rounded-xl text-center font-bold">1. Worship</span>
-              <span className="bg-slate-50 dark:bg-obsidian-850 p-2.5 rounded-xl text-center font-bold">2. Fellowship</span>
-              <span className="bg-slate-50 dark:bg-obsidian-850 p-2.5 rounded-xl text-center font-bold">3. Evangelism</span>
-              <span className="bg-slate-50 dark:bg-obsidian-850 p-2.5 rounded-xl text-center font-bold">4. Discipleship</span>
-              <span className="bg-slate-50 dark:bg-obsidian-850 p-2.5 rounded-xl text-center font-bold">5. Leadership</span>
-              <span className="bg-slate-50 dark:bg-obsidian-850 p-2.5 rounded-xl text-center font-bold">6. Ministries</span>
+          {/* Purpose Media Cards — Interactive Grid */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="flex items-center gap-3 mb-1">
+              <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold">
+                Our Purpose
+              </span>
+              <div className="h-px flex-1 bg-slate-200/60 dark:bg-white/5" />
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              {PURPOSE_PILLARS.map((pillar, idx) => (
+                <PurposeCard
+                  key={pillar.title}
+                  index={idx}
+                  title={pillar.title}
+                  image={pillar.image}
+                  description={pillar.description}
+                />
+              ))}
             </div>
           </div>
         </div>
