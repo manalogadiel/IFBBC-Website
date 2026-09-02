@@ -15,9 +15,10 @@ import {
   Play,
   Pause,
   ArrowRight,
-  Quote
+  Quote,
+  Maximize2,
+  X
 } from 'lucide-react';
-import { PurposeCard } from './ui/PurposeCard';
 
 const PURPOSE_PILLARS = [
   {
@@ -71,7 +72,26 @@ export const VisionValues: React.FC = () => {
   const [isAutoplay, setIsAutoplay] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [selectedPillar, setSelectedPillar] = useState<(typeof PURPOSE_PILLARS)[0] | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Keyboard navigation for expanded purpose pillar view
+  useEffect(() => {
+    if (!selectedPillar) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedPillar(null);
+      } else if (e.key === 'ArrowRight') {
+        const currIdx = PURPOSE_PILLARS.findIndex((p) => p.title === selectedPillar.title);
+        setSelectedPillar(PURPOSE_PILLARS[(currIdx + 1) % PURPOSE_PILLARS.length]);
+      } else if (e.key === 'ArrowLeft') {
+        const currIdx = PURPOSE_PILLARS.findIndex((p) => p.title === selectedPillar.title);
+        setSelectedPillar(PURPOSE_PILLARS[(currIdx - 1 + PURPOSE_PILLARS.length) % PURPOSE_PILLARS.length]);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedPillar]);
 
   const coreValues: CoreValue[] = [
     {
