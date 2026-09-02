@@ -16,9 +16,9 @@ import {
   Pause,
   ArrowRight,
   Quote,
-  Maximize2,
   X
 } from 'lucide-react';
+import { VehicleShowcase } from './ui/VehicleShowcase';
 
 const PURPOSE_PILLARS = [
   {
@@ -300,78 +300,55 @@ export const VisionValues: React.FC = () => {
           </p>
         </div>
 
-        {/* Vision & Purpose Dual Architectural Banners */}
+        {/* Vision & Purpose Dual Architectural Banners + Full-Width Visual Showcase */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 mb-8 sm:mb-12 md:mb-16">
-          {/* Vision Banner */}
-          <div className="lg:col-span-5 ambient-card rounded-3xl p-8 sm:p-12 space-y-4">
-            <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
-              Our Vision
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              GROWING A HEALTHY CHURCH
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-[1.68] text-pretty">
-              A vibrant body of believers rooted in the authority of God's Word, multiplying disciples and glorifying God through spiritual vitality and kingdom faithfulness.
-            </p>
+          {/* Vision Banner — 6 Columns */}
+          <div className="lg:col-span-6 ambient-card rounded-3xl p-8 sm:p-10 space-y-5 flex flex-col justify-between">
+            <div className="space-y-3">
+              <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
+                Our Vision
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                GROWING A HEALTHY CHURCH
+              </h3>
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-[1.68] text-pretty">
+                A vibrant body of believers rooted in the authority of God's Word, multiplying disciples and glorifying God through spiritual vitality and kingdom faithfulness.
+              </p>
+            </div>
+            <div className="pt-4 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between text-xs font-mono text-slate-400">
+              <span>Biblical Mandate</span>
+              <span className="text-royal-500 dark:text-cobalt-400 font-bold">Ephesians 4:15-16</span>
+            </div>
           </div>
 
-          {/* Purpose Banner — Original text layout preserved with interactive media cards directly underneath */}
-          <div className="lg:col-span-7 ambient-card rounded-3xl p-8 sm:p-12 space-y-5 flex flex-col justify-between">
+          {/* Purpose Banner — 6 Columns */}
+          <div className="lg:col-span-6 ambient-card rounded-3xl p-8 sm:p-10 space-y-5 flex flex-col justify-between">
             <div className="space-y-3">
               <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
                 Our Purpose
               </span>
-              <p className="text-base sm:text-lg text-slate-800 dark:text-slate-200 font-medium leading-[1.68] text-pretty">
+              <p className="text-sm sm:text-base text-slate-800 dark:text-slate-200 font-medium leading-[1.68] text-pretty">
                 A church that values <span className="font-bold text-royal-500 dark:text-cobalt-400">Worship</span>, grows in <span className="font-bold text-royal-500 dark:text-cobalt-400">Fellowship</span>, engages in <span className="font-bold text-royal-500 dark:text-cobalt-400">Evangelism</span>, equips through <span className="font-bold text-royal-500 dark:text-cobalt-400">Discipleship</span>, trains <span className="font-bold text-royal-500 dark:text-cobalt-400">Leaders</span>, and develops <span className="font-bold text-royal-500 dark:text-cobalt-400">Ministries</span>.
               </p>
             </div>
 
-            {/* 6 Purpose Items Grid: Original text layout on top, purpose image positioned directly underneath */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 font-mono text-[11px]">
+            {/* 6 Purpose Pillars */}
+            <div className="grid grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
               {PURPOSE_PILLARS.map((pillar) => (
-                <motion.div
+                <button
                   key={pillar.title}
                   onClick={() => setSelectedPillar(pillar)}
-                  whileHover={{ y: -3, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                  className="group cursor-pointer rounded-2xl bg-slate-50/90 dark:bg-obsidian-850/90 border border-slate-200/80 dark:border-white/5 hover:border-royal-500/40 dark:hover:border-cobalt-400/40 p-2.5 transition-all shadow-sm hover:shadow-lg flex flex-col space-y-2 overflow-hidden"
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`View ${pillar.title} expanded preview`}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setSelectedPillar(pillar);
-                    }
-                  }}
+                  className="bg-slate-50 dark:bg-obsidian-850 hover:bg-royal-500 hover:text-white dark:hover:bg-cobalt-500 p-2.5 rounded-xl text-center font-bold text-slate-700 dark:text-slate-300 transition-all border border-slate-200/60 dark:border-white/5 active:scale-95 shadow-sm"
                 >
-                  {/* Original text at top */}
-                  <div className="font-bold text-center text-slate-700 dark:text-slate-300 group-hover:text-royal-600 dark:group-hover:text-cobalt-400 transition-colors truncate">
-                    {pillar.title}
-                  </div>
-
-                  {/* Purpose image positioned directly underneath the text */}
-                  <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-900">
-                    <img
-                      src={pillar.image}
-                      alt={pillar.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity" />
-
-                    {/* Hover expand indicator */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 backdrop-blur-[2px]">
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-mono text-[9px] uppercase tracking-wider font-semibold shadow-sm">
-                        <Maximize2 className="w-2.5 h-2.5" />
-                        Expand
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
+                  {pillar.title}
+                </button>
               ))}
             </div>
+          </div>
+
+          {/* Full-Width Horizontal Visual Showcase Directly Underneath Both Cards */}
+          <div className="lg:col-span-12 pt-1">
+            <VehicleShowcase />
           </div>
         </div>
 
