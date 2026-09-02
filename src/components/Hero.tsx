@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Users, Calendar, Volume2 } from 'lucide-react';
 import { MagneticButton } from './ui/MagneticButton';
 import { LineMaskReveal } from './ui/LineMaskReveal';
-import { PrayerIcon } from './ui/PrayerIcon';
 
 // High-density frame buffer: 90 discrete frames ensures silky 60FPS scrubbing with fast texture extraction
 const TOTAL_FRAMES = 90;
@@ -732,7 +731,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPrayer, onScrollToSermons }) =
               <div className="flex flex-wrap items-center gap-4 pt-1">
                 <MagneticButton variant="primary" size="lg" onClick={onOpenPrayer}>
                   <span>Prayer Wall</span>
-                  <PrayerIcon className="w-4 h-4 ml-1.5" />
                 </MagneticButton>
 
                 <MagneticButton variant="outline" size="lg" onClick={onScrollToSermons}>

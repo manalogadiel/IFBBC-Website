@@ -3,13 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft,
   ChevronRight,
-  Sparkles,
-  BookOpen,
-  Heart,
-  Shield,
-  Compass,
-  CheckCircle2,
-  Users,
   Layers,
   Grid,
   Play,
@@ -60,7 +53,6 @@ interface CoreValue {
   description: string;
   scripture: string;
   application: string;
-  icon: React.ComponentType<{ className?: string }>;
   accentColor: string;
 }
 
@@ -101,7 +93,6 @@ export const VisionValues: React.FC = () => {
       description: 'The inerrant Scriptures serve as our supreme standard for all faith, doctrine, teaching, and congregational practice.',
       scripture: '2 Timothy 3:16-17 • "All scripture is given by inspiration of God, and is profitable for doctrine..."',
       application: 'Uncompromising expository pulpit preaching, systematic verse-by-verse doctrine, and personal Bible intake.',
-      icon: BookOpen,
       accentColor: 'from-blue-600/20 to-indigo-600/20',
     },
     {
@@ -112,7 +103,6 @@ export const VisionValues: React.FC = () => {
       description: 'Gathering regularly in unified worship, praising our God in spirit and truth while strengthening our bond in Christ.',
       scripture: 'Hebrews 10:24-25 • "Not forsaking the assembling of ourselves together, as the manner of some is..."',
       application: 'Reverent liturgical Sunday worship, united prayer meetings, and sincere Christian koinonia.',
-      icon: Heart,
       accentColor: 'from-rose-600/20 to-red-600/20',
     },
     {
@@ -123,7 +113,6 @@ export const VisionValues: React.FC = () => {
       description: 'Nurturing covenant homes, supporting parents, children, and intergenerational faithfulness within the body of Christ.',
       scripture: 'Joshua 24:15 • "As for me and my house, we will serve the Lord."',
       application: 'Family-centered ministries, marital equipping, and raising a godly generation from Kiddos to Adelphoi.',
-      icon: Shield,
       accentColor: 'from-emerald-600/20 to-teal-600/20',
     },
     {
@@ -134,7 +123,6 @@ export const VisionValues: React.FC = () => {
       description: 'Cultivating personal sanctification, deeper prayer lives, and mature Christlikeness in every believer.',
       scripture: '2 Peter 3:18 • "Grow in grace, and in the knowledge of our Lord and Saviour Jesus Christ."',
       application: 'Daily devotional rhythms, personal accountability, and continuous transformation into the likeness of Christ.',
-      icon: Sparkles,
       accentColor: 'from-amber-600/20 to-orange-600/20',
     },
     {
@@ -145,7 +133,6 @@ export const VisionValues: React.FC = () => {
       description: 'Reflecting the character of Jesus Christ through practical compassion, integrity, and love across Bauan and beyond.',
       scripture: 'Matthew 5:16 • "Let your light so shine before men, that they may see your good works..."',
       application: 'Community outreach, benevolent aid, spotless workplace ethics, and radiant public Christian testimony.',
-      icon: Compass,
       accentColor: 'from-cyan-600/20 to-sky-600/20',
     },
     {
@@ -156,7 +143,6 @@ export const VisionValues: React.FC = () => {
       description: 'Upholding orderly biblical governance, transparency, accountability, and wise stewardship of God’s house.',
       scripture: '1 Corinthians 14:40 • "Let all things be done decently and in order."',
       application: 'Transparent financial stewardship, orderly congregational order, and structural biblical integrity.',
-      icon: Shield,
       accentColor: 'from-purple-600/20 to-violet-600/20',
     },
     {
@@ -167,7 +153,6 @@ export const VisionValues: React.FC = () => {
       description: 'Providing intentional environments for spiritual service, connection, mutual encouragement, and spiritual gifts.',
       scripture: '1 Peter 4:10 • "As every man hath received the gift, even so minister the same one to another..."',
       application: 'Active volunteerism, music ministry, ushering, audiovisual service, and ministry development cohorts.',
-      icon: Sparkles,
       accentColor: 'from-fuchsia-600/20 to-pink-600/20',
     },
     {
@@ -178,7 +163,6 @@ export const VisionValues: React.FC = () => {
       description: 'Equipping believers through intentional small group community, mentorship, and clear stages of biblical growth.',
       scripture: '2 Timothy 2:2 • "And the things that thou hast heard of me... the same commit thou to faithful men..."',
       application: 'Sunday 9:00 AM Life Groups, one-on-one discipling pathways, and leader-in-training tracks.',
-      icon: Users,
       accentColor: 'from-blue-600/20 to-teal-600/20',
     },
     {
@@ -189,7 +173,6 @@ export const VisionValues: React.FC = () => {
       description: 'Faithfully propagating the Gospel of Jesus Christ locally in Batangas and supporting global church planting.',
       scripture: 'Mark 16:15 • "Go ye into all the world, and preach the gospel to every creature."',
       application: 'Saturday 2:00 PM Missions, mission field support, community Bible studies, and church multiplication.',
-      icon: Compass,
       accentColor: 'from-amber-600/20 to-red-600/20',
     },
     {
@@ -200,7 +183,6 @@ export const VisionValues: React.FC = () => {
       description: 'Honoring, praying for, and supporting the under-shepherds God has called to feed and lead the flock.',
       scripture: '1 Thessalonians 5:12-13 • "And we beseech you, brethren, to know them which labour among you..."',
       application: 'Sustained intercession for Senior Pastor Rev. Pallones and Youth Pastor Lualhati, pastoral care, and co-laboring.',
-      icon: CheckCircle2,
       accentColor: 'from-royal-600/20 to-cobalt-600/20',
     },
   ];
@@ -279,7 +261,6 @@ export const VisionValues: React.FC = () => {
   };
 
   const currentVal = coreValues[currentIndex];
-  const CurrentIcon = currentVal.icon;
 
   return (
     <section id="vision-values" className="pt-16 pb-20 md:pt-24 md:pb-32 scroll-mt-24 relative overflow-hidden select-none bg-chalk-50 dark:bg-obsidian-950 border-t border-slate-200/60 dark:border-white/5">
@@ -452,7 +433,7 @@ export const VisionValues: React.FC = () => {
                   {/* Subtle ambient gradient accent */}
                   <div className="absolute top-0 right-0 w-80 h-80 bg-royal-500/5 dark:bg-cobalt-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
 
-                  {/* Header Row: Number + Tag + Icon */}
+                  {/* Header Row: Number + Tag */}
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                       <span className="font-mono text-3xl sm:text-5xl font-black text-royal-500 dark:text-cobalt-400">
@@ -461,10 +442,6 @@ export const VisionValues: React.FC = () => {
                       <span className="text-[11px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-slate-100 dark:bg-obsidian-850 text-slate-700 dark:text-slate-300">
                         {currentVal.categoryLabel}
                       </span>
-                    </div>
-
-                    <div className="w-12 h-12 rounded-2xl bg-royal-500/10 dark:bg-cobalt-500/20 flex items-center justify-center text-royal-500 dark:text-cobalt-400">
-                      <CurrentIcon className="w-6 h-6" />
                     </div>
                   </div>
 
@@ -550,7 +527,6 @@ export const VisionValues: React.FC = () => {
           /* Grid View for full overview */
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {coreValues.map((val, idx) => {
-              const Icon = val.icon;
               return (
                 <motion.div
                   key={val.number}
@@ -567,9 +543,6 @@ export const VisionValues: React.FC = () => {
                     <span className="font-mono text-2xl sm:text-3xl font-black text-royal-500 dark:text-cobalt-400">
                       {val.number}
                     </span>
-                    <div className="w-10 h-10 rounded-2xl bg-royal-500/10 dark:bg-cobalt-500/20 flex items-center justify-center text-royal-500 dark:text-cobalt-400 group-hover:scale-110 transition-transform">
-                      <Icon className="w-5 h-5" />
-                    </div>
                   </div>
 
                   <div>
