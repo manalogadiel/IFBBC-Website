@@ -22,7 +22,7 @@ interface CoreGroup {
   demographic: string;
   tagline: string;
   description: string;
-  schedule: string;
+  schedule: string | string[];
   targetAges: string;
   coordinator: string;
   logo?: string;
@@ -42,10 +42,10 @@ export const CoreGroupsSection: React.FC = () => {
       shortLabel: 'Kids',
       demographic: 'Kids',
       tagline: 'Laying the Bible Foundation in Young Hearts',
-      description: 'A vibrant, Christ-centered ministry designed to disciple children through engaging Bible lessons, Scripture memorization, worship songs, and structured life groups.',
-      schedule: 'Every Sunday @ 9:00 AM (Life Group) & 10:00 AM (Kids Church)',
+      description: 'We disciple children through engaging Bible lessons, Games, Scripture memorization, worship songs.',
+      schedule: 'Every Sunday - 9:00 AM',
       targetAges: 'Toddlers to Grade 6',
-      coordinator: 'Kiddos Ministry Team',
+      coordinator: 'Tr. Ericah S. Lualhati',
       logo: '/logo.jpg',
       accentHex: '#10b981',
       posters: [
@@ -90,10 +90,10 @@ export const CoreGroupsSection: React.FC = () => {
       shortLabel: 'Youth',
       demographic: 'Young People',
       tagline: 'Brothers & Sisters Walking Steadfast in Christ',
-      description: 'A dynamic fellowship of high school and collegiate youth rooted in biblical worldview, peer accountability, gospel boldness, and servant leadership.',
-      schedule: 'Every Saturday @ 4:00 PM & Sunday Life Groups @ 9:00 AM',
+      description: 'We are a group of high school and collegiate youth rooted in biblical worldview, peer accountability, gospel boldness, and servant leadership.',
+      schedule: ['Every Saturday - 3:00 PM', 'Sunday - 9:00 AM'],
       targetAges: 'Ages 13–21 (Junior High, Senior High, College)',
-      coordinator: 'Ptr. Edwin Sebastian Lualhati (Youth Pastor)',
+      coordinator: 'Ptr. Edwin Sebastian Lualhati',
       logo: '/adelphoi-logo.jpg',
       accentHex: '#00a2ea',
       posters: [
@@ -141,7 +141,7 @@ export const CoreGroupsSection: React.FC = () => {
       description: 'Equipping marketplace ambassadors, corporate leaders, and young entrepreneurs to live out biblical integrity, financial stewardship, and gospel intentionality in the workplace.',
       schedule: 'Bi-Weekly Friday Dinners @ 7:00 PM & Sunday 9:00 AM Life Group',
       targetAges: 'Ages 22–35 (Single Professionals & Career Starters)',
-      coordinator: 'CAYA Ministry Team',
+      coordinator: 'Engr. Atreo Xyrus I. Gamilla',
       logo: '/logo.jpg',
       accentHex: '#3b82f6',
       posters: [
@@ -189,7 +189,7 @@ export const CoreGroupsSection: React.FC = () => {
       description: 'Strengthening adult men through mutual accountability, biblical manhood, leadership development, marriage encouragement, and active church service.',
       schedule: 'Monthly Saturday Breakfast @ 7:00 AM & Weekly Band of Brothers',
       targetAges: 'Men (30+ / Married & Family Heads)',
-      coordinator: 'A-Men Ministry Leaders',
+      coordinator: 'Bro. Ivan Lendl I. Gamilla',
       logo: '/logo.jpg',
       accentHex: '#64748b',
       posters: [
@@ -237,7 +237,7 @@ export const CoreGroupsSection: React.FC = () => {
       description: 'Nurturing godly womanhood, Titus 2 mentoring, fervent prayer, hospitality, and compassionate outreach across all families of the church.',
       schedule: 'Every 2nd Saturday Fellowship @ 2:00 PM & Weekly Prayer Circle',
       targetAges: 'Women (30+ / Married, Mothers & Senior Saints)',
-      coordinator: 'Womisso Ministry Leaders',
+      coordinator: 'Sis. Raquel Ilagan',
       logo: '/logo.jpg',
       accentHex: '#ec4899',
       posters: [
@@ -359,9 +359,19 @@ export const CoreGroupsSection: React.FC = () => {
                     <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
                       Regular Gathering
                     </span>
-                    <span className="font-bold text-slate-800 dark:text-slate-200 block">
-                      {activeGroup.schedule}
-                    </span>
+                    {Array.isArray(activeGroup.schedule) ? (
+                      <div className="space-y-1">
+                        {activeGroup.schedule.map((item, idx) => (
+                          <span key={idx} className="font-bold text-slate-800 dark:text-slate-200 block">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="font-bold text-slate-800 dark:text-slate-200 block">
+                        {activeGroup.schedule}
+                      </span>
+                    )}
                   </div>
 
                   <div>
@@ -375,7 +385,7 @@ export const CoreGroupsSection: React.FC = () => {
 
                   <div>
                     <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
-                      Pastoral Oversight
+                      Spiritual Leader
                     </span>
                     <span className="font-bold text-royal-500 dark:text-cobalt-400 block">
                       {activeGroup.coordinator}

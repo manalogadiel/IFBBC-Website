@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Menu, X, ArrowUpRight } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { MagneticButton } from './ui/MagneticButton';
-import { PrayerIcon } from './ui/PrayerIcon';
 
 interface NavbarProps {
   onOpenVisit: () => void;
@@ -144,9 +143,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit, onOpenPrayer }) => 
             <button
               type="button"
               onClick={onOpenPrayer}
-              className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 hover:text-royal-500 dark:hover:text-cobalt-400 px-3 py-2 flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap bg-slate-100/70 hover:bg-slate-200/70 dark:bg-obsidian-850 dark:hover:bg-obsidian-800 rounded-full"
+              className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 hover:text-royal-500 dark:hover:text-cobalt-400 px-3 py-2 flex items-center transition-colors cursor-pointer whitespace-nowrap bg-slate-100/70 hover:bg-slate-200/70 dark:bg-obsidian-850 dark:hover:bg-obsidian-800 rounded-full"
             >
-              <PrayerIcon className="w-3.5 h-3.5 text-royal-500 dark:text-cobalt-400" />
               <span>Prayer Wall</span>
             </button>
 
@@ -214,7 +212,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit, onOpenPrayer }) => 
                 }}
                 className="w-full py-3.5 bg-royal-500/10 hover:bg-royal-500/20 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
-                <PrayerIcon className="w-4 h-4 text-royal-500 dark:text-cobalt-400" />
                 <span>Open Community Prayer Wall</span>
               </button>
               <button
