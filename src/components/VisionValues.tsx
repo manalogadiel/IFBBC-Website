@@ -359,11 +359,6 @@ export const VisionValues: React.FC = () => {
               ))}
             </div>
           </div>
-
-          {/* Full-Width Horizontal Visual Showcase Directly Underneath Both Cards */}
-          <div className="lg:col-span-12 pt-1">
-            <VehicleShowcase />
-          </div>
         </div>
 
         {/* Core Values Section Header & Controls */}
