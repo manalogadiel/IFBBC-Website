@@ -182,3 +182,52 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-royal);
 }
+
+/* ── OUR CHURCH VIDEO CARD — SEAMLESS CONTAINER BORDER FITTING ── */
+.church-video-container {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  isolation: isolate;
+  /* Enforces hardware-accelerated clipping to container border radius without bleeding */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+  transform: translateZ(0);
+  background: transparent;
+}
+
+/* Fluid gentle breathing motion that remains inside container boundary bounds */
+.church-video-animated {
+  animation: churchVideoSeamlessMotion 22s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  will-change: transform, opacity;
+  transform-origin: center center;
+}
+
+@keyframes churchVideoSeamlessMotion {
+  0% {
+    transform: scale(1.02) translate3d(0, 0, 0);
+    opacity: 0.96;
+  }
+  50% {
+    transform: scale(1.06) translate3d(-0.6%, -0.4%, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.02) translate3d(0.4%, 0.2%, 0);
+    opacity: 0.97;
+  }
+}
+
+/* Seamless video fade-in keyframes to eliminate any initial black flash */
+@keyframes churchVideoFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.church-video-fadein {
+  animation: churchVideoFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

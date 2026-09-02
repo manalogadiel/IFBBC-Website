@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Maximize2, X, Sparkles, MoveHorizontal } from 'lucide-react';
+import { Maximize2, X, Sparkles, MoveHorizontal, Video, Play, Pause } from 'lucide-react';
 
 interface VehicleShowcaseProps {
-  onSelectPillar?: (title: string) => void;
+  className?: string;
 }
 
 interface Particle {
@@ -18,8 +18,9 @@ interface Particle {
   maxLife: number;
 }
 
-export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
+export const VehicleShowcase: React.FC<VehicleShowcaseProps> = ({ className = '' }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isVideoActive, setIsVideoActive] = useState(false);
 
   // DOM Refs for direct 60fps hardware-accelerated transforms
   const containerRef = useRef<HTMLDivElement>(null);
@@ -27,143 +28,161 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
   const vehicleRef = useRef<HTMLDivElement>(null);
   const parallaxBgRef = useRef<HTMLDivElement>(null);
   const underglowRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Physics state (pixels from center)
-  const posRef = useRef({ x: 0, y: 0 });
-  const velRef = useRef({ vx: 0, vy: 0 });
-  const isDraggingRef = useRef(false);
-  const lastPointerRef = useRef({ x: 0, y: 0, time: 0 });
-  const animFrameId = useRef<number>(0);
-  const roadOffsetRef = useRef(0);
+  // Video Scrubbing Synchronous State (Eliminates dropped frames on rewind)
+  const scrubTimeRef = useRef(0);
+  const isSeekingRef = useRef(false);
+  const lastSeekTickRef = useRef(0);
 
-  // Particle system
+  // Physics & Steering Motion State (Ref-based for silky 60FPS)
+  const posRef = useRef({
+    x: 0,
+    y: 0,
+    targetX: 0,
+    targetY: 0,
+    vx: 0,
+    vy: 0,
+    tilt: 0,
+    speed: 0,
+  });
+
+  const pointerRef = useRef({
+    isDown: false,
+    startX: 0,
+    startY: 0,
+    prevX: 0,
+    prevY: 0,
+    lastTime: 0,
+  });
+
   const particlesRef = useRef<Particle[]>([]);
+  const animFrameIdRef = useRef<number | null>(null);
 
-  // Close on Escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isExpanded) {
-        setIsExpanded(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isExpanded]);
+  // ── Spawn Dust & Light Trail Particles behind the Rear Wheels ──
+  const spawnParticles = useCallback((x: number, y: number, vx: number, vy: number) => {
+    const speed = Math.hypot(vx, vy);
+    if (speed < 0.4) return;
 
-  // Main 60fps physics & particle rendering animation loop
+    const count = Math.min(3, Math.floor(speed * 0.8));
+    for (let i = 0; i < count; i++) {
+      const isDust = Math.random() > 0.4;
+      particlesRef.current.push({
+        x: x - 120 + (Math.random() - 0.5) * 20, // Emit behind the van
+        y: y + 35 + (Math.random() - 0.5) * 12,  // Near ground level
+        vx: -vx * 0.35 + (Math.random() - 0.5) * 1.5,
+        vy: -0.2 - Math.random() * 0.8,
+        size: isDust ? 2 + Math.random() * 4 : 1.5 + Math.random() * 2,
+        alpha: isDust ? 0.45 : 0.85,
+        color: isDust ? 'rgba(255, 255, 255, 0.4)' : 'rgba(96, 165, 250, 0.9)',
+        life: 0,
+        maxLife: 25 + Math.random() * 20,
+      });
+    }
+  }, []);
+
+  // ── Main 60FPS Physics & Video Motion Scrubbing Loop ──
   const updatePhysics = useCallback(() => {
-    const friction = 0.92;
-    const springStiffness = 0.06;
-    const maxBoundsX = 320; // Max horizontal travel from center
-    const maxBoundsY = 90;  // Max vertical lane change travel
+    const pos = posRef.current;
+    const isDragging = pointerRef.current.isDown;
 
-    if (!isDraggingRef.current) {
-      // Apply momentum damping to velocity
-      velRef.current.vx *= friction;
-      velRef.current.vy *= friction;
-
-      // Soft spring boundary bounce-back if past limits
-      if (posRef.current.x > maxBoundsX) {
-        posRef.current.x -= (posRef.current.x - maxBoundsX) * springStiffness;
-        velRef.current.vx *= 0.65;
-      } else if (posRef.current.x < -maxBoundsX) {
-        posRef.current.x -= (posRef.current.x + maxBoundsX) * springStiffness;
-        velRef.current.vx *= 0.65;
-      }
-
-      if (posRef.current.y > maxBoundsY) {
-        posRef.current.y -= (posRef.current.y - maxBoundsY) * springStiffness;
-        velRef.current.vy *= 0.65;
-      } else if (posRef.current.y < -maxBoundsY) {
-        posRef.current.y -= (posRef.current.y + maxBoundsY) * springStiffness;
-        velRef.current.vy *= 0.65;
-      }
-
-      posRef.current.x += velRef.current.vx;
-      posRef.current.y += velRef.current.vy;
+    if (!isDragging) {
+      // Natural spring return towards center with smooth damping
+      const ax = (pos.targetX - pos.x) * 0.05;
+      const ay = (pos.targetY - pos.y) * 0.05;
+      pos.vx = (pos.vx + ax) * 0.86;
+      pos.vy = (pos.vy + ay) * 0.86;
+      pos.x += pos.vx;
+      pos.y += pos.vy;
     }
 
-    // Dynamic steering tilt based on vertical movement & velocity
-    const targetAngle = Math.max(-14, Math.min(14, velRef.current.vy * 1.6 + velRef.current.vx * 0.25));
+    // Dynamic steering tilt based on horizontal velocity
+    const targetTilt = Math.max(-8, Math.min(8, pos.vx * 0.75));
+    pos.tilt += (targetTilt - pos.tilt) * 0.12;
 
-    // Update vehicle DOM element directly every frame for 60fps responsiveness
+    const currentSpeed = Math.hypot(pos.vx, pos.vy);
+    pos.speed = currentSpeed;
+
+    // ── Directional Video Scrubbing: Smooth Forward & Stutter-Free Rewind ──
+    if (videoRef.current) {
+      const vid = videoRef.current;
+      const duration = vid.duration || 10;
+      const endThreshold = Math.max(0.1, duration - 0.06);
+
+      if (pos.vx > 0.12) {
+        // Moving RIGHT: Advance forward
+        if (vid.currentTime >= endThreshold) {
+          if (!vid.paused) vid.pause();
+          vid.currentTime = endThreshold;
+          scrubTimeRef.current = endThreshold;
+        } else {
+          if (vid.paused) {
+            vid.play().catch(() => {});
+          }
+          const rate = Math.min(3.8, Math.max(1.1, pos.vx / 2.2));
+          if (Math.abs(vid.playbackRate - rate) > 0.1) {
+            vid.playbackRate = rate;
+          }
+          scrubTimeRef.current = vid.currentTime;
+        }
+      } else if (pos.vx < -0.12) {
+        // Moving LEFT: Smooth backward rewind (Zero dropped frames or decoder freezes)
+        if (!vid.paused) {
+          vid.pause();
+        }
+        // Accumulate rewind delta continuously
+        const dt = pos.vx * 0.016; // pos.vx is negative
+        scrubTimeRef.current = Math.max(0, scrubTimeRef.current + dt);
+
+        const now = performance.now();
+        // Dispatch seek at smooth 30fps intervals (~32ms) to prevent decoder saturation
+        if (now - lastSeekTickRef.current > 32 && !isSeekingRef.current) {
+          isSeekingRef.current = true;
+          lastSeekTickRef.current = now;
+          vid.currentTime = scrubTimeRef.current;
+        }
+      } else {
+        // Stationary: Freeze on current frame and flush final target frame
+        if (!vid.paused) {
+          vid.pause();
+        }
+        if (!isSeekingRef.current && Math.abs(vid.currentTime - scrubTimeRef.current) > 0.03) {
+          isSeekingRef.current = true;
+          vid.currentTime = scrubTimeRef.current;
+        }
+      }
+    }
+
+    // Direct inline DOM transform updates for 60fps performance
     if (vehicleRef.current) {
-      vehicleRef.current.style.transform = `translate(-50%, -50%) translate3d(${posRef.current.x.toFixed(2)}px, ${posRef.current.y.toFixed(2)}px, 0) rotate(${targetAngle.toFixed(2)}deg)`;
+      vehicleRef.current.style.transform = `translate(-50%, -50%) translate3d(${pos.x}px, ${pos.y}px, 0px) rotate(${pos.tilt}deg)`;
     }
 
-    // Update parallax highway backdrop
-    if (parallaxBgRef.current) {
-      parallaxBgRef.current.style.transform = `translateX(${(-posRef.current.x * 0.22).toFixed(2)}px)`;
-    }
-
-    // Update underglow brightness based on velocity
     if (underglowRef.current) {
-      const speedMagnitude = Math.sqrt(velRef.current.vx * velRef.current.vx + velRef.current.vy * velRef.current.vy);
-      underglowRef.current.style.opacity = Math.min(1, 0.75 + speedMagnitude * 0.04).toFixed(2);
+      const glowScale = 1 + Math.min(0.35, currentSpeed * 0.03);
+      const glowOpacity = 0.55 + Math.min(0.45, currentSpeed * 0.05);
+      underglowRef.current.style.transform = `translateX(-50%) scale(${glowScale})`;
+      underglowRef.current.style.opacity = `${glowOpacity}`;
     }
 
-    // Road scroll speed based on forward surge
-    const forwardSpeed = 5.0 + Math.max(-2, velRef.current.vx * 0.15);
-    roadOffsetRef.current = (roadOffsetRef.current + forwardSpeed) % 2000;
+    // Subtle opposite parallax drift on background video container
+    if (parallaxBgRef.current) {
+      const bgX = -pos.x * 0.08;
+      const bgY = -pos.y * 0.04;
+      parallaxBgRef.current.style.transform = `translate3d(${bgX}px, ${bgY}px, 0px)`;
+    }
 
-    // ── Render Particles on Canvas ──
+    // Render particle dust & light trails
     const canvas = canvasRef.current;
-    if (canvas && isExpanded) {
+    if (canvas) {
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const centerX = canvas.width / 2 + pos.x;
+        const centerY = canvas.height / 2 + pos.y;
 
-        const vCenterX = canvas.width * 0.5 + posRef.current.x;
-        const vCenterY = canvas.height * 0.54 + posRef.current.y;
+        spawnParticles(centerX, centerY, pos.vx, pos.vy);
 
-        // Spawn dust and neon trail particles behind Mitsubishi L300 rear tires
-        if (Math.random() < 0.8) {
-          const spawnX = vCenterX - 130;
-          const spawnY = vCenterY + 65 + (Math.random() * 10 - 5);
-
-          // Neon blue road streak
-          particlesRef.current.push({
-            x: spawnX,
-            y: spawnY,
-            vx: -(forwardSpeed * 1.6 + Math.random() * 2),
-            vy: (Math.random() - 0.5) * 1.2,
-            size: 2.5 + Math.random() * 3,
-            alpha: 0.85,
-            color: Math.random() > 0.4 ? 'rgba(56, 189, 248, ' : 'rgba(99, 102, 241, ',
-            life: 0,
-            maxLife: 35 + Math.random() * 25,
-          });
-
-          // Atmospheric road dust
-          particlesRef.current.push({
-            x: spawnX - 15,
-            y: spawnY - Math.random() * 12,
-            vx: -(forwardSpeed * 1.8 + Math.random() * 3),
-            vy: -0.4 - Math.random() * 0.8,
-            size: 4 + Math.random() * 8,
-            alpha: 0.35,
-            color: 'rgba(148, 163, 184, ',
-            life: 0,
-            maxLife: 40 + Math.random() * 30,
-          });
-        }
-
-        // Underbody neon glow particles along asphalt
-        if (Math.random() < 0.45) {
-          particlesRef.current.push({
-            x: vCenterX + (Math.random() * 160 - 80),
-            y: vCenterY + 75,
-            vx: -(forwardSpeed * 2.0),
-            vy: 0,
-            size: 14 + Math.random() * 18,
-            alpha: 0.28,
-            color: 'rgba(37, 99, 235, ',
-            life: 0,
-            maxLife: 22,
-          });
-        }
-
-        // Update and draw active particles
         for (let i = particlesRef.current.length - 1; i >= 0; i--) {
           const p = particlesRef.current[i];
           p.x += p.vx;
@@ -180,62 +199,100 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
 
           ctx.save();
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size * (1 + progress * 0.5), 0, Math.PI * 2);
-          ctx.fillStyle = `${p.color}${currentAlpha})`;
+          ctx.arc(p.x, p.y, p.size * (1 - progress * 0.3), 0, Math.PI * 2);
+          ctx.fillStyle = p.color.replace(/[\d.]+\)$/, `${currentAlpha})`);
           ctx.shadowBlur = 8;
-          ctx.shadowColor = p.color + '0.6)';
+          ctx.shadowColor = p.color;
           ctx.fill();
           ctx.restore();
         }
       }
     }
 
-    animFrameId.current = requestAnimationFrame(updatePhysics);
-  }, [isExpanded]);
+    animFrameIdRef.current = requestAnimationFrame(updatePhysics);
+  }, [spawnParticles]);
 
-  // Start physics animation loop
+  // Start physics loop when modal opens
   useEffect(() => {
-    animFrameId.current = requestAnimationFrame(updatePhysics);
-    return () => cancelAnimationFrame(animFrameId.current);
-  }, [updatePhysics]);
+    if (isExpanded) {
+      // Reset position to center
+      posRef.current = {
+        x: 0,
+        y: 0,
+        targetX: 0,
+        targetY: 0,
+        vx: 0,
+        vy: 0,
+        tilt: 0,
+        speed: 0,
+      };
+      particlesRef.current = [];
+      animFrameIdRef.current = requestAnimationFrame(updatePhysics);
 
-  // Window-level mouse/touch drag handlers so fast swipes never detach
-  const handlePointerDown = (e: React.PointerEvent) => {
-    e.preventDefault();
-    isDraggingRef.current = true;
-    lastPointerRef.current = {
-      x: e.clientX,
-      y: e.clientY,
-      time: performance.now(),
+      // Ensure video is initially paused on frame
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+    } else {
+      if (animFrameIdRef.current) {
+        cancelAnimationFrame(animFrameIdRef.current);
+      }
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+    }
+
+    return () => {
+      if (animFrameIdRef.current) {
+        cancelAnimationFrame(animFrameIdRef.current);
+      }
     };
-    velRef.current = { vx: 0, vy: 0 };
+  }, [isExpanded, updatePhysics]);
+
+  // ── Drag & Touch Event Handlers ──
+  const handlePointerDown = (e: React.PointerEvent) => {
+    pointerRef.current = {
+      isDown: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      prevX: e.clientX,
+      prevY: e.clientY,
+      lastTime: performance.now(),
+    };
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
   };
 
   useEffect(() => {
     const handleGlobalPointerMove = (e: PointerEvent) => {
-      if (!isDraggingRef.current) return;
+      if (!pointerRef.current.isDown) return;
       const now = performance.now();
-      const dt = Math.max(1, now - lastPointerRef.current.time);
-      const dx = e.clientX - lastPointerRef.current.x;
-      const dy = e.clientY - lastPointerRef.current.y;
+      const dt = Math.max(1, now - pointerRef.current.lastTime);
 
-      // Real-time steering & panning sensitivity
-      posRef.current.x += dx * 1.15;
-      posRef.current.y += dy * 0.95;
+      const dx = e.clientX - pointerRef.current.prevX;
+      const dy = e.clientY - pointerRef.current.prevY;
 
-      // Instantaneous release velocity for natural momentum coasting
-      velRef.current.vx = (dx / dt) * 16;
-      velRef.current.vy = (dy / dt) * 16;
+      // Bound steering range so car stays inside viewport bounds
+      const nextX = Math.max(-280, Math.min(280, posRef.current.x + dx * 1.2));
+      const nextY = Math.max(-80, Math.min(80, posRef.current.y + dy * 0.9));
 
-      lastPointerRef.current = {
-        x: e.clientX,
-        y: e.clientY,
-        time: now,
-      };
+      posRef.current.vx = (dx / dt) * 16;
+      posRef.current.vy = (dy / dt) * 16;
+      posRef.current.x = nextX;
+      posRef.current.y = nextY;
+
+      pointerRef.current.prevX = e.clientX;
+      pointerRef.current.prevY = e.clientY;
+      pointerRef.current.lastTime = now;
     };
 
     const handleGlobalPointerUp = () => {
-      isDraggingRef.current = false;
+      pointerRef.current.isDown = false;
+      // Target springs back to center smoothly
+      posRef.current.targetX = 0;
+      posRef.current.targetY = 0;
+      if (videoRef.current && Math.abs(videoRef.current.currentTime - scrubTimeRef.current) > 0.03) {
+        videoRef.current.currentTime = scrubTimeRef.current;
+      }
     };
 
     window.addEventListener('pointermove', handleGlobalPointerMove);
@@ -250,24 +307,23 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${className}`}>
       {/* ── 1. Collapsed Banner (Full-Width under Vision & Purpose) ── */}
       <motion.div
         whileHover={{ y: -2 }}
         onClick={() => setIsExpanded(true)}
-        className="group relative w-full rounded-3xl ambient-card overflow-hidden cursor-pointer border border-slate-200/80 dark:border-white/10 transition-all duration-300 shadow-md hover:shadow-2xl"
+        className="group relative w-full rounded-3xl ambient-card overflow-hidden cursor-pointer border border-slate-200/80 dark:border-white/10 transition-all duration-300 shadow-md hover:shadow-2xl select-none"
       >
-        {/* Background panoramic preview with scenic road and official church van */}
         <div className="relative h-44 sm:h-52 md:h-64 w-full overflow-hidden bg-slate-950">
-          {/* Parallax Road Background */}
+          {/* Background church scenery with dark ambient vignette */}
           <img
-            src="/mitsubishi-l300-mission.jpg"
-            alt="Mission Road"
-            className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105 opacity-50"
+            src="/hero-poster.webp"
+            alt="Inicbulan FBBC Church Scenery"
+            className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105 opacity-45"
           />
 
           {/* Vignette & Ambient Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-slate-950/40 z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/75 to-slate-950/45 z-[1]" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-[1]" />
 
           {/* Authentic Inicbulan FBBC Mitsubishi L300 Van Cutout on the Right */}
@@ -286,13 +342,13 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
             <div className="flex items-center justify-between">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/65 backdrop-blur-md border border-white/20 text-white font-mono text-[11px] font-bold uppercase tracking-wider shadow-lg">
                 <Sparkles className="w-3.5 h-3.5 text-cobalt-400" />
-                <span>Mitsubishi L300 • Ministry Fleet</span>
+                <span>Mitsubishi L300 • Interactive Ministry Van</span>
               </div>
 
               {/* Expand Action Button */}
               <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-royal-500 hover:bg-royal-600 text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg group-hover:scale-105 transition-transform pointer-events-auto">
                 <Maximize2 className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Launch Viewport</span>
+                <span className="hidden sm:inline">Steer Van</span>
               </div>
             </div>
 
@@ -302,32 +358,32 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
                 Community Expedition & Outreach
               </h4>
               <p className="text-xs sm:text-sm text-slate-300 font-light mt-1 text-pretty leading-relaxed drop-shadow-sm">
-                The official Mitsubishi L300 ministry van reaching every barangay across Bauan and Batangas. Click to enter the interactive viewport and steer the van.
+                The official Mitsubishi L300 ministry van reaching every barangay across Bauan and Batangas. Click to steer the van across the church grounds.
               </p>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* ── 2. Interactive Wide-Screen Viewport (Expanded Modal) ── */}
+      {/* ── 2. Interactive Wide-Screen Viewport (Steerable L300 + Motion-Linked Church Video) ── */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
             initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
             animate={{ opacity: 1, backdropFilter: 'blur(20px)' }}
             exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             onClick={() => setIsExpanded(false)}
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 overflow-hidden"
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 overflow-hidden select-none"
           >
-            {/* Viewport Container (Sleek reduced height, fits all screens) */}
+            {/* Viewport Container (Sleek height, fits all screen sizes with top-right X button) */}
             <motion.div
               initial={{ scale: 0.94, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.94, opacity: 0, y: 15 }}
               transition={{ type: 'spring', damping: 28, stiffness: 320 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-4xl h-[55vh] max-h-[420px] min-h-[280px] bg-slate-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_70px_rgba(41,121,255,0.3)] flex flex-col select-none touch-none"
+              className="relative w-full max-w-4xl h-[55vh] max-h-[430px] min-h-[290px] bg-slate-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_70px_rgba(41,121,255,0.3)] flex flex-col select-none touch-none"
             >
               {/* Circular X Button on Right Top */}
               <button
@@ -345,18 +401,45 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
                 onPointerDown={handlePointerDown}
                 className="relative flex-1 w-full h-full overflow-hidden cursor-grab active:cursor-grabbing bg-black select-none"
               >
-                {/* Parallax Highway & Church Plaza Backdrop */}
+                {/* ── Background Church Video (Advances ONLY when car is moving) ── */}
                 <div
                   ref={parallaxBgRef}
-                  className="absolute inset-0 w-[125%] -left-[12.5%] h-full pointer-events-none"
+                  className="absolute inset-0 w-[115%] -left-[7.5%] h-full pointer-events-none"
                   style={{ willChange: 'transform' }}
                 >
+                  {/* Seamless Base Poster to guarantee zero black frame on entry */}
                   <img
-                    src="/mitsubishi-l300-mission.jpg"
-                    alt="Panoramic Mission Route"
-                    className="w-full h-full object-cover object-center filter brightness-[0.85] contrast-[1.1]"
+                    src="/hero-poster.webp"
+                    alt="Inicbulan FBBC Grounds"
+                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] contrast-[1.05]"
                   />
-                  <div className="absolute inset-0 bg-slate-950/25 backdrop-blur-[0.5px]" />
+
+                  {/* Motion-Linked Church Video (Clamps at end without restarting) */}
+                  <video
+                    ref={videoRef}
+                    muted
+                    playsInline
+                    preload="auto"
+                    poster="/hero-poster.webp"
+                    onCanPlay={() => setIsVideoActive(true)}
+                    onSeeked={() => {
+                      isSeekingRef.current = false;
+                    }}
+                    onEnded={() => {
+                      if (videoRef.current) {
+                        videoRef.current.pause();
+                        videoRef.current.currentTime = Math.max(0, (videoRef.current.duration || 1) - 0.05);
+                      }
+                    }}
+                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] contrast-[1.05]"
+                  >
+                    <source src="/Background Church.webm" type="video/webm" />
+                    <source src="/Background Church.mp4" type="video/mp4" />
+                  </video>
+
+                  {/* Atmospheric Vignette Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/50" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
                 </div>
 
                 {/* Dynamic Particle Dust & Light Trails Canvas */}
@@ -367,13 +450,13 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
                   className="absolute inset-0 w-full h-full pointer-events-none z-10"
                 />
 
-                {/* Interactive Vehicle Layer (Steered & Panned in 60fps) */}
+                {/* ── Interactive Vehicle Layer (Steered & Panned in 60fps) ── */}
                 <div
                   ref={vehicleRef}
                   className="absolute pointer-events-none z-20"
                   style={{
                     left: '50%',
-                    top: '52%',
+                    top: '54%',
                     transform: 'translate(-50%, -50%) translate3d(0px, 0px, 0px)',
                     willChange: 'transform',
                   }}
@@ -396,7 +479,7 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
                       className="w-full h-full object-contain pointer-events-none select-none"
                     />
 
-                    {/* Volumetric Headlamp Beam projecting from the front right headlights */}
+                    {/* Volumetric Headlamp Beam projecting from front right headlights */}
                     <div
                       className="absolute -right-20 sm:-right-32 top-[58%] -translate-y-1/2 w-36 sm:w-56 md:w-72 h-24 sm:h-32 pointer-events-none opacity-50"
                       style={{
@@ -409,9 +492,9 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
 
                 {/* Control Guidance Overlay Banner */}
                 <div className="absolute bottom-3 inset-x-0 z-30 flex justify-center pointer-events-none px-4">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/65 backdrop-blur-md border border-white/15 text-white font-mono text-[11px] shadow-xl">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-white font-mono text-[11px] shadow-xl">
                     <MoveHorizontal className="w-3.5 h-3.5 text-cobalt-400 animate-pulse" />
-                    <span>Drag or swipe anywhere to steer the Mitsubishi L300</span>
+                    <span>Steer right to drive forward • Steer left to rewind frames</span>
                   </div>
                 </div>
               </div>
