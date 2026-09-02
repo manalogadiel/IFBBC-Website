@@ -23,12 +23,12 @@ const PURPOSE_PILLARS = [
   {
     title: 'Worship',
     image: '/Purpose - Worship.jpg',
-    description: 'Exalting God through reverent, Spirit-led corporate worship — praising Him in spirit and truth every Lord's Day.',
+    description: 'Exalting God through reverent, Spirit-led corporate worship \u2014 praising Him in spirit and truth every Lord\u0027s Day.',
   },
   {
     title: 'Fellowship',
     image: '/Purpose - Fellowship.jpg',
-    description: 'Building authentic covenant community through genuine koinonia, mutual encouragement, and bearing one another's burdens.',
+    description: 'Building authentic covenant community through genuine koinonia, mutual encouragement, and bearing one another\u0027s burdens.',
   },
   {
     title: 'Evangelism',
@@ -43,12 +43,12 @@ const PURPOSE_PILLARS = [
   {
     title: 'Leadership',
     image: '/Purpose - Leadership.jpg',
-    description: 'Training faithful servant-leaders who shepherd with integrity, accountability, and a passion for God's flock.',
+    description: 'Training faithful servant-leaders who shepherd with integrity, accountability, and a passion for God\u0027s flock.',
   },
   {
     title: 'Ministries',
     image: '/Purpose - Ministries.jpg',
-    description: 'Deploying spiritual gifts through intentional ministry teams — from music to ushering to audiovisual service.',
+    description: 'Deploying spiritual gifts through intentional ministry teams \u2014 from music to ushering to audiovisual service.',
   },
 ];
 
