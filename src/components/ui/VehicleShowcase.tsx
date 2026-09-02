@@ -257,43 +257,52 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
         onClick={() => setIsExpanded(true)}
         className="group relative w-full rounded-3xl ambient-card overflow-hidden cursor-pointer border border-slate-200/80 dark:border-white/10 transition-all duration-300 shadow-md hover:shadow-2xl"
       >
-        {/* Background panoramic preview with Mitsubishi L300 */}
+        {/* Background panoramic preview with scenic road and official church van */}
         <div className="relative h-44 sm:h-52 md:h-64 w-full overflow-hidden bg-slate-950">
+          {/* Parallax Road Background */}
           <img
             src="/mitsubishi-l300-mission.jpg"
-            alt="Mitsubishi L300 Community Expedition Mission Van"
-            className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105 opacity-85"
+            alt="Mission Road"
+            className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105 opacity-50"
           />
 
           {/* Vignette & Ambient Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/40 to-transparent z-[1]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-slate-950/40 z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-[1]" />
 
-          {/* Ambient Blue Neon Underglow in banner */}
-          <div className="absolute bottom-4 left-1/4 w-96 h-12 bg-royal-500/25 dark:bg-cobalt-400/35 rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity" />
+          {/* Authentic Inicbulan FBBC Mitsubishi L300 Van Cutout on the Right */}
+          <div className="absolute right-3 sm:right-8 md:right-12 bottom-2 sm:bottom-4 z-[2] w-[220px] sm:w-[320px] md:w-[380px] pointer-events-none transition-transform duration-500 ease-out group-hover:translate-x-1 group-hover:-translate-y-1">
+            {/* Ambient Underglow */}
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4/5 h-8 bg-royal-500/50 dark:bg-cobalt-400/60 rounded-full blur-xl pointer-events-none group-hover:opacity-100 opacity-70 transition-opacity" />
+            <img
+              src="/ifbbc-l300-van.png"
+              alt="Inicbulan FBBC Mitsubishi L300 Church Van"
+              className="w-full h-auto object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.85)] filter brightness-[1.02]"
+            />
+          </div>
 
           {/* Banner Content Layout */}
-          <div className="absolute inset-0 z-[2] p-6 sm:p-8 flex flex-col justify-between">
+          <div className="absolute inset-0 z-[3] p-5 sm:p-7 md:p-8 flex flex-col justify-between pointer-events-none">
             <div className="flex items-center justify-between">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white font-mono text-[11px] font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/65 backdrop-blur-md border border-white/20 text-white font-mono text-[11px] font-bold uppercase tracking-wider shadow-lg">
                 <Sparkles className="w-3.5 h-3.5 text-cobalt-400" />
-                <span>Mitsubishi L300 • Mission In Motion Fleet</span>
+                <span>Mitsubishi L300 • Ministry Fleet</span>
               </div>
 
               {/* Expand Action Button */}
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-royal-500 hover:bg-royal-600 text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg group-hover:scale-105 transition-transform">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-royal-500 hover:bg-royal-600 text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg group-hover:scale-105 transition-transform pointer-events-auto">
                 <Maximize2 className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Launch Viewport</span>
               </div>
             </div>
 
             {/* Bottom Statement */}
-            <div className="max-w-xl">
-              <h4 className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase tracking-tight leading-snug drop-shadow-md">
+            <div className="max-w-xs sm:max-w-md md:max-w-lg">
+              <h4 className="text-lg sm:text-2xl md:text-3xl font-black text-white uppercase tracking-tight leading-snug drop-shadow-md">
                 Community Expedition & Outreach
               </h4>
-              <p className="text-xs sm:text-sm text-slate-300 font-light mt-1 text-pretty leading-relaxed">
-                The iconic Mitsubishi L300 ministry van reaching every barangay across Bauan and Batangas. Click to enter the interactive viewport and steer the vehicle.
+              <p className="text-xs sm:text-sm text-slate-300 font-light mt-1 text-pretty leading-relaxed drop-shadow-sm">
+                The official Mitsubishi L300 ministry van reaching every barangay across Bauan and Batangas. Click to enter the interactive viewport and steer the van.
               </p>
             </div>
           </div>
@@ -372,26 +381,26 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = () => {
                   {/* High-Intensity Ambient Neon Underglow Beneath L300 Chassis */}
                   <div
                     ref={underglowRef}
-                    className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[340px] sm:w-[460px] h-16 sm:h-20 rounded-full blur-2xl pointer-events-none"
+                    className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[300px] sm:w-[420px] md:w-[480px] h-10 sm:h-14 rounded-full blur-xl pointer-events-none"
                     style={{
-                      background: 'radial-gradient(ellipse at center, rgba(41, 121, 255, 0.85) 0%, rgba(99, 102, 241, 0.5) 45%, transparent 75%)',
+                      background: 'radial-gradient(ellipse at center, rgba(41, 121, 255, 0.9) 0%, rgba(99, 102, 241, 0.55) 45%, transparent 75%)',
                       transition: 'opacity 0.2s ease-out',
                     }}
                   />
 
-                  {/* Mitsubishi L300 Van Body Container */}
-                  <div className="relative w-[340px] sm:w-[480px] md:w-[560px] aspect-[16/9] drop-shadow-[0_25px_45px_rgba(0,0,0,0.9)]">
+                  {/* Authentic Inicbulan FBBC Mitsubishi L300 Van Body Container */}
+                  <div className="relative w-[300px] sm:w-[440px] md:w-[510px] aspect-[533/255] filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.95)]">
                     <img
-                      src="/mitsubishi-l300-mission.jpg"
-                      alt="Mitsubishi L300 Mission Van"
-                      className="w-full h-full object-contain rounded-2xl"
+                      src="/ifbbc-l300-van.png"
+                      alt="Inicbulan FBBC Mitsubishi L300 Church Van"
+                      className="w-full h-full object-contain pointer-events-none select-none"
                     />
 
-                    {/* Volumetric Headlamp Beam */}
+                    {/* Volumetric Headlamp Beam projecting from the front right headlights */}
                     <div
-                      className="absolute right-2 top-1/2 -translate-y-1/3 w-64 h-32 pointer-events-none opacity-40"
+                      className="absolute -right-20 sm:-right-32 top-[58%] -translate-y-1/2 w-36 sm:w-56 md:w-72 h-24 sm:h-32 pointer-events-none opacity-50"
                       style={{
-                        background: 'linear-gradient(90deg, rgba(255,255,255,0.45) 0%, rgba(200,230,255,0.12) 60%, transparent 100%)',
+                        background: 'linear-gradient(90deg, rgba(255,255,255,0.75) 0%, rgba(190,220,255,0.25) 45%, transparent 100%)',
                         clipPath: 'polygon(0% 40%, 100% 0%, 100% 100%, 0% 60%)',
                       }}
                     />
