@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, Volume2 } from 'lucide-react';
+import { Users, Calendar, Volume2, Sparkles } from 'lucide-react';
 import { MagneticButton } from './ui/MagneticButton';
 import { LineMaskReveal } from './ui/LineMaskReveal';
 
@@ -203,11 +203,11 @@ export const getNextGathering = (now: Date): NextGatheringState => {
 };
 
 interface HeroProps {
-  onOpenVisit: () => void;
+  onOpenPrayer: () => void;
   onScrollToSermons: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) => {
+export const Hero: React.FC<HeroProps> = ({ onOpenPrayer, onScrollToSermons }) => {
   // ── 1. Dynamic Next Weekly Gathering Countdown ──────────────────────────────
   const [nextGatheringState, setNextGatheringState] = useState<NextGatheringState>(() =>
     getNextGathering(new Date())
@@ -733,9 +733,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
               </div>
 
               <div className="flex flex-wrap items-center gap-4 pt-1">
-                <MagneticButton variant="primary" size="lg" onClick={onOpenVisit}>
-                  <span>Plan Your Sunday Visit</span>
-                  <Calendar className="w-4 h-4 ml-1" />
+                <MagneticButton variant="primary" size="lg" onClick={onOpenPrayer}>
+                  <span>Prayer Wall</span>
+                  <Sparkles className="w-4 h-4 ml-1" />
                 </MagneticButton>
 
                 <MagneticButton variant="outline" size="lg" onClick={onScrollToSermons}>

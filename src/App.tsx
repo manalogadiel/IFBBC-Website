@@ -48,7 +48,7 @@ export const AppContent: React.FC = () => {
 
         {/* Section 1: Hero with Background Church Video */}
         <Hero
-          onOpenVisit={() => handleOpenVisit()}
+          onOpenPrayer={() => setPrayerModalOpen(true)}
           onScrollToSermons={handleScrollToSermons}
         />
 
