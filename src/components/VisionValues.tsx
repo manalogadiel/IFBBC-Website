@@ -15,10 +15,10 @@ import {
   Play,
   Pause,
   ArrowRight,
-  Quote,
-  X
+  Quote
 } from 'lucide-react';
 import { VehicleShowcase } from './ui/VehicleShowcase';
+import { ActivePillarModal } from './ui/ActivePillarModal';
 
 const PURPOSE_PILLARS = [
   {
@@ -338,9 +338,24 @@ export const VisionValues: React.FC = () => {
                 <button
                   key={pillar.title}
                   onClick={() => setSelectedPillar(pillar)}
-                  className="bg-slate-50 dark:bg-obsidian-850 hover:bg-royal-500 hover:text-white dark:hover:bg-cobalt-500 p-2.5 rounded-xl text-center font-bold text-slate-700 dark:text-slate-300 transition-all border border-slate-200/60 dark:border-white/5 active:scale-95 shadow-sm"
+                  className="relative group overflow-hidden py-2.5 px-2 rounded-full flex items-center justify-center text-center font-bold text-white transition-all border border-white/20 dark:border-white/15 hover:border-royal-400/90 dark:hover:border-cobalt-400/90 active:scale-95 shadow-sm hover:shadow-md cursor-pointer select-none"
                 >
-                  {pillar.title}
+                  {/* Individual Background Image */}
+                  <img
+                    src={pillar.image}
+                    alt={pillar.title}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 ease-out"
+                    loading="lazy"
+                  />
+                  {/* Dark Semi-Transparent Overlay (rgba(0,0,0,0.65)) */}
+                  <div
+                    className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-75"
+                    style={{ backgroundColor: 'rgba(0, 0, 0, 0.65)' }}
+                  />
+                  {/* White Typography - Sharp & Legible */}
+                  <span className="relative z-10 font-mono text-[11px] font-bold text-white tracking-wider drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)] truncate px-1">
+                    {pillar.title}
+                  </span>
                 </button>
               ))}
             </div>
@@ -610,101 +625,12 @@ export const VisionValues: React.FC = () => {
       {/* High-Impact Expanded Card Modal with Floating Ken-Burns Motion & Elevated Shadow */}
       <AnimatePresence>
         {selectedPillar && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-black/80 backdrop-blur-md"
-            onClick={() => setSelectedPillar(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.92, opacity: 0, y: 20 }}
-              transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-4xl max-h-[90vh] bg-slate-950 border border-white/15 rounded-3xl overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.85),0_0_60px_rgba(99,102,241,0.25)] flex flex-col md:flex-row select-text"
-            >
-              {/* Image Showcase with Ken-Burns floating drift */}
-              <div className="relative w-full md:w-3/5 h-64 sm:h-80 md:h-auto min-h-[300px] md:min-h-[460px] overflow-hidden bg-black">
-                <img
-                  src={selectedPillar.image}
-                  alt={selectedPillar.title}
-                  className="w-full h-full object-cover ken-burns-expanded"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-slate-950 via-slate-950/20 to-transparent opacity-80" />
-
-                {/* Visual badge */}
-                <div className="absolute top-4 left-4 sm:top-5 sm:left-5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white font-mono text-[11px] font-bold uppercase tracking-wider">
-                  <span>Purpose Pillar</span>
-                  <span className="text-cobalt-400">#{PURPOSE_PILLARS.findIndex(p => p.title === selectedPillar.title) + 1}</span>
-                </div>
-              </div>
-
-              {/* Content Panel: Glassmorphism layout */}
-              <div className="w-full md:w-2/5 p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-slate-950/90 backdrop-blur-xl border-t md:border-t-0 md:border-l border-white/10">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
-                      Our Purpose
-                    </span>
-                    <button
-                      onClick={() => setSelectedPillar(null)}
-                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-all active:scale-95"
-                      aria-label="Close"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
-                    {selectedPillar.title}
-                  </h3>
-
-                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal text-pretty">
-                    {selectedPillar.description}
-                  </p>
-
-                  <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 space-y-1">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-cobalt-400 font-bold block">
-                      Church Expression
-                    </span>
-                    <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                      Anchored in the Word of God to build a spiritually vibrant, discipleship-multiplying church in Bauan, Batangas.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Quick Switcher across all 6 Pillars */}
-                <div className="pt-4 border-t border-white/10">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
-                      All 6 Pillars
-                    </span>
-                    <span className="font-mono text-[10px] text-slate-500">
-                      Esc to close • ← → to switch
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-1.5 font-mono text-[10px]">
-                    {PURPOSE_PILLARS.map((p) => (
-                      <button
-                        key={p.title}
-                        onClick={() => setSelectedPillar(p)}
-                        className={`p-2 rounded-xl text-center font-bold transition-all ${
-                          selectedPillar.title === p.title
-                            ? 'bg-royal-500 text-white shadow-md scale-105'
-                            : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
-                        }`}
-                      >
-                        {p.title}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
+          <ActivePillarModal
+            pillar={selectedPillar}
+            allPillars={PURPOSE_PILLARS}
+            onClose={() => setSelectedPillar(null)}
+            onSelect={(pillar) => setSelectedPillar(pillar)}
+          />
         )}
       </AnimatePresence>
     </section>
