@@ -328,7 +328,7 @@ export const VisionValues: React.FC = () => {
 
             {/* 6 Purpose Items Grid: Original text layout on top, purpose image positioned directly underneath */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 font-mono text-[11px]">
-              {PURPOSE_PILLARS.map((pillar, idx) => (
+              {PURPOSE_PILLARS.map((pillar) => (
                 <motion.div
                   key={pillar.title}
                   onClick={() => setSelectedPillar(pillar)}
@@ -348,7 +348,7 @@ export const VisionValues: React.FC = () => {
                 >
                   {/* Original text at top */}
                   <div className="font-bold text-center text-slate-700 dark:text-slate-300 group-hover:text-royal-600 dark:group-hover:text-cobalt-400 transition-colors truncate">
-                    {idx + 1}. {pillar.title}
+                    {pillar.title}
                   </div>
 
                   {/* Purpose image positioned directly underneath the text */}
@@ -710,7 +710,7 @@ export const VisionValues: React.FC = () => {
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-1.5 font-mono text-[10px]">
-                    {PURPOSE_PILLARS.map((p, idx) => (
+                    {PURPOSE_PILLARS.map((p) => (
                       <button
                         key={p.title}
                         onClick={() => setSelectedPillar(p)}
@@ -720,7 +720,7 @@ export const VisionValues: React.FC = () => {
                             : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        {idx + 1}. {p.title}
+                        {p.title}
                       </button>
                     ))}
                   </div>
