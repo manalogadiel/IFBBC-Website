@@ -26,7 +26,7 @@ export const LeadershipSection: React.FC = () => {
       demographic: 'General Congregation, Elder Council & Pulpit Ministry',
       bio: 'Serving with steadfast dedication to the exposition of the Scriptures, Rev. Hinahon B. Pallones shepherds IFBBC with a passion for biblical doctrine, prayer, family discipleship, and city-wide outreach in Bauan and Batangas.',
       focus: ['Expository Preaching', 'Pastoral Counseling', 'Church Vision & Doctrine', 'Missions & Church Planting'],
-      quote: '“We stand unwavering on the authority of the Open Bible, growing a healthy flock grounded in truth, fervent in love, and committed to Christ’s Great Commission.”',
+      quote: '“Standing steadfast on the authority of God\u2019s Word, discipling the flock in truth, and laboring together in the Great Commission.” — 2 Timothy 4:2',
       email: 'iffbc2021@gmail.com',
     },
     {
@@ -36,7 +36,7 @@ export const LeadershipSection: React.FC = () => {
       demographic: 'Adelphoi Youth, Campus Outreach & Young Adults',
       bio: 'Ptr. Edwin Sebastian Lualhati leads the NextGen ministries of IFBBC, passionate about raising a generation of young people who are unashamed of the Gospel, biblically grounded, and active in ministry leadership.',
       focus: ['Adelphoi Youth Fellowship', 'Collegiate & High School Discipleship', 'Youth Music & Worship', 'Evangelistic Camps'],
-      quote: '“Our young people are not just the church of tomorrow; they are vital disciples today, called to shine as lights in their campuses and communities.”',
+      quote: '“Discipling youth and young people to be unashamed of the Gospel, rooted in the Scriptures, and shining as lights in their generation.” — Romans 1:16',
       email: 'iffbc2021@gmail.com',
     },
   ];
@@ -215,7 +215,7 @@ export const LeadershipSection: React.FC = () => {
                         <input
                           type="text"
                           required
-                          placeholder="Juan Dela Cruz"
+                          placeholder="e.g. Maria Santos"
                           className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40"
                         />
                       </div>
@@ -226,7 +226,7 @@ export const LeadershipSection: React.FC = () => {
                         <input
                           type="text"
                           required
-                          placeholder="0917-000-0000"
+                          placeholder="e.g. 0917-xxx-xxxx or email@example.com"
                           className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40"
                         />
                       </div>

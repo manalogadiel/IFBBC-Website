@@ -97,7 +97,7 @@ const weeklyServices: WeeklyServiceItem[] = [
     service: 'Missions',
     category: 'Evangelistic Outreach & Planting',
     description: 'Practical Gospel mobilization, street preaching, Bible distribution, medical/mercy outreaches, and supporting satellite mission points and church plants in Batangas province.',
-    location: 'Cupang, Calumpang, & Paraiso',
+    location: 'Batangas Outreaches (Cupang, Calumpang, & Paraiso)',
     frequency: 'Weekly',
     features: ['Gospel Outreach', 'Tract Distribution', 'Community Mercy', 'Youth Mobilization'],
     image: '/Schedule%20-%20Missions.jpg',

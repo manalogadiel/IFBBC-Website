@@ -65,7 +65,7 @@ export const LocationSection: React.FC = () => {
                     <span>Private Vehicle & Parking</span>
                   </div>
                   <p className="text-xs text-slate-500 dark:text-slate-400 leading-[1.68]">
-                    Dedicated open campus parking available along Purok Munlawin with greeter and parking marshall assistance.
+                    Campus parking space available along Purok Munlawin with church greeters on hand to assist visitors.
                   </p>
                 </div>
 

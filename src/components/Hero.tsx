@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, Volume2, Sparkles } from 'lucide-react';
+import { Users, Calendar, Volume2 } from 'lucide-react';
 import { MagneticButton } from './ui/MagneticButton';
 import { LineMaskReveal } from './ui/LineMaskReveal';
+import { PrayerIcon } from './ui/PrayerIcon';
 
 // High-density frame buffer: 90 discrete frames ensures silky 60FPS scrubbing with fast texture extraction
 const TOTAL_FRAMES = 90;
@@ -60,10 +61,9 @@ export const WEEKLY_GATHERINGS: WeeklyGathering[] = [
     time: '10:00 AM',
     name: 'Worship Service',
     category: "Corporate Lord's Day Gathering",
-    topBarText: '10:00 AM Worship Service & Expository Preaching',
+    topBarText: '10:00 AM Worship Service',
     scheduleItems: [
       { time: '10:00 AM', service: 'Worship Service', location: 'Worship Hall', isPrimary: true },
-      { time: '9:00 AM', service: 'Life Group (Discipleship)', location: 'Departamental', isPrimary: false },
     ],
   },
   {
@@ -77,10 +77,9 @@ export const WEEKLY_GATHERINGS: WeeklyGathering[] = [
     time: '6:00 PM',
     name: 'Prayer Meeting',
     category: 'Midweek Spiritual Anchor',
-    topBarText: '6:00 PM Prayer Meeting & Exhortation',
+    topBarText: '6:00 PM Prayer Meeting',
     scheduleItems: [
       { time: '6:00 PM', service: 'Prayer Meeting', location: 'Worship Hall', isPrimary: true },
-      { time: '6:40 PM', service: 'Prayer Time', location: 'Departamental', isPrimary: false },
     ],
   },
   {
@@ -94,11 +93,10 @@ export const WEEKLY_GATHERINGS: WeeklyGathering[] = [
     time: '6:00 PM',
     name: 'Cottage Service',
     category: 'Home & Community Fellowship',
-    location: 'Designated Member Homes in Bauan',
+    location: 'Designated Member Homes',
     topBarText: '6:00 PM Cottage Service at Member Homes',
     scheduleItems: [
       { time: '6:00 PM', service: 'Cottage Service', location: 'Designated Homes', isPrimary: true },
-      { time: '7:00 PM', service: 'Home Fellowship & Bible Study', location: 'Bauan Neighborhoods', isPrimary: false },
     ],
   },
   {
@@ -111,12 +109,11 @@ export const WEEKLY_GATHERINGS: WeeklyGathering[] = [
     endMin: 0,
     time: '2:00 PM',
     name: 'Missions Outreach',
-    category: 'Evangelistic Outreach & Planting',
-    location: 'Mission Outreaches & Community Centers',
-    topBarText: '2:00 PM Missions Mobilization & Outreach',
+    category: 'Evangelistic Outreach',
+    location: 'Mission Outreaches',
+    topBarText: '2:00 PM Missions',
     scheduleItems: [
       { time: '2:00 PM', service: 'Missions Outreach', location: 'Batangas Outreaches', isPrimary: true },
-      { time: '3:30 PM', service: 'Gospel & Community Mercy', location: 'Community Centers', isPrimary: false },
     ],
   },
 ];
@@ -735,7 +732,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPrayer, onScrollToSermons }) =
               <div className="flex flex-wrap items-center gap-4 pt-1">
                 <MagneticButton variant="primary" size="lg" onClick={onOpenPrayer}>
                   <span>Prayer Wall</span>
-                  <Sparkles className="w-4 h-4 ml-1" />
+                  <PrayerIcon className="w-4 h-4 ml-1.5" />
                 </MagneticButton>
 
                 <MagneticButton variant="outline" size="lg" onClick={onScrollToSermons}>
@@ -907,16 +904,16 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPrayer, onScrollToSermons }) =
                   </div>
 
                   {nextGatheringState.gathering.scheduleItems.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between text-xs">
+                    <div key={idx} className="flex items-center justify-between text-xs gap-3">
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full font-bold text-xs ${item.isPrimary
+                        className={`inline-flex items-center px-3 py-1.5 rounded-full font-bold text-xs whitespace-nowrap shrink-0 ${item.isPrimary
                           ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400'
                           : 'bg-slate-200/70 dark:bg-obsidian-800 text-slate-600 dark:text-slate-400 font-medium'
                           }`}
                       >
                         {item.time ? `${item.time} - ` : ''}{item.service}
                       </span>
-                      <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">
+                      <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500 shrink-0 text-right">
                         {item.location}
                       </span>
                     </div>

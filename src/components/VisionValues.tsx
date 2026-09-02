@@ -314,10 +314,6 @@ export const VisionValues: React.FC = () => {
                 A vibrant body of believers rooted in the authority of God's Word, multiplying disciples and glorifying God through spiritual vitality and kingdom faithfulness.
               </p>
             </div>
-            <div className="pt-4 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between text-xs font-mono text-slate-400">
-              <span>Biblical Mandate</span>
-              <span className="text-royal-500 dark:text-cobalt-400 font-bold">Ephesians 4:15-16</span>
-            </div>
           </div>
 
           {/* Purpose Banner — 6 Columns */}
@@ -372,9 +368,6 @@ export const VisionValues: React.FC = () => {
                 {String(currentIndex + 1).padStart(2, '0')} / 10
               </span>
             </div>
-            <span className="text-xs text-slate-500 dark:text-slate-400 block mt-1">
-              Swipe or drag cards horizontally to explore each foundational biblical conviction
-            </span>
           </div>
 
           {/* View Mode & Autoplay Controls */}
@@ -496,23 +489,6 @@ export const VisionValues: React.FC = () => {
                     <p className="text-xs sm:text-sm font-serif italic text-slate-700 dark:text-slate-300 leading-relaxed">
                       {currentVal.scripture}
                     </p>
-                  </div>
-
-                  {/* Practical Ministry Application */}
-                  <div className="pt-2 flex items-start gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                    <ArrowRight className="w-4 h-4 text-royal-500 dark:text-cobalt-400 shrink-0 mt-0.5" />
-                    <span>
-                      <strong className="text-slate-800 dark:text-slate-200">Church Expression:</strong> {currentVal.application}
-                    </span>
-                  </div>
-
-                  {/* Drag / Swipe Hint indicator */}
-                  <div className="mt-8 pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-[11px] font-mono text-slate-400 dark:text-slate-500">
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-royal-500 dark:bg-cobalt-400 animate-pulse" />
-                      {dragActive ? 'Release to flip' : 'Swipe left / right or use buttons'}
-                    </span>
-                    <span>IFBBC Constitution & Bylaws Art. III</span>
                   </div>
                 </motion.div>
               </AnimatePresence>

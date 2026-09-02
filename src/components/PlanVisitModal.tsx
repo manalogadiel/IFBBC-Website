@@ -16,11 +16,11 @@ export const PlanVisitModal: React.FC<PlanVisitModalProps> = ({
 }) => {
   const [step, setStep] = useState<number>(1);
   const [selectedService, setSelectedService] = useState<string>(initialServiceTime);
-  const [attendeeCount, setAttendeeCount] = useState<number>(2);
+  const [attendeeCount, setAttendeeCount] = useState<number>(1);
   const [hasKids, setHasKids] = useState<boolean>(false);
-  const [kidsAges, setKidsAges] = useState<string>('5, 8');
-  const [guestName, setGuestName] = useState<string>('Juan Dela Cruz');
-  const [guestEmail, setGuestEmail] = useState<string>('juan.delacruz@example.com');
+  const [kidsAges, setKidsAges] = useState<string>('');
+  const [guestName, setGuestName] = useState<string>('');
+  const [guestEmail, setGuestEmail] = useState<string>('');
   const [passGenerated, setPassGenerated] = useState<boolean>(false);
 
   if (!isOpen) return null;
@@ -164,6 +164,7 @@ export const PlanVisitModal: React.FC<PlanVisitModalProps> = ({
                 <input
                   type="text"
                   required
+                  placeholder="e.g. Maria Santos"
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
                   className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40"
@@ -176,6 +177,7 @@ export const PlanVisitModal: React.FC<PlanVisitModalProps> = ({
                 <input
                   type="text"
                   required
+                  placeholder="e.g. 0917-xxx-xxxx or email@example.com"
                   value={guestEmail}
                   onChange={(e) => setGuestEmail(e.target.value)}
                   className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40"
@@ -250,7 +252,7 @@ export const PlanVisitModal: React.FC<PlanVisitModalProps> = ({
                     INICBULAN FUNDAMENTAL BAPTIST BIBLE CHURCH • GUEST PASS
                   </span>
                   <h4 className="text-2xl font-extrabold tracking-tight text-white mt-1">
-                    {guestName}
+                    {guestName || 'Valued Guest'}
                   </h4>
                 </div>
                 <div className="text-right">

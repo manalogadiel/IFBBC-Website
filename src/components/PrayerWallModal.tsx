@@ -5,7 +5,6 @@ import {
   Heart,
   Shield,
   Clock,
-  Sparkles,
   Send,
   Eye,
   EyeOff,
@@ -14,9 +13,10 @@ import {
   CheckCircle2,
   Users,
   Search,
-  MessageCircle
+  MessageCircle,
 } from 'lucide-react';
 import { MagneticButton } from './ui/MagneticButton';
+import { PrayerIcon } from './ui/PrayerIcon';
 
 export interface PrayerItem {
   id: string;
@@ -38,7 +38,7 @@ const DEFAULT_PRAYERS: PrayerItem[] = [
     id: 'p-1',
     category: 'missions',
     categoryLabel: 'Missions & Outreach',
-    request: 'Pray for our Saturday 2:00 PM mission field Bible study in Sitio Libis and the outreach teams sharing the Gospel across Batangas.',
+    request: 'Pray for our Saturday mission field Bible studies and the outreach teams sharing the Gospel across Batangas communities.',
     author: 'Pastor Hinahon Pallones',
     isAnonymous: false,
     duration: '365d',
@@ -51,9 +51,9 @@ const DEFAULT_PRAYERS: PrayerItem[] = [
     id: 'p-2',
     category: 'healing',
     categoryLabel: 'Healing & Health',
-    request: 'Pray for complete healing and physical strength for Deacon Santos recovering from medical treatment this week. Pray for peace for his family.',
-    author: 'Sister Elena M.',
-    isAnonymous: false,
+    request: 'Praying for healing, strength, and complete recovery for church members and family facing sickness and medical difficulties.',
+    author: 'Anonymous Believer',
+    isAnonymous: true,
     duration: '7d',
     durationLabel: '1 Week',
     createdAt: Date.now() - 1000 * 60 * 60 * 12,
@@ -64,7 +64,7 @@ const DEFAULT_PRAYERS: PrayerItem[] = [
     id: 'p-3',
     category: 'spiritual',
     categoryLabel: 'Spiritual Growth',
-    request: 'Seeking earnest prayer for wisdom, spiritual discenment, and boldness in sharing Christ with coworkers at work in Bauan.',
+    request: 'Seeking earnest prayer for wisdom, spiritual discernment, and boldness in sharing Christ with coworkers and neighbors in Bauan.',
     author: 'Anonymous Believer',
     isAnonymous: true,
     duration: '30d',
@@ -77,8 +77,8 @@ const DEFAULT_PRAYERS: PrayerItem[] = [
     id: 'p-4',
     category: 'family',
     categoryLabel: 'Family & NextGen',
-    request: 'Please uphold our Adelphoi youth ministry and students facing upcoming university entrance exams. May their hearts remain steadfast in the Word.',
-    author: 'Ptr. Edwin Lualhati',
+    request: 'Please uphold our Adelphoi youth ministry and young people as they navigate school and studies. May their hearts remain steadfast in God\u2019s Word.',
+    author: 'Ptr. Edwin Sebastian Lualhati',
     isAnonymous: false,
     duration: '30d',
     durationLabel: '1 Month',
@@ -90,7 +90,7 @@ const DEFAULT_PRAYERS: PrayerItem[] = [
     id: 'p-5',
     category: 'thanksgiving',
     categoryLabel: 'Thanksgiving',
-    request: 'Praising the Lord for answered prayers in our home, financial provision, and the salvation of our brother this past Sunday service!',
+    request: 'Praising the Lord for His faithfulness, answered prayers in our home, financial provision, and the fellowship of our church family!',
     author: 'Anonymous Believer',
     isAnonymous: true,
     duration: '7d',
@@ -243,7 +243,7 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 font-mono text-[11px] font-bold uppercase tracking-wider">
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <PrayerIcon className="w-3.5 h-3.5" />
                   Community Intercession
                 </span>
                 <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[11px] text-slate-400 dark:text-slate-500">
