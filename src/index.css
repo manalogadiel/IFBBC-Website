@@ -143,6 +143,24 @@
   opacity: 1 !important;
 }
 
+/* High-impact expanded view Ken Burns subtle floating motion */
+.ken-burns-expanded {
+  animation: kenBurnsExpanded 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes kenBurnsExpanded {
+  0% {
+    transform: scale(1.03) translate(0px, 0px);
+  }
+  50% {
+    transform: scale(1.11) translate(-8px, -5px);
+  }
+  100% {
+    transform: scale(1.07) translate(6px, -3px);
+  }
+}
+
 /* SUBTLE SMOOTH SCROLLBAR */
 ::-webkit-scrollbar {
   width: 6px;
