@@ -315,23 +315,61 @@ export const VisionValues: React.FC = () => {
             </p>
           </div>
 
-          {/* Purpose Media Cards — Interactive Grid */}
-          <div className="lg:col-span-7 space-y-4">
-            <div className="flex items-center gap-3 mb-1">
-              <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold">
+          {/* Purpose Banner — Original text layout preserved with interactive media cards directly underneath */}
+          <div className="lg:col-span-7 ambient-card rounded-3xl p-8 sm:p-12 space-y-5 flex flex-col justify-between">
+            <div className="space-y-3">
+              <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
                 Our Purpose
               </span>
-              <div className="h-px flex-1 bg-slate-200/60 dark:bg-white/5" />
+              <p className="text-base sm:text-lg text-slate-800 dark:text-slate-200 font-medium leading-[1.68] text-pretty">
+                A church that values <span className="font-bold text-royal-500 dark:text-cobalt-400">Worship</span>, grows in <span className="font-bold text-royal-500 dark:text-cobalt-400">Fellowship</span>, engages in <span className="font-bold text-royal-500 dark:text-cobalt-400">Evangelism</span>, equips through <span className="font-bold text-royal-500 dark:text-cobalt-400">Discipleship</span>, trains <span className="font-bold text-royal-500 dark:text-cobalt-400">Leaders</span>, and develops <span className="font-bold text-royal-500 dark:text-cobalt-400">Ministries</span>.
+              </p>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+
+            {/* 6 Purpose Items Grid: Original text layout on top, purpose image positioned directly underneath */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 font-mono text-[11px]">
               {PURPOSE_PILLARS.map((pillar, idx) => (
-                <PurposeCard
+                <motion.div
                   key={pillar.title}
-                  index={idx}
-                  title={pillar.title}
-                  image={pillar.image}
-                  description={pillar.description}
-                />
+                  onClick={() => setSelectedPillar(pillar)}
+                  whileHover={{ y: -3, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  className="group cursor-pointer rounded-2xl bg-slate-50/90 dark:bg-obsidian-850/90 border border-slate-200/80 dark:border-white/5 hover:border-royal-500/40 dark:hover:border-cobalt-400/40 p-2.5 transition-all shadow-sm hover:shadow-lg flex flex-col space-y-2 overflow-hidden"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`View ${pillar.title} expanded preview`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedPillar(pillar);
+                    }
+                  }}
+                >
+                  {/* Original text at top */}
+                  <div className="font-bold text-center text-slate-700 dark:text-slate-300 group-hover:text-royal-600 dark:group-hover:text-cobalt-400 transition-colors truncate">
+                    {idx + 1}. {pillar.title}
+                  </div>
+
+                  {/* Purpose image positioned directly underneath the text */}
+                  <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-900">
+                    <img
+                      src={pillar.image}
+                      alt={pillar.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity" />
+
+                    {/* Hover expand indicator */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 backdrop-blur-[2px]">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-mono text-[9px] uppercase tracking-wider font-semibold shadow-sm">
+                        <Maximize2 className="w-2.5 h-2.5" />
+                        Expand
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -591,6 +629,107 @@ export const VisionValues: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* High-Impact Expanded Card Modal with Floating Ken-Burns Motion & Elevated Shadow */}
+      <AnimatePresence>
+        {selectedPillar && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-black/80 backdrop-blur-md"
+            onClick={() => setSelectedPillar(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-4xl max-h-[90vh] bg-slate-950 border border-white/15 rounded-3xl overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.85),0_0_60px_rgba(99,102,241,0.25)] flex flex-col md:flex-row select-text"
+            >
+              {/* Image Showcase with Ken-Burns floating drift */}
+              <div className="relative w-full md:w-3/5 h-64 sm:h-80 md:h-auto min-h-[300px] md:min-h-[460px] overflow-hidden bg-black">
+                <img
+                  src={selectedPillar.image}
+                  alt={selectedPillar.title}
+                  className="w-full h-full object-cover ken-burns-expanded"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-slate-950 via-slate-950/20 to-transparent opacity-80" />
+
+                {/* Visual badge */}
+                <div className="absolute top-4 left-4 sm:top-5 sm:left-5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white font-mono text-[11px] font-bold uppercase tracking-wider">
+                  <span>Purpose Pillar</span>
+                  <span className="text-cobalt-400">#{PURPOSE_PILLARS.findIndex(p => p.title === selectedPillar.title) + 1}</span>
+                </div>
+              </div>
+
+              {/* Content Panel: Glassmorphism layout */}
+              <div className="w-full md:w-2/5 p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-slate-950/90 backdrop-blur-xl border-t md:border-t-0 md:border-l border-white/10">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
+                      Our Purpose
+                    </span>
+                    <button
+                      onClick={() => setSelectedPillar(null)}
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-all active:scale-95"
+                      aria-label="Close"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
+                    {selectedPillar.title}
+                  </h3>
+
+                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal text-pretty">
+                    {selectedPillar.description}
+                  </p>
+
+                  <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 space-y-1">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-cobalt-400 font-bold block">
+                      Church Expression
+                    </span>
+                    <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                      Anchored in the Word of God to build a spiritually vibrant, discipleship-multiplying church in Bauan, Batangas.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Quick Switcher across all 6 Pillars */}
+                <div className="pt-4 border-t border-white/10">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
+                      All 6 Pillars
+                    </span>
+                    <span className="font-mono text-[10px] text-slate-500">
+                      Esc to close • ← → to switch
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1.5 font-mono text-[10px]">
+                    {PURPOSE_PILLARS.map((p, idx) => (
+                      <button
+                        key={p.title}
+                        onClick={() => setSelectedPillar(p)}
+                        className={`p-2 rounded-xl text-center font-bold transition-all ${
+                          selectedPillar.title === p.title
+                            ? 'bg-royal-500 text-white shadow-md scale-105'
+                            : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
+                        }`}
+                      >
+                        {idx + 1}. {p.title}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
