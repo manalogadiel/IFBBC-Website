@@ -166,11 +166,10 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
                     key={val}
                     type="button"
                     onClick={() => handleSelectPreset(val)}
-                    className={`py-2 sm:py-2.5 rounded-xl font-mono text-xs sm:text-sm font-bold transition-all ${
-                      amount === val && !customAmount
+                    className={`py-2 sm:py-2.5 rounded-xl font-mono text-xs sm:text-sm font-bold transition-all ${amount === val && !customAmount
                         ? 'bg-royal-500 dark:bg-cobalt-500 text-white shadow-sm scale-105'
                         : 'bg-slate-100/80 dark:bg-obsidian-850 text-slate-800 dark:text-slate-200 hover:bg-slate-200/80'
-                    }`}
+                      }`}
                   >
                     ₱{val.toLocaleString()}
                   </button>
@@ -279,7 +278,7 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           <div className="lg:col-span-6 space-y-6">
             <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
-              Stewardship & Worship // 05
+              Stewardship & Worship
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight uppercase text-balance">
               Faithful Stewardship for the Lord's Work

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Calendar, Volume2 } from 'lucide-react';
 import { MagneticButton } from './ui/MagneticButton';
@@ -8,39 +8,219 @@ import { LineMaskReveal } from './ui/LineMaskReveal';
 const TOTAL_FRAMES = 90;
 const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
 
+export interface GatheringScheduleItem {
+  time?: string;
+  service: string;
+  location: string;
+  isPrimary?: boolean;
+}
+
+export interface WeeklyGathering {
+  id: string;
+  day: number; // 0 = Sun, 1 = Mon, ..., 6 = Sat
+  dayName: string;
+  hour: number;
+  min: number;
+  endHour: number;
+  endMin: number;
+  time: string;
+  name: string;
+  category: string;
+  location?: string;
+  topBarText: string;
+  scheduleItems: GatheringScheduleItem[];
+}
+
+export const WEEKLY_GATHERINGS: WeeklyGathering[] = [
+  {
+    id: 'sun-lifegroup',
+    day: 0,
+    dayName: 'Sunday',
+    hour: 9,
+    min: 0,
+    endHour: 10,
+    endMin: 0,
+    time: '9:00 AM',
+    name: 'Life Group & Worship',
+    category: 'Sunday Morning Discipleship',
+    topBarText: '9:00 AM Life Group & 10:00 AM Worship Service',
+    scheduleItems: [
+      { time: '9:00 AM', service: 'Life Group', location: 'Departamental Classrooms', isPrimary: true },
+      { time: '10:00 AM', service: 'Worship Service', location: 'Worship Hall', isPrimary: false },
+    ],
+  },
+  {
+    id: 'sun-worship',
+    day: 0,
+    dayName: 'Sunday',
+    hour: 10,
+    min: 0,
+    endHour: 12,
+    endMin: 0,
+    time: '10:00 AM',
+    name: 'Worship Service',
+    category: "Corporate Lord's Day Gathering",
+    topBarText: '10:00 AM Worship Service & Expository Preaching',
+    scheduleItems: [
+      { time: '10:00 AM', service: 'Worship Service', location: 'Worship Hall', isPrimary: true },
+      { time: '9:00 AM', service: 'Life Group (Discipleship)', location: 'Departamental', isPrimary: false },
+    ],
+  },
+  {
+    id: 'wed-prayer',
+    day: 3,
+    dayName: 'Wednesday',
+    hour: 18,
+    min: 0,
+    endHour: 19,
+    endMin: 30,
+    time: '6:00 PM',
+    name: 'Prayer Meeting',
+    category: 'Midweek Spiritual Anchor',
+    topBarText: '6:00 PM Prayer Meeting & Exhortation',
+    scheduleItems: [
+      { time: '6:00 PM', service: 'Prayer Meeting', location: 'Worship Hall', isPrimary: true },
+      { time: '6:40 PM', service: 'Prayer Time', location: 'Departamental', isPrimary: false },
+    ],
+  },
+  {
+    id: 'fri-cottage',
+    day: 5,
+    dayName: 'Friday',
+    hour: 18,
+    min: 0,
+    endHour: 19,
+    endMin: 30,
+    time: '6:00 PM',
+    name: 'Cottage Service',
+    category: 'Home & Community Fellowship',
+    location: 'Designated Member Homes in Bauan',
+    topBarText: '6:00 PM Cottage Service at Member Homes',
+    scheduleItems: [
+      { time: '6:00 PM', service: 'Cottage Service', location: 'Designated Homes', isPrimary: true },
+      { time: '7:00 PM', service: 'Home Fellowship & Bible Study', location: 'Bauan Neighborhoods', isPrimary: false },
+    ],
+  },
+  {
+    id: 'sat-missions',
+    day: 6,
+    dayName: 'Saturday',
+    hour: 14,
+    min: 0,
+    endHour: 16,
+    endMin: 0,
+    time: '2:00 PM',
+    name: 'Missions Outreach',
+    category: 'Evangelistic Outreach & Planting',
+    location: 'Mission Outreaches & Community Centers',
+    topBarText: '2:00 PM Missions Mobilization & Outreach',
+    scheduleItems: [
+      { time: '2:00 PM', service: 'Missions Outreach', location: 'Batangas Outreaches', isPrimary: true },
+      { time: '3:30 PM', service: 'Gospel & Community Mercy', location: 'Community Centers', isPrimary: false },
+    ],
+  },
+];
+
+export interface NextGatheringState {
+  gathering: WeeklyGathering;
+  isInSession: boolean;
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  calendarDate: string;
+}
+
+export const getNextGathering = (now: Date): NextGatheringState => {
+  let inSessionGathering: WeeklyGathering | null = null;
+  let inSessionTarget: Date = now;
+  let upcomingGathering: WeeklyGathering = WEEKLY_GATHERINGS[0];
+  let upcomingTarget: Date = now;
+  let minDiff = Infinity;
+
+  for (const g of WEEKLY_GATHERINGS) {
+    const target = new Date(now);
+    const dayDiff = (g.day - now.getDay() + 7) % 7;
+    target.setDate(now.getDate() + dayDiff);
+    target.setHours(g.hour, g.min, 0, 0);
+
+    const end = new Date(now);
+    end.setDate(now.getDate() + dayDiff);
+    end.setHours(g.endHour, g.endMin, 0, 0);
+
+    // If currently between service start and finish
+    if (now >= target && now < end) {
+      inSessionGathering = g;
+      inSessionTarget = target;
+      break;
+    }
+
+    // If service has already finished today, shift target to next week
+    if (now >= end) {
+      target.setDate(target.getDate() + 7);
+    }
+
+    const diff = target.getTime() - now.getTime();
+    if (diff > 0 && diff < minDiff) {
+      minDiff = diff;
+      upcomingGathering = g;
+      upcomingTarget = target;
+    }
+  }
+
+  const formatCalendarDate = (date: Date): string => {
+    const month = date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+    const day = date.getDate();
+    return `${month} ${day}`;
+  };
+
+  if (inSessionGathering) {
+    return {
+      gathering: inSessionGathering,
+      isInSession: true,
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      calendarDate: formatCalendarDate(inSessionTarget),
+    };
+  }
+
+  const days = Math.floor(minDiff / 86400000);
+  const hours = Math.floor((minDiff / 3600000) % 24);
+  const minutes = Math.floor((minDiff / 60000) % 60);
+  const seconds = Math.floor((minDiff / 1000) % 60);
+
+  return {
+    gathering: upcomingGathering,
+    isInSession: false,
+    days,
+    hours,
+    minutes,
+    seconds,
+    calendarDate: formatCalendarDate(upcomingTarget),
+  };
+};
+
 interface HeroProps {
   onOpenVisit: () => void;
   onScrollToSermons: () => void;
+  children?: React.ReactNode;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) => {
-  // ── 1. Next Sunday Gathering Countdown ─────────────────────────────────────
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons, children }) => {
+  // ── 1. Dynamic Next Weekly Gathering Countdown ──────────────────────────────
+  const [nextGatheringState, setNextGatheringState] = useState<NextGatheringState>(() =>
+    getNextGathering(new Date())
+  );
 
   useEffect(() => {
-    const calculateTimeLeft = () => {
-      const now = new Date();
-      const nextSunday = new Date();
-      const currentDay = now.getDay();
-      const daysUntilSunday = currentDay === 0 && now.getHours() < 9 ? 0 : (7 - currentDay) % 7 || 7;
-
-      nextSunday.setDate(now.getDate() + daysUntilSunday);
-      nextSunday.setHours(9, 0, 0, 0);
-
-      const diff = nextSunday.getTime() - now.getTime();
-
-      if (diff > 0) {
-        setTimeLeft({
-          days: Math.floor(diff / 86400000),
-          hours: Math.floor((diff / 3600000) % 24),
-          minutes: Math.floor((diff / 60000) % 60),
-          seconds: Math.floor((diff / 1000) % 60),
-        });
-      }
+    const updateCountdown = () => {
+      setNextGatheringState(getNextGathering(new Date()));
     };
 
-    calculateTimeLeft();
-    const interval = setInterval(calculateTimeLeft, 1000);
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -48,6 +228,192 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
   const heroRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isEngineReady, setIsEngineReady] = useState(false);
+
+  // ── 3D Parallax Tilt + Two-Stage Lighting System ────────────────────────────
+  // Stage 0 (idle):    Soft ambient radial spotlight resting at center
+  // Stage 1 (flash):   Hover-enter → central core flashes & expands as shockwave
+  // Stage 2 (track):   Post-shockwave → cursor-tracking spotlight + border beam
+  // Leave:             Smooth ease-out spring decay back to centered idle state
+  const cardRef = useRef<HTMLDivElement>(null);
+  const ambientRef = useRef<HTMLDivElement>(null);
+  const shockwaveRef = useRef<HTMLDivElement>(null);
+  const trackGlowRef = useRef<HTMLDivElement>(null);
+  const borderBeamRef = useRef<HTMLDivElement>(null);
+
+  const tiltRafRef = useRef<number | null>(null);
+  const tiltTargetRef = useRef({ rx: 0, ry: 0, ox: 50, oy: 50 });
+  const tiltCurrentRef = useRef({ rx: 0, ry: 0, ox: 50, oy: 50 });
+  const lightPhaseRef = useRef<'idle' | 'flash' | 'tracking'>('idle');
+  const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const applyTilt = useCallback(() => {
+    const card = cardRef.current;
+    if (!card) return;
+    const t = tiltTargetRef.current;
+    const c = tiltCurrentRef.current;
+
+    // Spring factor varies by phase: faster snapping while tracking, gentler on leave
+    const factor = lightPhaseRef.current === 'tracking' ? 0.10 : 0.08;
+    c.rx += (t.rx - c.rx) * factor;
+    c.ry += (t.ry - c.ry) * factor;
+    c.ox += (t.ox - c.ox) * factor;
+    c.oy += (t.oy - c.oy) * factor;
+
+    // GPU-composited transform
+    const scaleVal = lightPhaseRef.current === 'idle' ? 1 : 1.015;
+    card.style.transform = `perspective(900px) rotateX(${c.rx.toFixed(3)}deg) rotateY(${c.ry.toFixed(3)}deg) scale3d(${scaleVal}, ${scaleVal}, 1)`;
+
+    // Update CSS custom properties for glow layer positioning
+    const ox = `${c.ox.toFixed(2)}%`;
+    const oy = `${c.oy.toFixed(2)}%`;
+    card.style.setProperty('--glow-ox', ox);
+    card.style.setProperty('--glow-oy', oy);
+
+    // Update tracking glow + border beam positions directly (avoids React re-renders)
+    if (trackGlowRef.current) {
+      trackGlowRef.current.style.background =
+        `radial-gradient(340px circle at ${ox} ${oy}, rgba(99,102,241,0.16), rgba(99,102,241,0.04) 50%, transparent 75%)`;
+    }
+    if (borderBeamRef.current) {
+      borderBeamRef.current.style.background =
+        `radial-gradient(220px circle at ${ox} ${oy}, rgba(99,102,241,0.40), transparent 80%)`;
+      borderBeamRef.current.style.webkitMaskImage =
+        `radial-gradient(250px circle at ${ox} ${oy}, black 0%, transparent 80%)`;
+    }
+
+    // Continue loop only while not at rest
+    const isResting =
+      Math.abs(c.rx - t.rx) < 0.005 &&
+      Math.abs(c.ry - t.ry) < 0.005 &&
+      Math.abs(c.ox - t.ox) < 0.03 &&
+      Math.abs(c.oy - t.oy) < 0.03;
+    if (!isResting) {
+      tiltRafRef.current = requestAnimationFrame(applyTilt);
+    } else {
+      tiltRafRef.current = null;
+    }
+  }, []);
+
+  const startRafLoop = useCallback(() => {
+    if (!tiltRafRef.current) {
+      tiltRafRef.current = requestAnimationFrame(applyTilt);
+    }
+  }, [applyTilt]);
+
+  // ── Mouse Enter: Flash → Shockwave → Tracking ──
+  const handleCardMouseEnter = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    // Compute entry position for the flash origin
+    const rect = card.getBoundingClientRect();
+    const entryOx = ((e.clientX - rect.left) / rect.width) * 100;
+    const entryOy = ((e.clientY - rect.top) / rect.height) * 100;
+
+    // Snap glow origin to entry point immediately
+    tiltCurrentRef.current.ox = entryOx;
+    tiltCurrentRef.current.oy = entryOy;
+    tiltTargetRef.current.ox = entryOx;
+    tiltTargetRef.current.oy = entryOy;
+
+    // Phase 1: Flash — hide ambient, show shockwave
+    lightPhaseRef.current = 'flash';
+
+    if (ambientRef.current) {
+      ambientRef.current.style.opacity = '0';
+      ambientRef.current.style.transition = 'opacity 0.15s ease-out';
+    }
+    if (shockwaveRef.current) {
+      const sw = shockwaveRef.current;
+      sw.style.left = `${entryOx}%`;
+      sw.style.top = `${entryOy}%`;
+      sw.style.opacity = '1';
+      sw.style.transform = 'translate(-50%, -50%) scale(0.15)';
+      // Force reflow to reset animation
+      void sw.offsetWidth;
+      sw.style.transition = 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease-out';
+      sw.style.transform = 'translate(-50%, -50%) scale(2.8)';
+      sw.style.opacity = '0';
+    }
+
+    // Phase 2: After shockwave completes → enter tracking mode
+    if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+    flashTimerRef.current = setTimeout(() => {
+      lightPhaseRef.current = 'tracking';
+
+      if (trackGlowRef.current) {
+        trackGlowRef.current.style.opacity = '1';
+        trackGlowRef.current.style.transition = 'opacity 0.35s ease-out';
+      }
+      if (borderBeamRef.current) {
+        borderBeamRef.current.style.opacity = '1';
+        borderBeamRef.current.style.transition = 'opacity 0.35s ease-out';
+      }
+    }, 320);
+
+    startRafLoop();
+  }, [startRafLoop]);
+
+  // ── Mouse Move: Tilt + track spotlight ──
+  const handleCardMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) / (rect.width / 2);
+    const dy = (e.clientY - cy) / (rect.height / 2);
+
+    tiltTargetRef.current = {
+      rx: -dy * 8,
+      ry: dx * 8,
+      ox: ((e.clientX - rect.left) / rect.width) * 100,
+      oy: ((e.clientY - rect.top) / rect.height) * 100,
+    };
+    startRafLoop();
+  }, [startRafLoop]);
+
+  // ── Mouse Leave: Decay to idle center ──
+  const handleCardMouseLeave = useCallback(() => {
+    if (flashTimerRef.current) {
+      clearTimeout(flashTimerRef.current);
+      flashTimerRef.current = null;
+    }
+
+    lightPhaseRef.current = 'idle';
+    tiltTargetRef.current = { rx: 0, ry: 0, ox: 50, oy: 50 };
+
+    // Fade out tracking layers
+    if (trackGlowRef.current) {
+      trackGlowRef.current.style.opacity = '0';
+      trackGlowRef.current.style.transition = 'opacity 0.6s ease-out';
+    }
+    if (borderBeamRef.current) {
+      borderBeamRef.current.style.opacity = '0';
+      borderBeamRef.current.style.transition = 'opacity 0.6s ease-out';
+    }
+    if (shockwaveRef.current) {
+      shockwaveRef.current.style.opacity = '0';
+    }
+
+    // Fade ambient back in after glow fades
+    setTimeout(() => {
+      if (lightPhaseRef.current === 'idle' && ambientRef.current) {
+        ambientRef.current.style.opacity = '1';
+        ambientRef.current.style.transition = 'opacity 0.8s ease-in';
+      }
+    }, 350);
+
+    startRafLoop();
+  }, [startRafLoop]);
+
+  // Cleanup tilt RAF + timers on unmount
+  useEffect(() => {
+    return () => {
+      if (tiltRafRef.current) cancelAnimationFrame(tiltRafRef.current);
+      if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+    };
+  }, []);
 
   // ── 3. High-Performance Canvas Frame-Sequence Pipeline ──────────────────────
   useEffect(() => {
@@ -65,7 +431,32 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
     let isExtracting = true;
     let rafId: number;
 
-    // Offscreen hardware decoder instance
+    // 0ms Instant Poster Rendering: Draw high-res poster immediately so the canvas is never blank
+    let posterImg: HTMLImageElement | null = new Image();
+    let isPosterReady = false;
+
+    const onPosterReady = () => {
+      isPosterReady = true;
+      setIsEngineReady(true);
+      if (canvas && ctx && extractIdx === 0 && !frameBitmaps[0] && posterImg) {
+        drawFrameCover(posterImg);
+      }
+    };
+
+    posterImg.onload = onPosterReady;
+    posterImg.onerror = () => {
+      if (posterImg && posterImg.src.includes('.webp')) {
+        posterImg.src = '/hero-poster.jpg';
+      }
+    };
+    posterImg.src = '/hero-poster.webp';
+
+    // In case image was already cached by browser
+    if (posterImg.complete && posterImg.naturalWidth > 0) {
+      onPosterReady();
+    }
+
+    // Offscreen hardware decoder instance (uses the 5.2MB faststart-enabled H.264 stream)
     const offscreenVideo = document.createElement('video');
     offscreenVideo.src = '/Background Church.mp4';
     offscreenVideo.muted = true;
@@ -73,12 +464,18 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
     offscreenVideo.preload = 'auto';
 
     // Cover Aspect-Ratio Helper (mimics object-fit: cover with zero distortion)
-    const drawFrameCover = (drawable: ImageBitmap | HTMLVideoElement) => {
+    const drawFrameCover = (drawable: ImageBitmap | HTMLVideoElement | HTMLImageElement) => {
       if (!canvas || !ctx) return;
       const cWidth = canvas.width;
       const cHeight = canvas.height;
-      const sWidth = (drawable as HTMLVideoElement).videoWidth || (drawable as ImageBitmap).width;
-      const sHeight = (drawable as HTMLVideoElement).videoHeight || (drawable as ImageBitmap).height;
+      const sWidth =
+        (drawable as HTMLVideoElement).videoWidth ||
+        (drawable as HTMLImageElement).naturalWidth ||
+        (drawable as ImageBitmap).width;
+      const sHeight =
+        (drawable as HTMLVideoElement).videoHeight ||
+        (drawable as HTMLImageElement).naturalHeight ||
+        (drawable as ImageBitmap).height;
 
       if (!sWidth || !sHeight || cWidth === 0 || cHeight === 0) return;
 
@@ -165,24 +562,28 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
       initEngine();
     }
 
-    // ── Safeguard 2 & 3: Extended Scroll Buffer & Explicit 100% Clamping ──
+    // ── Safeguard 2 & 3: Precision Keyframe Mapping to End Exactly at Section 2 ──
     const handleScroll = () => {
-      const visionSection = document.getElementById('vision-values');
       const scrollY = window.scrollY;
+      const heroEl = heroRef.current;
+      const coreGroupsSection = document.getElementById('core-groups');
 
-      let videoCompletionDistance: number;
-      if (visionSection) {
-        const visionRect = visionSection.getBoundingClientRect();
-        const visionTop = visionRect.top + scrollY;
-        // The video finishes 100% of its frames with an extra 15% scroll buffer so the user sees the completed final frame held before unpinning
-        videoCompletionDistance = Math.max(visionTop - window.innerHeight * 0.45, 380);
+      // The exact scroll distance to reach the end of Section 2 (when Section 3 reaches bottom of viewport)
+      let endOfSection2Scroll: number;
+      if (coreGroupsSection) {
+        endOfSection2Scroll = coreGroupsSection.offsetTop - window.innerHeight;
+      } else if (heroEl) {
+        endOfSection2Scroll = heroEl.offsetTop + heroEl.offsetHeight - window.innerHeight;
       } else {
-        videoCompletionDistance = Math.max(hero.offsetHeight - window.innerHeight * 0.45, 380);
+        endOfSection2Scroll = 1800;
       }
 
-      const normalizedProgress = Math.min(Math.max(scrollY / videoCompletionDistance, 0), 1.0);
+      endOfSection2Scroll = Math.max(endOfSection2Scroll, 600);
 
-      // Explicit End-State Clamping: Snap directly to the final frame index when 100% progress or boundary is reached
+      // Progress scales smoothly from 0.0 at top of Section 1 to exactly 1.0 at the end of Section 2
+      const normalizedProgress = Math.min(Math.max(scrollY / endOfSection2Scroll, 0), 1.0);
+
+      // Explicit End-State Clamping: Reaches final keyframe exactly at the end of Section 2
       if (normalizedProgress >= 0.995) {
         targetFrame = TOTAL_FRAMES - 1;
       } else {
@@ -194,7 +595,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
     const renderLoop = () => {
       // Smooth floating-point spring interpolation prevents jumping over chunks of frames
       currentFrame = lerp(currentFrame, targetFrame, 0.20);
-      
+
       // If close to the final frame or target is at maximum, snap precisely to the final keyframe
       if (targetFrame === TOTAL_FRAMES - 1 && currentFrame >= TOTAL_FRAMES - 1.2) {
         currentFrame = TOTAL_FRAMES - 1;
@@ -221,6 +622,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
         drawFrameCover(bitmap);
       } else if (offscreenVideo.readyState >= 2) {
         drawFrameCover(offscreenVideo);
+      } else if (isPosterReady && posterImg) {
+        drawFrameCover(posterImg);
       }
 
       rafId = requestAnimationFrame(renderLoop);
@@ -232,7 +635,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
 
     // Re-run layout calculations after web fonts load to prevent layout shift shortening
     if (document.fonts?.ready) {
-      document.fonts.ready.then(handleResize).catch(() => {});
+      document.fonts.ready.then(handleResize).catch(() => { });
     }
 
     handleResize();
@@ -240,6 +643,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
 
     return () => {
       isExtracting = false;
+      posterImg = null;
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('load', handleResize);
@@ -254,27 +658,24 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
   return (
     <div
       ref={heroRef}
-      className="relative w-full overflow-visible"
+      className="relative w-full overflow-visible bg-chalk-50 dark:bg-obsidian-950"
     >
-      {/* ── Sticky Background Viewport: Locked in Viewport Center until Vision & Values ── */}
+      {/* ── Sticky Background Viewport: Locked in Viewport Center across Hero & Vision/Values ── */}
       <div className="sticky top-0 w-full h-screen overflow-hidden pointer-events-none z-0">
         <div className="relative w-full h-full bg-chalk-50 dark:bg-obsidian-950 flex items-center justify-center">
           {/* Hardware-Accelerated 60FPS Canvas Frame Player */}
           <canvas
             ref={canvasRef}
-            className={`w-full h-full object-cover filter grayscale-[100%] contrast-[1.10] brightness-[0.55] dark:brightness-[0.30] transition-opacity duration-700 ${isEngineReady ? 'opacity-40 dark:opacity-30' : 'opacity-0'
+            className={`w-full h-full object-cover filter grayscale-[45%] dark:grayscale-[55%] contrast-[1.08] brightness-[0.78] dark:brightness-[0.58] transition-opacity duration-700 ${isEngineReady ? 'opacity-65 dark:opacity-55' : 'opacity-0'
               }`}
           />
 
-          {/* Neutral Site Theme Overlay (Softened for Enhanced Video Detail Visibility) */}
-          <div className="absolute inset-0 bg-gradient-to-b from-chalk-50/82 via-chalk-50/65 to-chalk-50 dark:from-obsidian-950/86 dark:via-obsidian-950/72 dark:to-obsidian-950" />
-          <div className="absolute inset-0 bg-radial-at-c from-transparent via-chalk-50/25 to-chalk-50/65 dark:via-obsidian-950/30 dark:to-obsidian-950/75" />
-
-          {/* Bottom Edge Dissolve Mask */}
-          <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-b from-transparent to-chalk-50 dark:to-obsidian-950" />
+          {/* Neutral Site Theme Overlay (Balanced tone: comfortable on eyes, readable text, clear video detail) */}
+          <div className="absolute inset-0 bg-gradient-to-b from-chalk-50/70 via-chalk-50/50 to-chalk-50/70 dark:from-obsidian-950/80 dark:via-obsidian-950/65 dark:to-obsidian-950/80" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-chalk-50/15 to-chalk-50/40 dark:via-obsidian-950/20 dark:to-obsidian-950/60" />
 
           {/* Architectural Swiss Grid Texture */}
-          <div className="absolute inset-0 swiss-grid-pattern opacity-30 dark:opacity-20" />
+          <div className="absolute inset-0 swiss-grid-pattern opacity-25 dark:opacity-20" />
         </div>
       </div>
 
@@ -290,10 +691,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
           >
             <div className="flex items-center gap-3">
               <span className="font-semibold text-slate-900 dark:text-slate-200">
-                Sunday Gatherings
+                {nextGatheringState.gathering.dayName} Gathering
               </span>
               <span className="hidden sm:inline text-slate-300 dark:text-slate-700">|</span>
-              <span className="hidden sm:inline">9:00 AM Life Group &amp; 10:00 AM Worship</span>
+              <span className="hidden sm:inline">
+                {nextGatheringState.gathering.topBarText}
+              </span>
             </div>
             <div className="flex items-center gap-2 text-[11px]">
               <span>Brgy. Inicbulan, Bauan, Batangas</span>
@@ -380,72 +783,170 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) =>
               </div>
             </motion.div>
 
-            {/* Right Column: Next Gathering Countdown Card */}
+            {/* Right Column: Next Gathering Countdown Card — 3D Parallax Tilt + Border Glow */}
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="lg:col-span-5 ambient-card rounded-3xl p-6 sm:p-8 lg:p-9 relative"
+              className="lg:col-span-5"
             >
-              <div className="flex items-center justify-between pb-5 mb-6">
-                <div className="flex items-center gap-2.5">
-                  <motion.div
-                    animate={{ scale: [1, 1.15, 1], opacity: [0.85, 1, 0.85] }}
-                    transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-                    className="text-royal-500 dark:text-cobalt-400 flex items-center justify-center"
-                  >
-                    <Users className="w-4 h-4" />
-                  </motion.div>
-                  <span className="font-mono text-xs uppercase font-bold text-slate-800 dark:text-slate-200 tracking-wider">
-                    Next Gathering In
-                  </span>
-                </div>
-                <span className="text-[11px] font-mono font-bold uppercase bg-royal-50 dark:bg-royal-500/10 text-royal-600 dark:text-cobalt-400 px-3 py-1 rounded-full">
-                  JOIN US!
-                </span>
-              </div>
+              {/* Tilt wrapper: pointer events drive 3D tilt + two-stage lighting */}
+              <div
+                ref={cardRef}
+                onMouseEnter={handleCardMouseEnter}
+                onMouseMove={handleCardMouseMove}
+                onMouseLeave={handleCardMouseLeave}
+                className="ambient-card rounded-3xl p-6 sm:p-8 lg:p-9 relative overflow-hidden"
+                style={{
+                  willChange: 'transform',
+                  transformStyle: 'preserve-3d',
+                  transition: 'box-shadow 0.35s ease',
+                }}
+              >
+                {/* ── Layer 1: Ambient idle glow (always visible at rest, fades on hover) ── */}
+                <div
+                  ref={ambientRef}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 rounded-3xl"
+                  style={{
+                    background:
+                      'radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.07) 0%, transparent 65%)',
+                    opacity: 1,
+                    zIndex: 0,
+                  }}
+                />
 
-              {/* Countdown Grid */}
-              <div className="grid grid-cols-4 gap-2.5 sm:gap-3 text-center mb-6 sm:mb-7">
-                {[
-                  { value: timeLeft.days, label: 'Days', accent: false },
-                  { value: timeLeft.hours, label: 'Hours', accent: false },
-                  { value: timeLeft.minutes, label: 'Mins', accent: false },
-                  { value: timeLeft.seconds, label: 'Secs', accent: true },
-                ].map(({ value, label, accent }) => (
-                  <div key={label} className="bg-slate-50/80 dark:bg-obsidian-850 p-3 sm:p-4 rounded-2xl">
-                    <span
-                      className={`font-mono text-xl sm:text-2xl lg:text-3xl font-extrabold block ${accent ? 'text-royal-500 dark:text-cobalt-400' : 'text-slate-900 dark:text-white'
-                        }`}
+                {/* ── Layer 2: Shockwave flash (hidden, triggered on hover enter) ── */}
+                <div
+                  ref={shockwaveRef}
+                  aria-hidden
+                  className="pointer-events-none absolute rounded-full"
+                  style={{
+                    width: '300px',
+                    height: '300px',
+                    background:
+                      'radial-gradient(circle, rgba(99,102,241,0.35) 0%, rgba(99,102,241,0.12) 40%, transparent 70%)',
+                    opacity: 0,
+                    transform: 'translate(-50%, -50%) scale(0.15)',
+                    zIndex: 0,
+                  }}
+                />
+
+                {/* ── Layer 3: Cursor-tracking radial fill glow (appears after shockwave) ── */}
+                <div
+                  ref={trackGlowRef}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 rounded-3xl"
+                  style={{
+                    background:
+                      'radial-gradient(340px circle at 50% 50%, rgba(99,102,241,0.16), rgba(99,102,241,0.04) 50%, transparent 75%)',
+                    opacity: 0,
+                    zIndex: 0,
+                  }}
+                />
+
+                {/* ── Layer 4: Border beam spotlight (masked edge glow tracking pointer) ── */}
+                <div
+                  ref={borderBeamRef}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-[1px] rounded-3xl"
+                  style={{
+                    background:
+                      'radial-gradient(220px circle at 50% 50%, rgba(99,102,241,0.40), transparent 80%)',
+                    WebkitMaskImage:
+                      'radial-gradient(250px circle at 50% 50%, black 0%, transparent 80%)',
+                    maskImage:
+                      'radial-gradient(250px circle at 50% 50%, black 0%, transparent 80%)',
+                    boxShadow: 'inset 0 0 0 1px rgba(99,102,241,0.12)',
+                    opacity: 0,
+                    zIndex: 0,
+                  }}
+                />
+                <div className="flex items-center justify-between pb-5 mb-6">
+                  <div className="flex items-center gap-2.5">
+                    <motion.div
+                      animate={{ scale: [1, 1.15, 1], opacity: [0.85, 1, 0.85] }}
+                      transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                      className="text-royal-500 dark:text-cobalt-400 flex items-center justify-center"
                     >
-                      {String(value).padStart(2, '0')}
-                    </span>
-                    <span className="font-mono text-[9px] uppercase tracking-widest text-slate-400 dark:text-slate-500 mt-1 block font-semibold">
-                      {label}
+                      <Users className="w-4 h-4" />
+                    </motion.div>
+                    <span className="font-mono text-xs uppercase font-bold text-slate-800 dark:text-slate-200 tracking-wider">
+                      Next Gathering In
                     </span>
                   </div>
-                ))}
-              </div>
-
-              {/* Sunday Schedule Preview */}
-              <div className="bg-slate-50/80 dark:bg-obsidian-850 p-4 sm:p-5 rounded-2xl space-y-2.5 sm:space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 font-bold text-xs">
-                    9:00 AM - Life Group
-                  </span>
-                  <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">Departamental</span>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-royal-500/10 dark:bg-cobalt-500/15 border border-royal-500/20 dark:border-cobalt-400/20 text-royal-600 dark:text-cobalt-400 font-mono text-[11px] font-bold uppercase tracking-wider">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{nextGatheringState.calendarDate}</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-slate-200/70 dark:bg-obsidian-800 text-slate-600 dark:text-slate-400 font-medium text-xs">
-                    10:00 AM - Worship Service
-                  </span>
-                  <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">Worship Hall</span>
+
+                {/* Countdown Grid */}
+                <div className="grid grid-cols-4 gap-2.5 sm:gap-3 text-center mb-6 sm:mb-7">
+                  {[
+                    { value: nextGatheringState.days, label: 'Days', accent: false },
+                    { value: nextGatheringState.hours, label: 'Hours', accent: false },
+                    { value: nextGatheringState.minutes, label: 'Mins', accent: false },
+                    { value: nextGatheringState.seconds, label: 'Secs', accent: true },
+                  ].map(({ value, label, accent }) => (
+                    <div key={label} className="bg-slate-50/80 dark:bg-obsidian-850 p-3 sm:p-4 rounded-2xl">
+                      <span
+                        className={`font-mono text-xl sm:text-2xl lg:text-3xl font-extrabold block ${accent ? 'text-royal-500 dark:text-cobalt-400' : 'text-slate-900 dark:text-white'
+                          }`}
+                      >
+                        {String(value).padStart(2, '0')}
+                      </span>
+                      <span className="font-mono text-[9px] uppercase tracking-widest text-slate-400 dark:text-slate-500 mt-1 block font-semibold">
+                        {label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Dynamic Gathering Schedule Preview */}
+                <div className="bg-slate-50/80 dark:bg-obsidian-850 p-4 sm:p-5 rounded-2xl space-y-2.5 sm:space-y-3">
+                  <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 dark:text-slate-500 pb-1 border-b border-slate-200/60 dark:border-white/5">
+                    <span className="uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">
+                      {nextGatheringState.gathering.dayName} Schedule
+                    </span>
+                    {nextGatheringState.gathering.location && (
+                      <span className="truncate max-w-[170px] text-right">
+                        {nextGatheringState.gathering.location}
+                      </span>
+                    )}
+                  </div>
+
+                  {nextGatheringState.gathering.scheduleItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between text-xs">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full font-bold text-xs ${item.isPrimary
+                          ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400'
+                          : 'bg-slate-200/70 dark:bg-obsidian-800 text-slate-600 dark:text-slate-400 font-medium'
+                          }`}
+                      >
+                        {item.time ? `${item.time} - ` : ''}{item.service}
+                      </span>
+                      <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">
+                        {item.location}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </motion.div>
           </div>
         </div>
       </div>
+
+      {/* ── Section 2: Vision & Values Layer (shares continuous sticky video background) ── */}
+      {children && (
+        <div className="relative z-10 w-full">
+          {children}
+        </div>
+      )}
+
+      {/* Hand-off dissolve mask into Section 3 (Core Groups) */}
+      <div className="relative w-full h-28 -mt-28 bg-gradient-to-b from-transparent to-slate-100/50 dark:to-obsidian-950 pointer-events-none z-20" />
     </div>
   );
 };

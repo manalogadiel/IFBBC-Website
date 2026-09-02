@@ -46,14 +46,14 @@ export const AppContent: React.FC = () => {
           onOpenPrayer={() => setPrayerModalOpen(true)}
         />
 
-        {/* Hero Section */}
+        {/* Combined Section 1 (Hero) & Section 2 (Vision & Values) with continuous video background */}
         <Hero
           onOpenVisit={() => handleOpenVisit()}
           onScrollToSermons={handleScrollToSermons}
-        />
-
-        {/* 01 // Vision & 10 Core Values */}
-        <VisionValues />
+        >
+          {/* 01 // Vision & 10 Core Values */}
+          <VisionValues />
+        </Hero>
 
         {/* 02 // 5 Core Groups & Event Poster Gallery */}
         <CoreGroupsSection />
