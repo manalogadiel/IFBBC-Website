@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Maximize2, X, Sparkles, MoveHorizontal, Video, Play, Pause } from 'lucide-react';
+import { Maximize2, X, Sparkles, MoveHorizontal } from 'lucide-react';
 
 interface VehicleShowcaseProps {
   className?: string;
@@ -431,7 +431,7 @@ export const VehicleShowcase: React.FC<VehicleShowcaseProps> = ({ className = ''
                         videoRef.current.currentTime = Math.max(0, (videoRef.current.duration || 1) - 0.05);
                       }
                     }}
-                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] contrast-[1.05]"
+                    className={`absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] contrast-[1.05] transition-opacity duration-500 ${isVideoActive ? 'opacity-100' : 'opacity-0'}`}
                   >
                     <source src="/Background Church.webm" type="video/webm" />
                     <source src="/Background Church.mp4" type="video/mp4" />

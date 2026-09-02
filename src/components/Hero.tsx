@@ -205,10 +205,9 @@ export const getNextGathering = (now: Date): NextGatheringState => {
 interface HeroProps {
   onOpenVisit: () => void;
   onScrollToSermons: () => void;
-  children?: React.ReactNode;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons, children }) => {
+export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons }) => {
   // ── 1. Dynamic Next Weekly Gathering Countdown ──────────────────────────────
   const [nextGatheringState, setNextGatheringState] = useState<NextGatheringState>(() =>
     getNextGathering(new Date())
@@ -562,28 +561,19 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons, chil
       initEngine();
     }
 
-    // ── Safeguard 2 & 3: Precision Keyframe Mapping to End Exactly at Section 2 ──
+    // ── Safeguard 2 & 3: Precision Keyframe Mapping Confined Strictly to Section 1 ──
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const heroEl = heroRef.current;
-      const coreGroupsSection = document.getElementById('core-groups');
+      if (!heroEl) return;
 
-      // The exact scroll distance to reach the end of Section 2 (when Section 3 reaches bottom of viewport)
-      let endOfSection2Scroll: number;
-      if (coreGroupsSection) {
-        endOfSection2Scroll = coreGroupsSection.offsetTop - window.innerHeight;
-      } else if (heroEl) {
-        endOfSection2Scroll = heroEl.offsetTop + heroEl.offsetHeight - window.innerHeight;
-      } else {
-        endOfSection2Scroll = 1800;
-      }
+      // The exact scroll distance to traverse Section 1 (Hero)
+      const scrollRange = Math.max(heroEl.offsetHeight - window.innerHeight, 450);
 
-      endOfSection2Scroll = Math.max(endOfSection2Scroll, 600);
+      // Progress scales smoothly from 0.0 at top of Section 1 to 1.0 at bottom of Section 1
+      const normalizedProgress = Math.min(Math.max(scrollY / scrollRange, 0), 1.0);
 
-      // Progress scales smoothly from 0.0 at top of Section 1 to exactly 1.0 at the end of Section 2
-      const normalizedProgress = Math.min(Math.max(scrollY / endOfSection2Scroll, 0), 1.0);
-
-      // Explicit End-State Clamping: Reaches final keyframe exactly at the end of Section 2
+      // Explicit End-State Clamping: Reaches final keyframe at the end of Section 1
       if (normalizedProgress >= 0.995) {
         targetFrame = TOTAL_FRAMES - 1;
       } else {
@@ -666,16 +656,16 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons, chil
           {/* Hardware-Accelerated 60FPS Canvas Frame Player */}
           <canvas
             ref={canvasRef}
-            className={`w-full h-full object-cover filter grayscale-[45%] dark:grayscale-[55%] contrast-[1.08] brightness-[0.78] dark:brightness-[0.58] transition-opacity duration-700 ${isEngineReady ? 'opacity-65 dark:opacity-55' : 'opacity-0'
+            className={`w-full h-full object-cover filter grayscale-[20%] dark:grayscale-[30%] contrast-[1.05] brightness-[0.88] dark:brightness-[0.68] transition-opacity duration-700 ${isEngineReady ? 'opacity-75 dark:opacity-65' : 'opacity-0'
               }`}
           />
 
           {/* Neutral Site Theme Overlay (Balanced tone: comfortable on eyes, readable text, clear video detail) */}
-          <div className="absolute inset-0 bg-gradient-to-b from-chalk-50/70 via-chalk-50/50 to-chalk-50/70 dark:from-obsidian-950/80 dark:via-obsidian-950/65 dark:to-obsidian-950/80" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-chalk-50/15 to-chalk-50/40 dark:via-obsidian-950/20 dark:to-obsidian-950/60" />
+          <div className="absolute inset-0 bg-gradient-to-b from-chalk-50/60 via-chalk-50/40 to-chalk-50/75 dark:from-obsidian-950/75 dark:via-obsidian-950/55 dark:to-obsidian-950/85" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-chalk-50/15 to-chalk-50/35 dark:via-obsidian-950/15 dark:to-obsidian-950/50" />
 
           {/* Architectural Swiss Grid Texture */}
-          <div className="absolute inset-0 swiss-grid-pattern opacity-25 dark:opacity-20" />
+          <div className="absolute inset-0 swiss-grid-pattern opacity-20 dark:opacity-15" />
         </div>
       </div>
 
@@ -938,15 +928,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVisit, onScrollToSermons, chil
         </div>
       </div>
 
-      {/* ── Section 2: Vision & Values Layer (shares continuous sticky video background) ── */}
-      {children && (
-        <div className="relative z-10 w-full">
-          {children}
-        </div>
-      )}
-
-      {/* Hand-off dissolve mask into Section 3 (Core Groups) */}
-      <div className="relative w-full h-28 -mt-28 bg-gradient-to-b from-transparent to-slate-100/50 dark:to-obsidian-950 pointer-events-none z-20" />
+      {/* Seamless bottom transition into Section 2 (Vision & Values) */}
+      <div className="relative w-full h-24 -mt-24 bg-gradient-to-b from-transparent to-chalk-50 dark:to-obsidian-950 pointer-events-none z-20" />
     </div>
   );
 };

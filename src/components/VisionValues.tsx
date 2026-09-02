@@ -282,7 +282,7 @@ export const VisionValues: React.FC = () => {
   const CurrentIcon = currentVal.icon;
 
   return (
-    <section id="vision-values" className="pt-12 pb-16 md:pt-16 md:pb-24 scroll-mt-24 relative overflow-hidden select-none">
+    <section id="vision-values" className="pt-16 pb-20 md:pt-24 md:pb-32 scroll-mt-24 relative overflow-hidden select-none bg-chalk-50 dark:bg-obsidian-950 border-t border-slate-200/60 dark:border-white/5">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 md:mb-16 gap-4 sm:gap-6 md:gap-8 pb-6 sm:pb-8 md:pb-12 border-b border-slate-200/80 dark:border-white/5">
