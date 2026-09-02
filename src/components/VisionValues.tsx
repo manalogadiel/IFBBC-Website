@@ -17,7 +17,6 @@ import {
   ArrowRight,
   Quote
 } from 'lucide-react';
-import { VehicleShowcase } from './ui/VehicleShowcase';
 import { ActivePillarModal } from './ui/ActivePillarModal';
 
 const PURPOSE_PILLARS = [
