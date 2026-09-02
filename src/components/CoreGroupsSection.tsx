@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Sparkles, Image as ImageIcon, X, ArrowRight, Check } from 'lucide-react';
+import { GlassLogoBadge } from './ui/GlassLogoBadge';
 
 interface EventPoster {
   id: string;
@@ -24,11 +25,13 @@ interface CoreGroup {
   schedule: string;
   targetAges: string;
   coordinator: string;
+  logo?: string;
+  accentHex?: string;
   posters: EventPoster[];
 }
 
 export const CoreGroupsSection: React.FC = () => {
-  const [activeGroupId, setActiveGroupId] = useState<string>('kiddos');
+  const [activeGroupId, setActiveGroupId] = useState<string>('adelphoi');
   const [selectedPoster, setSelectedPoster] = useState<EventPoster | null>(null);
   const [registeredPosterId, setRegisteredPosterId] = useState<string | null>(null);
 
@@ -37,12 +40,14 @@ export const CoreGroupsSection: React.FC = () => {
       id: 'kiddos',
       name: 'Kiddos',
       shortLabel: 'Kids',
-      demographic: 'For Kids (Ages 0–12)',
+      demographic: 'Kids',
       tagline: 'Laying the Bible Foundation in Young Hearts',
       description: 'A vibrant, Christ-centered ministry designed to disciple children through engaging Bible lessons, Scripture memorization, worship songs, and structured life groups.',
       schedule: 'Every Sunday @ 9:00 AM (Life Group) & 10:00 AM (Kids Church)',
       targetAges: 'Toddlers to Grade 6',
       coordinator: 'Kiddos Ministry Team',
+      logo: '/logo.jpg',
+      accentHex: '#10b981',
       posters: [
         {
           id: 'vbs-2026',
@@ -50,7 +55,7 @@ export const CoreGroupsSection: React.FC = () => {
           subtitle: 'The Champions of Faith: Running the Race with Jesus',
           date: 'July 15–18, 2026',
           time: '8:30 AM – 11:30 AM',
-          venue: 'IFBBC Sanctuary & Fellowship Grounds',
+          venue: 'Worship Hall & Fellowship Grounds',
           scripture: 'Hebrews 12:1-2',
           themeColor: 'from-amber-500/20 to-orange-500/10 text-amber-500',
           tag: 'Annual Major Event',
@@ -83,12 +88,14 @@ export const CoreGroupsSection: React.FC = () => {
       id: 'adelphoi',
       name: 'Adelphoi',
       shortLabel: 'Youth',
-      demographic: 'For Young People (Teens & Students)',
+      demographic: 'Young People',
       tagline: 'Brothers & Sisters Walking Steadfast in Christ',
       description: 'A dynamic fellowship of high school and collegiate youth rooted in biblical worldview, peer accountability, gospel boldness, and servant leadership.',
       schedule: 'Every Saturday @ 4:00 PM & Sunday Life Groups @ 9:00 AM',
       targetAges: 'Ages 13–21 (Junior High, Senior High, College)',
       coordinator: 'Ptr. Edwin Sebastian Lualhati (Youth Pastor)',
+      logo: '/adelphoi-logo.jpg',
+      accentHex: '#00a2ea',
       posters: [
         {
           id: 'adelphoi-camp',
@@ -107,7 +114,7 @@ export const CoreGroupsSection: React.FC = () => {
           subtitle: 'Open Mic, Scriptural Reflections & Fellowship',
           date: 'Every 2nd Friday of the Month',
           time: '6:30 PM – 8:30 PM',
-          venue: 'Roofdeck Loft / Sanctuary',
+          venue: 'Roofdeck Loft / Worship Hall',
           scripture: '1 Timothy 4:12',
           themeColor: 'from-purple-500/20 to-indigo-500/10 text-purple-400',
           tag: 'Monthly Fellowship',
@@ -129,12 +136,14 @@ export const CoreGroupsSection: React.FC = () => {
       id: 'caya',
       name: 'CAYA',
       shortLabel: 'Young Adults',
-      demographic: 'For Young Professionals (Single & Early Career)',
+      demographic: 'Young Professionals',
       tagline: 'Christian Adults in Youthful Action',
       description: 'Equipping marketplace ambassadors, corporate leaders, and young entrepreneurs to live out biblical integrity, financial stewardship, and gospel intentionality in the workplace.',
       schedule: 'Bi-Weekly Friday Dinners @ 7:00 PM & Sunday 9:00 AM Life Group',
       targetAges: 'Ages 22–35 (Single Professionals & Career Starters)',
       coordinator: 'CAYA Core Council',
+      logo: '/logo.jpg',
+      accentHex: '#3b82f6',
       posters: [
         {
           id: 'caya-summit',
@@ -175,12 +184,14 @@ export const CoreGroupsSection: React.FC = () => {
       id: 'amen',
       name: 'A-Men',
       shortLabel: 'Men',
-      demographic: 'For Men (After Young Pro Stage / Fathers & Husbands)',
-      tagline: 'Anchored Men: Spiritual Heads of Homes & Community',
+      demographic: 'Men',
+      tagline: 'Able Men: Spiritual Heads of Homes & Community',
       description: 'Strengthening adult men through mutual accountability, biblical manhood, leadership development, marriage encouragement, and active church service.',
       schedule: 'Monthly Saturday Breakfast @ 7:00 AM & Weekly Band of Brothers',
       targetAges: 'Men (30+ / Married & Family Heads)',
       coordinator: 'Deacons & Pastoral Council',
+      logo: '/logo.jpg',
+      accentHex: '#64748b',
       posters: [
         {
           id: 'amen-breakfast',
@@ -188,7 +199,7 @@ export const CoreGroupsSection: React.FC = () => {
           subtitle: 'Courageous Faith: Protecting, Providing & Pastoring the Home',
           date: 'October 10, 2026',
           time: '7:30 AM – 2:00 PM',
-          venue: 'IFBBC Main Sanctuary',
+          venue: 'Worship Hall',
           scripture: '1 Corinthians 16:13',
           themeColor: 'from-slate-700/30 to-slate-800/20 text-slate-300',
           tag: 'Annual Convocation',
@@ -221,12 +232,14 @@ export const CoreGroupsSection: React.FC = () => {
       id: 'womisso',
       name: 'Womisso',
       shortLabel: 'Women',
-      demographic: 'For Women (Non-Young-Pro / Mothers, Wives & Matrons)',
+      demographic: 'Women',
       tagline: 'Women in Mission & Service for our Sovereign God',
       description: 'Nurturing godly womanhood, Titus 2 mentoring, fervent prayer, hospitality, and compassionate outreach across all families of the church.',
       schedule: 'Every 2nd Saturday Fellowship @ 2:00 PM & Weekly Prayer Circle',
       targetAges: 'Women (30+ / Married, Mothers & Senior Saints)',
       coordinator: 'Womisso Leadership Guild',
+      logo: '/logo.jpg',
+      accentHex: '#ec4899',
       posters: [
         {
           id: 'womisso-conference',
@@ -234,7 +247,7 @@ export const CoreGroupsSection: React.FC = () => {
           subtitle: 'Clothed with Strength & Dignity: Joy in Holy Living',
           date: 'September 26, 2026',
           time: '9:00 AM – 3:30 PM',
-          venue: 'IFBBC Sanctuary & Banquet Hall',
+          venue: 'Worship Hall & Banquet Hall',
           scripture: 'Proverbs 31:25-30',
           themeColor: 'from-rose-500/20 to-pink-500/10 text-rose-400',
           tag: 'Annual Conference',
@@ -317,10 +330,11 @@ export const CoreGroupsSection: React.FC = () => {
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-12"
           >
-            {/* Primary Overview Container */}
+            {/* Primary Overview Container with Interactive 3D Glass Logo Badge */}
             <div className="ambient-card rounded-3xl p-8 sm:p-12 relative overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                <div className="lg:col-span-8 space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                {/* Left Column: Group Demographics & Mission Statement */}
+                <div className="lg:col-span-5 space-y-4">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 font-mono text-xs font-bold uppercase tracking-wider">
                     <Users className="w-3.5 h-3.5" />
                     <span>{activeGroup.demographic}</span>
@@ -334,11 +348,12 @@ export const CoreGroupsSection: React.FC = () => {
                     "{activeGroup.tagline}"
                   </p>
 
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-[1.68] max-w-2xl text-pretty">
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-[1.68] max-w-xl text-pretty">
                     {activeGroup.description}
                   </p>
                 </div>
 
+                {/* Center Column: Gathering Details & Pastoral Oversight Box */}
                 <div className="lg:col-span-4 bg-slate-50 dark:bg-obsidian-850 p-6 rounded-2xl space-y-4 text-xs">
                   <div>
                     <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
@@ -366,6 +381,16 @@ export const CoreGroupsSection: React.FC = () => {
                       {activeGroup.coordinator}
                     </span>
                   </div>
+                </div>
+
+                {/* Right Column: Interactive 3D Glass Logo Badge */}
+                <div className="lg:col-span-3 flex flex-col items-center justify-center pt-4 lg:pt-0">
+                  <GlassLogoBadge
+                    logoSrc={activeGroup.logo || '/adelphoi-logo-transparent.png'}
+                    altText={`${activeGroup.name} Emblem`}
+                    groupName={activeGroup.name}
+                    accentColor={activeGroup.accentHex || '#00a2ea'}
+                  />
                 </div>
               </div>
             </div>
