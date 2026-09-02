@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Sparkles, Image as ImageIcon, X, ArrowRight, Check } from 'lucide-react';
+import { X, Image as ImageIcon } from 'lucide-react';
 import { GlassLogoBadge } from './ui/GlassLogoBadge';
+import churchLogo from '../assets/logo-hd.png';
 
 interface EventPoster {
   id: string;
@@ -12,7 +13,8 @@ interface EventPoster {
   venue: string;
   scripture: string;
   themeColor: string;
-  tag: string;
+  tag?: string;
+  image?: string;
 }
 
 interface CoreGroup {
@@ -33,7 +35,6 @@ interface CoreGroup {
 export const CoreGroupsSection: React.FC = () => {
   const [activeGroupId, setActiveGroupId] = useState<string>('adelphoi');
   const [selectedPoster, setSelectedPoster] = useState<EventPoster | null>(null);
-  const [registeredPosterId, setRegisteredPosterId] = useState<string | null>(null);
 
   const coreGroups: CoreGroup[] = [
     {
@@ -46,7 +47,7 @@ export const CoreGroupsSection: React.FC = () => {
       schedule: 'Every Sunday - 9:00 AM',
       targetAges: 'Toddlers to Grade 6',
       coordinator: 'Tr. Ericah S. Lualhati',
-      logo: '/logo.jpg',
+      logo: churchLogo,
       accentHex: '#10b981',
       posters: [
         {
@@ -142,7 +143,7 @@ export const CoreGroupsSection: React.FC = () => {
       schedule: 'Bi-Weekly Friday Dinners @ 7:00 PM & Sunday 9:00 AM Life Group',
       targetAges: 'Ages 22–35 (Single Professionals & Career Starters)',
       coordinator: 'Engr. Atreo Xyrus I. Gamilla',
-      logo: '/logo.jpg',
+      logo: churchLogo,
       accentHex: '#3b82f6',
       posters: [
         {
@@ -190,7 +191,7 @@ export const CoreGroupsSection: React.FC = () => {
       schedule: 'Monthly Saturday Breakfast @ 7:00 AM & Weekly Band of Brothers',
       targetAges: 'Men (30+ / Married & Family Heads)',
       coordinator: 'Bro. Ivan Lendl I. Gamilla',
-      logo: '/logo.jpg',
+      logo: churchLogo,
       accentHex: '#64748b',
       posters: [
         {
@@ -238,7 +239,7 @@ export const CoreGroupsSection: React.FC = () => {
       schedule: 'Every 2nd Saturday Fellowship @ 2:00 PM & Weekly Prayer Circle',
       targetAges: 'Women (30+ / Married, Mothers & Senior Saints)',
       coordinator: 'Sis. Raquel Ilagan',
-      logo: '/logo.jpg',
+      logo: churchLogo,
       accentHex: '#ec4899',
       posters: [
         {
@@ -332,14 +333,9 @@ export const CoreGroupsSection: React.FC = () => {
           >
             {/* Primary Overview Container with Interactive 3D Glass Logo Badge */}
             <div className="ambient-card rounded-3xl p-8 sm:p-12 relative overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left Column: Group Demographics & Mission Statement */}
-                <div className="lg:col-span-5 space-y-4">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 font-mono text-xs font-bold uppercase tracking-wider">
-                    <Users className="w-3.5 h-3.5" />
-                    <span>{activeGroup.demographic}</span>
-                  </div>
-
+                <div className="lg:col-span-5 space-y-3 pt-1">
                   <h3 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
                     {activeGroup.name}
                   </h3>
@@ -407,19 +403,10 @@ export const CoreGroupsSection: React.FC = () => {
 
             {/* Event Poster Gallery */}
             <div>
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h4 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    {activeGroup.name} Event Poster Gallery
-                  </h4>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
-                    Upcoming official campaigns, conferences, and fellowship events for this group
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-xs font-mono text-slate-400">
-                  <ImageIcon className="w-3.5 h-3.5 text-royal-500 dark:text-cobalt-400" />
-                  <span>Click poster to inspect details</span>
-                </div>
+              <div className="mb-8">
+                <h4 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  {activeGroup.name} Event Poster Gallery
+                </h4>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -432,14 +419,25 @@ export const CoreGroupsSection: React.FC = () => {
                     className="ambient-card rounded-3xl p-8 space-y-5 cursor-pointer group relative overflow-hidden"
                   >
                     {/* Decorative Top Accent */}
-                    <div className={`p-4 rounded-2xl bg-gradient-to-br ${poster.themeColor} space-y-2`}>
-                      <span className="text-[10px] font-mono uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-white/40 dark:bg-black/40">
-                        {poster.tag}
-                      </span>
+                    <div className={`p-4 rounded-2xl bg-gradient-to-br ${poster.themeColor} space-y-1`}>
                       <span className="font-mono text-xs block font-bold text-slate-900 dark:text-white">
                         {poster.date}
                       </span>
+                      <span className="font-mono text-[11px] block font-medium text-slate-600 dark:text-slate-300">
+                        {poster.time}
+                      </span>
                     </div>
+
+                    {/* Poster Thumbnail (shown when image is provided) */}
+                    {poster.image && (
+                      <div className="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-950">
+                        <img
+                          src={poster.image}
+                          alt={poster.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
 
                     <div>
                       <h5 className="text-lg font-black text-slate-900 dark:text-white tracking-tight uppercase group-hover:text-royal-500 dark:group-hover:text-cobalt-400 transition-colors">
@@ -448,13 +446,6 @@ export const CoreGroupsSection: React.FC = () => {
                       <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-[1.68] text-pretty">
                         {poster.subtitle}
                       </p>
-                    </div>
-
-                    <div className="pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
-                      <span>{poster.scripture}</span>
-                      <span className="text-royal-500 dark:text-cobalt-400 font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        View Poster <ArrowRight className="w-3 h-3" />
-                      </span>
                     </div>
                   </motion.div>
                 ))}
@@ -479,9 +470,9 @@ export const CoreGroupsSection: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl ambient-card rounded-3xl p-8 sm:p-12 z-10 my-8 overflow-hidden"
+              className="relative w-full max-w-2xl ambient-card rounded-3xl p-8 sm:p-10 z-10 my-8 overflow-hidden max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between pb-6 mb-8 border-b border-slate-100 dark:border-white/5">
+              <div className="flex items-center justify-between pb-5 mb-6 border-b border-slate-100 dark:border-white/5">
                 <div>
                   <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
                     Official Event Poster // {activeGroup.name}
@@ -492,68 +483,60 @@ export const CoreGroupsSection: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setSelectedPoster(null)}
-                  className="w-9 h-9 rounded-full bg-slate-100 dark:bg-obsidian-800 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  className="w-9 h-9 rounded-full bg-slate-100 dark:bg-obsidian-800 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Poster Visual Representation */}
-              <div className="p-8 bg-slate-900 text-white rounded-2xl mb-8 space-y-6 relative overflow-hidden">
-                <div className="flex items-center justify-between font-mono text-xs text-royal-400">
-                  <span>INICBULAN FUNDAMENTAL BAPTIST BIBLE CHURCH</span>
-                  <span>{selectedPoster.tag}</span>
+              {/* Poster Image or Clean Visual Placeholder */}
+              {selectedPoster.image ? (
+                <div className="relative w-full rounded-2xl overflow-hidden bg-slate-950 mb-6 border border-slate-800 shadow-lg">
+                  <img
+                    src={selectedPoster.image}
+                    alt={selectedPoster.title}
+                    className="w-full max-h-[460px] object-contain mx-auto"
+                  />
                 </div>
+              ) : (
+                <div className="w-full rounded-2xl border border-dashed border-slate-300 dark:border-white/10 bg-slate-50/70 dark:bg-white/[0.02] p-10 sm:p-12 flex flex-col items-center justify-center text-center mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-royal-500/10 dark:bg-cobalt-400/10 text-royal-500 dark:text-cobalt-400 flex items-center justify-center mb-3">
+                    <ImageIcon className="w-7 h-7" />
+                  </div>
+                  <h5 className="text-base font-bold text-slate-900 dark:text-white">
+                    Official Event Poster
+                  </h5>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm font-mono">
+                    Official event poster graphic will be published here soon
+                  </p>
+                </div>
+              )}
 
-                <div className="space-y-2 py-4">
-                  <h4 className="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase">
+              {/* Event Details Card */}
+              <div className="p-6 bg-slate-900 text-white rounded-2xl space-y-5 relative overflow-hidden">
+                <div className="space-y-1">
+                  <h4 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
                     {selectedPoster.title}
                   </h4>
-                  <p className="text-sm text-slate-300 font-medium">
+                  <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
                     {selectedPoster.subtitle}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800 font-mono text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800 font-mono text-xs">
                   <div>
                     <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Date & Time</span>
-                    <span className="font-bold text-white">{selectedPoster.date}</span>
-                    <span className="block text-slate-400 text-[10px]">{selectedPoster.time}</span>
+                    <span className="font-bold text-white block">{selectedPoster.date}</span>
+                    <span className="text-slate-400 text-[10px] block">{selectedPoster.time}</span>
                   </div>
                   <div>
                     <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Venue</span>
-                    <span className="font-bold text-white">{selectedPoster.venue}</span>
+                    <span className="font-bold text-white block">{selectedPoster.venue}</span>
                   </div>
                   <div>
                     <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Theme Scripture</span>
-                    <span className="font-bold text-royal-400">{selectedPoster.scripture}</span>
+                    <span className="font-bold text-royal-400 block">{selectedPoster.scripture}</span>
                   </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-                  Hosted by IFBBC {activeGroup.name} Ministry
-                </span>
-
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                  <button
-                    onClick={() => setRegisteredPosterId(selectedPoster.id)}
-                    className="flex-1 sm:flex-none px-6 py-3 bg-royal-500 hover:bg-royal-600 dark:bg-cobalt-500 dark:hover:bg-cobalt-400 text-white text-xs font-bold rounded-full uppercase tracking-wider transition-all flex items-center justify-center gap-2"
-                  >
-                    {registeredPosterId === selectedPoster.id ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        <span>Registered Successfully</span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4" />
-                        <span>RSVP / Register Attendance</span>
-                      </>
-                    )}
-                  </button>
                 </div>
               </div>
             </motion.div>

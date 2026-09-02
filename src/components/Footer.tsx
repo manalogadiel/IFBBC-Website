@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, ArrowRight, Check, Facebook, Youtube, Mail, MapPin } from 'lucide-react';
+import churchLogo from '../assets/logo-hd.png';
 
 export const Footer: React.FC = () => {
   const [creedOpen, setCreedOpen] = useState(false);
@@ -25,12 +26,14 @@ export const Footer: React.FC = () => {
           {/* Brand & Mission Statement (Span 4) */}
           <div className="lg:col-span-4 space-y-5">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center shrink-0 bg-slate-900">
+              <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-2xl p-[2px] backdrop-blur-xl bg-gradient-to-br from-white/30 via-white/10 to-transparent dark:from-white/15 dark:via-white/5 dark:to-transparent border border-white/40 dark:border-white/20 shadow-[0_6px_16px_-4px_rgba(24,94,224,0.3),inset_0_1.5px_2px_rgba(255,255,255,0.8)] dark:shadow-[0_6px_20px_-4px_rgba(59,130,246,0.35),inset_0_1.5px_2px_rgba(255,255,255,0.4)] flex items-center justify-center shrink-0 overflow-hidden">
                 <img
-                  src="/logo.jpg"
+                  src={churchLogo}
                   alt="IFBBC Logo"
-                  className="w-full h-full object-cover object-center filter hue-rotate-[38deg] saturate-[1.35] contrast-[1.08] brightness-[1.02]"
+                  className="w-full h-full object-contain p-0.5"
                 />
+                <div className="absolute inset-x-1 top-0.5 h-[42%] rounded-t-[14px] bg-gradient-to-b from-white/70 via-white/15 to-transparent pointer-events-none opacity-85" />
+                <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/50 dark:ring-white/30 pointer-events-none" />
               </div>
               <span className="text-base font-black tracking-tight text-slate-900 dark:text-white uppercase">
                 IFBBC

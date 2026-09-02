@@ -171,7 +171,7 @@ export const GlassLogoBadge: React.FC<GlassLogoBadgeProps> = ({
               transform: 'translateZ(18px)',
               transformStyle: 'preserve-3d',
             }}
-            className="relative z-10 w-[84%] h-[84%] rounded-full overflow-hidden flex items-center justify-center pointer-events-none"
+            className="relative z-10 w-[92%] h-[92%] rounded-full overflow-hidden flex items-center justify-center pointer-events-none"
           >
             <img
               src={logoSrc}

@@ -904,7 +904,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPrayer, onScrollToSermons }) =
                   {nextGatheringState.gathering.scheduleItems.map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between text-xs gap-3">
                       <span
-                        className={`inline-flex items-center px-3 py-1.5 rounded-full font-bold text-xs whitespace-nowrap shrink-0 ${item.isPrimary
+                        className={`inline-flex items-center px-3 py-1.5 -ml-2.5 sm:-ml-3 rounded-full font-bold text-xs whitespace-nowrap shrink-0 ${item.isPrimary
                           ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400'
                           : 'bg-slate-200/70 dark:bg-obsidian-800 text-slate-600 dark:text-slate-400 font-medium'
                           }`}

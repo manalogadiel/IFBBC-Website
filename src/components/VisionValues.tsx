@@ -508,15 +508,13 @@ export const VisionValues: React.FC = () => {
                     <button
                       key={val.number}
                       onClick={() => jumpTo(idx)}
-                      className={`p-2.5 rounded-2xl flex flex-col items-center justify-center transition-all ${isActive
+                      aria-label={`Jump to core value ${val.number}`}
+                      className={`py-2.5 px-2 rounded-2xl flex items-center justify-center transition-all ${isActive
                         ? 'bg-royal-500 dark:bg-cobalt-500 text-white shadow-md scale-105'
                         : 'bg-slate-100 dark:bg-obsidian-850 text-slate-500 dark:text-slate-400 hover:bg-slate-200/80 dark:hover:bg-obsidian-800'
                         }`}
                     >
                       <span className="font-mono text-xs font-black">{val.number}</span>
-                      <span className="text-[9px] font-mono truncate max-w-full hidden sm:block opacity-80">
-                        {val.categoryLabel.split(' ')[0]}
-                      </span>
                     </button>
                   );
                 })}

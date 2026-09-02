@@ -231,3 +231,54 @@
 .church-video-fadein {
   animation: churchVideoFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ── MODERN NAVIGATION SHINING & SPECULAR LIGHT BEAM ANIMATIONS ── */
+@keyframes navSpecularShine {
+  0% {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  30%, 100% {
+    transform: translateX(260%) skewX(-20deg);
+  }
+}
+
+.animate-nav-shine {
+  animation: navSpecularShine 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes borderLightBeam {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(200%);
+    opacity: 0;
+  }
+}
+
+.animate-border-beam {
+  animation: borderLightBeam 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes logoGlowPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.08);
+  }
+}
+
+.animate-logo-glow {
+  animation: logoGlowPulse 3.8s ease-in-out infinite;
+}
+

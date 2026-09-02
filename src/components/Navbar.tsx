@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Menu, X, ArrowUpRight } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { MagneticButton } from './ui/MagneticButton';
+import churchLogo from '../assets/logo-hd.png';
 
 interface NavbarProps {
   onOpenVisit: () => void;
@@ -78,12 +79,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit, onOpenPrayer }) => 
             onClick={(e) => handleNavClick(e, '#')}
             className="flex items-center gap-3 group focus:outline-none shrink-0"
           >
+            {/* Logo Badge (Clean, fixed framing, shiny animation, no glass distortion) */}
             <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center transition-all duration-500 group-hover:scale-105 shrink-0 bg-slate-900">
               <img
-                src="/logo.jpg"
+                src={churchLogo}
                 alt="IFBBC Logo"
-                className="w-full h-full object-cover object-center filter hue-rotate-[38deg] saturate-[1.35] contrast-[1.08] brightness-[1.02] transition-all"
+                className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
               />
+              {/* Shiny Specular Shimmer Ray */}
+              <div className="absolute -inset-full top-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-nav-shine pointer-events-none" />
             </div>
             <div className="flex flex-col shrink-0">
               <span className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white leading-none">
@@ -139,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit, onOpenPrayer }) => 
               </AnimatePresence>
             </button>
 
-            {/* Prayer Wall Action Button (Replaces repetitive Online Giving) */}
+            {/* Prayer Wall Action Button */}
             <button
               type="button"
               onClick={onOpenPrayer}
