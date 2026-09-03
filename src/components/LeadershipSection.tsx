@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Check, X } from 'lucide-react';
+import { MessageSquare, Check, X, Mail, Facebook } from 'lucide-react';
 
 interface Leader {
   name: string;
@@ -11,6 +11,8 @@ interface Leader {
   focus: string[];
   quote: string;
   email: string;
+  facebookName: string;
+  facebookUrl: string;
 }
 
 export const LeadershipSection: React.FC = () => {
@@ -22,22 +24,26 @@ export const LeadershipSection: React.FC = () => {
     {
       name: 'Rev. Hinahon B. Pallones',
       role: 'Senior Pastor',
-      title: 'Under-Shepherd & Expository Preacher',
+      title: 'Senior Pastor',
       demographic: 'General Congregation, Elder Council & Pulpit Ministry',
       bio: 'Serving with steadfast dedication to the exposition of the Scriptures, Rev. Hinahon B. Pallones shepherds IFBBC with a passion for biblical doctrine, prayer, family discipleship, and city-wide outreach in Bauan and Batangas.',
       focus: ['Expository Preaching', 'Pastoral Counseling', 'Church Vision & Doctrine', 'Missions & Church Planting'],
       quote: '“Standing steadfast on the authority of God\u2019s Word, discipling the flock in truth, and laboring together in the Great Commission.” — 2 Timothy 4:2',
       email: 'iffbc2021@gmail.com',
+      facebookName: 'Jiffy Pallones',
+      facebookUrl: 'https://www.facebook.com/jiffy.pallones',
     },
     {
       name: 'Ptr. Edwin Sebastian Lualhati',
       role: 'Youth Pastor',
-      title: 'NextGen & Discipleship Shepherd',
+      title: 'Youth Pastor',
       demographic: 'Adelphoi Youth, Campus Outreach & Young Adults',
       bio: 'Ptr. Edwin Sebastian Lualhati leads the NextGen ministries of IFBBC, passionate about raising a generation of young people who are unashamed of the Gospel, biblically grounded, and active in ministry leadership.',
       focus: ['Adelphoi Youth Fellowship', 'Collegiate & High School Discipleship', 'Youth Music & Worship', 'Evangelistic Camps'],
       quote: '“Discipling youth and young people to be unashamed of the Gospel, rooted in the Scriptures, and shining as lights in their generation.” — Romans 1:16',
       email: 'iffbc2021@gmail.com',
+      facebookName: 'Edwin Luahati',
+      facebookUrl: 'https://www.facebook.com/elualhati1',
     },
   ];
 
@@ -76,20 +82,11 @@ export const LeadershipSection: React.FC = () => {
               className="ambient-card rounded-3xl p-8 sm:p-12 space-y-6 relative flex flex-col justify-between"
             >
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="px-3.5 py-1 rounded-full bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 font-mono text-xs font-bold uppercase tracking-wider">
-                    {leader.role}
-                  </span>
-                  <span className="font-mono text-[10px] uppercase text-slate-400 dark:text-slate-500">
-                    Ordained Ministry
-                  </span>
-                </div>
-
                 <div>
                   <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
                     {leader.name}
                   </h3>
-                  <span className="text-xs font-mono text-royal-500 dark:text-cobalt-400 block mt-1 font-bold">
+                  <span className="text-xs sm:text-sm font-mono text-royal-500 dark:text-cobalt-400 block mt-1 font-bold uppercase tracking-wider">
                     {leader.title}
                   </span>
                 </div>
@@ -97,23 +94,6 @@ export const LeadershipSection: React.FC = () => {
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-[1.68] text-pretty">
                   {leader.bio}
                 </p>
-
-                {/* Focus Areas */}
-                <div className="space-y-2 pt-2">
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold block">
-                    Ministry Focus & Portfolio
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {leader.focus.map((f) => (
-                      <span
-                        key={f}
-                        className="px-3 py-1 bg-slate-50 dark:bg-obsidian-850 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold"
-                      >
-                        {f}
-                      </span>
-                    ))}
-                  </div>
-                </div>
 
                 {/* Quote Box */}
                 <div className="p-5 bg-slate-50/80 dark:bg-obsidian-850 rounded-2xl border-l-2 border-royal-500 dark:border-cobalt-400">
@@ -123,20 +103,45 @@ export const LeadershipSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* Action */}
-              <div className="pt-6 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
-                <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
-                  {leader.email}
-                </span>
+              {/* Action & Contact Channels */}
+              <div className="pt-6 border-t border-slate-100 dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-2">
+                  {/* Email Channel */}
+                  <a
+                    href={`mailto:${leader.email}`}
+                    className="group/mail inline-flex items-center gap-2.5 text-xs font-mono text-slate-600 dark:text-slate-400 hover:text-royal-500 dark:hover:text-cobalt-400 transition-colors"
+                    title={`Send email to ${leader.name}`}
+                  >
+                    <span className="w-6 h-6 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center shrink-0 group-hover/mail:border-royal-500 group-hover/mail:text-royal-500 dark:group-hover/mail:border-cobalt-400 dark:group-hover/mail:text-cobalt-400 transition-colors">
+                      <Mail className="w-3 h-3" />
+                    </span>
+                    <span className="truncate">{leader.email}</span>
+                  </a>
+
+                  {/* Facebook Channel */}
+                  <a
+                    href={leader.facebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group/fb flex items-center gap-2.5 text-xs font-mono text-slate-600 dark:text-slate-400 hover:text-royal-500 dark:hover:text-cobalt-400 transition-colors"
+                    title={`Open Facebook profile for ${leader.facebookName}`}
+                  >
+                    <span className="w-6 h-6 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center shrink-0 group-hover/fb:border-royal-500 group-hover/fb:text-royal-500 dark:group-hover/fb:border-cobalt-400 dark:group-hover/fb:text-cobalt-400 transition-colors">
+                      <Facebook className="w-3 h-3" />
+                    </span>
+                    <span className="truncate font-semibold">{leader.facebookName}</span>
+                  </a>
+                </div>
+
                 <button
                   onClick={() => {
                     setSelectedPastor(leader.name);
                     setCounselingModalOpen(true);
                   }}
-                  className="px-4 py-2 bg-royal-500 hover:bg-royal-600 dark:bg-cobalt-500 dark:hover:bg-cobalt-400 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5"
+                  className="px-4 py-2 bg-royal-500 hover:bg-royal-600 dark:bg-cobalt-500 dark:hover:bg-cobalt-400 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 self-start sm:self-center shrink-0"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
-                  <span>Request Meeting</span>
+                  <span>Contact</span>
                 </button>
               </div>
             </div>
