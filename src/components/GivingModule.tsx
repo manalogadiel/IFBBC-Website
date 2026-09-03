@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Copy, Check, Building2, ShieldCheck, HeartHandshake, X } from 'lucide-react';
+import { Copy, Check, Building2, Maximize2, Download, X, QrCode } from 'lucide-react';
 
 interface GivingModuleProps {
   isModal?: boolean;
@@ -8,11 +8,8 @@ interface GivingModuleProps {
 }
 
 export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onClose }) => {
-  const [amount, setAmount] = useState<number>(1000);
-  const [customAmount, setCustomAmount] = useState<string>('');
-  const [fund, setFund] = useState<string>('Tithes & General Offering');
   const [copied, setCopied] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean>(false);
+  const [isQRExpanded, setIsQRExpanded] = useState<boolean>(false);
 
   const bpiAccount = {
     bank: 'BPI (Bank of the Philippine Islands)',
@@ -20,42 +17,16 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
     accountNumber: '8959-367214',
   };
 
-  const presetAmounts = [500, 1000, 2500, 5000, 10000];
-  const funds = [
-    'Tithes & General Offering',
-    'Missions & Outreaches (Saturday Missions)',
-    'Building & Sanctuary Renewal Fund',
-    'Benevolence & Mercy Ministry',
-  ];
-
   const handleCopyAccount = () => {
     navigator.clipboard.writeText(bpiAccount.accountNumber.replace(/-/g, ''));
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSelectPreset = (val: number) => {
-    setAmount(val);
-    setCustomAmount('');
-  };
-
-  const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setCustomAmount(val);
-    if (val && !isNaN(Number(val))) {
-      setAmount(Number(val));
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSuccess(true);
-  };
-
   const content = (
-    <div className={`w-full ${isModal ? 'p-6 sm:p-8' : 'ambient-card rounded-3xl p-8 sm:p-12'}`}>
+    <div className={`w-full ${isModal ? 'p-6 sm:p-8' : 'ambient-card rounded-3xl p-6 sm:p-8 md:p-10'}`}>
       {/* Header */}
-      <div className={`flex items-center justify-between pb-4 mb-6 border-b border-slate-100 dark:border-white/5`}>
+      <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-100 dark:border-white/5">
         <div>
           <span className="font-mono text-[10px] uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block mb-1">
             Biblical Stewardship
@@ -75,236 +46,250 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
         )}
       </div>
 
-      {/* Official BPI Bank Transfer Card */}
-      <div className="p-4 sm:p-6 bg-slate-900 text-white rounded-2xl mb-6 space-y-3 relative overflow-hidden shadow-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-royal-400" />
-            <span className="font-mono text-[11px] font-bold uppercase text-royal-400 tracking-wider">
-              Official Bank Account
+      <div className="space-y-5">
+        {/* Official BPI Bank Transfer Card */}
+        <div className="p-4 sm:p-5 bg-slate-900 text-white rounded-2xl space-y-3 relative overflow-hidden shadow-lg border border-white/10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-royal-400" />
+              <span className="font-mono text-[11px] font-bold uppercase text-royal-400 tracking-wider">
+                Official Bank Account
+              </span>
+            </div>
+            <span className="text-[10px] bg-slate-800 text-emerald-400 px-2 py-0.5 rounded font-mono font-bold">
+              Verified BPI Account
             </span>
           </div>
-          <span className="text-[10px] bg-slate-800 text-emerald-400 px-2 py-0.5 rounded font-mono font-bold">
-            Verified BPI Account
-          </span>
-        </div>
 
-        <div className="space-y-0.5 pt-1">
-          <span className="font-mono text-[9px] text-slate-400 uppercase tracking-wider block">
-            Bank Name
-          </span>
-          <h4 className="text-base font-extrabold text-white">
-            {bpiAccount.bank}
-          </h4>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 font-mono text-xs">
-          <div>
-            <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Account Names</span>
-            <span className="font-bold text-slate-200 block text-xs">{bpiAccount.names}</span>
+          <div className="space-y-0.5">
+            <span className="font-mono text-[9px] text-slate-400 uppercase tracking-wider block">
+              Bank Name
+            </span>
+            <h4 className="text-sm sm:text-base font-extrabold text-white">
+              {bpiAccount.bank}
+            </h4>
           </div>
-          <div>
-            <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Account Number</span>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="font-mono font-black text-base sm:text-lg text-emerald-400 tracking-wider">
-                {bpiAccount.accountNumber}
-              </span>
-              <button
-                type="button"
-                onClick={handleCopyAccount}
-                title="Copy Account Number"
-                className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-              >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-            {copied && (
-              <span className="text-[10px] text-emerald-400 font-sans block mt-0.5">
-                ✓ Account number copied to clipboard
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
 
-      <AnimatePresence mode="wait">
-        {!success ? (
-          <motion.form
-            key="form"
-            onSubmit={handleSubmit}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="space-y-4"
-          >
-            {/* Fund Designation */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 font-mono text-xs">
             <div>
-              <label className="block font-mono text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 font-bold">
-                Select Giving Designation
-              </label>
-              <select
-                value={fund}
-                onChange={(e) => setFund(e.target.value)}
-                className="w-full px-3.5 py-2.5 sm:py-3 bg-slate-50 dark:bg-obsidian-850 rounded-xl text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-royal-500/40"
-              >
-                {funds.map((f) => (
-                  <option key={f} value={f}>
-                    {f}
-                  </option>
-                ))}
-              </select>
+              <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Account Names</span>
+              <span className="font-bold text-slate-200 block text-xs">{bpiAccount.names}</span>
             </div>
-
-            {/* Amount Presets */}
             <div>
-              <label className="block font-mono text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 font-bold">
-                Pledge / Donation Amount (PHP)
-              </label>
-              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-2.5">
-                {presetAmounts.map((val) => (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => handleSelectPreset(val)}
-                    className={`py-2 sm:py-2.5 rounded-xl font-mono text-xs sm:text-sm font-bold transition-all ${amount === val && !customAmount
-                        ? 'bg-royal-500 dark:bg-cobalt-500 text-white shadow-sm scale-105'
-                        : 'bg-slate-100/80 dark:bg-obsidian-850 text-slate-800 dark:text-slate-200 hover:bg-slate-200/80'
-                      }`}
-                  >
-                    ₱{val.toLocaleString()}
-                  </button>
-                ))}
-              </div>
-
-              {/* Custom Input */}
-              <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm font-bold text-slate-400">
-                  ₱
+              <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Account Number</span>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="font-mono font-black text-base sm:text-lg text-emerald-400 tracking-wider">
+                  {bpiAccount.accountNumber}
                 </span>
-                <input
-                  type="number"
-                  placeholder="Or enter custom amount in PHP..."
-                  value={customAmount}
-                  onChange={handleCustomChange}
-                  className="w-full pl-8 pr-4 py-2.5 sm:py-3 bg-slate-50 dark:bg-obsidian-850 rounded-xl font-mono text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-royal-500/40"
-                />
+                <button
+                  type="button"
+                  onClick={handleCopyAccount}
+                  title="Copy Account Number"
+                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                >
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                </button>
+              </div>
+              {copied && (
+                <span className="text-[10px] text-emerald-400 font-sans block mt-0.5">
+                  ✓ Account number copied to clipboard
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ── PAYMENT QR CODE TILE with subtle breathing blue glow ── */}
+        <motion.div
+          animate={{
+            boxShadow: [
+              '0 0 16px 0px rgba(37,99,235,0.18)',
+              '0 0 28px 4px rgba(37,99,235,0.36)',
+              '0 0 16px 0px rgba(37,99,235,0.18)',
+            ],
+          }}
+          transition={{
+            duration: 3.6,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          whileHover={{
+            scale: 1.01,
+            boxShadow: '0 0 36px 6px rgba(37,99,235,0.55)',
+          }}
+          className="relative group rounded-2xl p-5 sm:p-6 bg-slate-900 border border-slate-700/60 dark:border-white/10 transition-all duration-300 overflow-hidden"
+        >
+          <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
+            {/* White rounded quiet-zone tile containing the clean QR code */}
+            <div
+              onClick={() => setIsQRExpanded(true)}
+              className="relative shrink-0 cursor-pointer group/qr p-2 bg-white rounded-xl shadow-md transition-transform duration-300 group-hover/qr:scale-105"
+              title="Click to enlarge QR code"
+            >
+              <img
+                src="/ifbbc-bpi-qr.png"
+                alt="IFBBC BPI InstaPay QR Code"
+                className="w-36 h-36 sm:w-40 sm:h-40 object-contain rounded-lg"
+              />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/qr:opacity-100 transition-opacity rounded-xl flex items-center justify-center text-white">
+                <Maximize2 className="w-6 h-6 drop-shadow-md" />
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-2 pt-1">
-              <button
-                type="submit"
-                className="w-full py-3 sm:py-3.5 bg-royal-500 hover:bg-royal-600 dark:bg-cobalt-500 dark:hover:bg-cobalt-400 text-white font-bold text-xs sm:text-sm rounded-full uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all"
-              >
-                <HeartHandshake className="w-4 h-4" />
-                <span>Confirm Pledge & Generate Voucher (₱{amount.toLocaleString()})</span>
-              </button>
-            </div>
-
-            {/* Security Guarantee Strip */}
-            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-slate-400 dark:text-slate-500 pt-1">
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                SEC Registered Non-Profit
+            {/* Information & Eyebrow Label */}
+            <div className="flex-1 text-center sm:text-left space-y-2">
+              <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-royal-400 dark:text-cobalt-400 font-bold block">
+                SCAN TO GIVE • SUPPORT THE MINISTRY
               </span>
-              <span>100% Directed to Local Ministry</span>
-            </div>
-          </motion.form>
-        ) : (
-          <motion.div
-            key="success"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-6 space-y-4"
-          >
-            <div className="w-14 h-14 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500 mx-auto">
-              <CheckCircle2 className="w-8 h-8" />
-            </div>
-
-            <div>
-              <span className="font-mono text-xs uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-bold block">
-                Pledge Recorded • Reference #IFBBC-{Date.now().toString().slice(-6)}
-              </span>
-              <h4 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">
-                Salamat sa Inyong Tapat na Pagbibigay
+              <h4 className="text-base sm:text-lg font-extrabold text-white tracking-tight">
+                InstaPay & BPI QR Transfer
               </h4>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 max-w-md mx-auto leading-[1.68] text-pretty">
-                Please transfer <strong className="text-slate-900 dark:text-white">₱{amount.toLocaleString()}</strong> to BPI Account <strong className="text-slate-900 dark:text-white">{bpiAccount.accountNumber}</strong> ({bpiAccount.names}) for <em>"{fund}"</em>.
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Scan directly using BPI, GCash, Maya, or any InstaPay-compliant banking app for instant, fee-free tithes and love offerings.
               </p>
-            </div>
 
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={() => setSuccess(false)}
-                className="px-6 py-2.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-obsidian-950 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm"
-              >
-                Make Another Pledge
-              </button>
+              <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsQRExpanded(true)}
+                  className="px-3.5 py-1.5 rounded-full bg-royal-600/30 hover:bg-royal-600 border border-royal-400/40 text-royal-200 hover:text-white text-xs font-mono font-semibold flex items-center gap-1.5 transition-all"
+                >
+                  <Maximize2 className="w-3 h-3" />
+                  <span>Enlarge QR</span>
+                </button>
+                <a
+                  href="/ifbbc-bpi-qr.png"
+                  download="IFBBC-BPI-InstaPay-QR.png"
+                  className="px-3.5 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-300 hover:text-white text-xs font-mono font-semibold flex items-center gap-1.5 transition-all"
+                >
+                  <Download className="w-3 h-3" />
+                  <span>Save QR</span>
+                </a>
+              </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </motion.div>
+
+
+      </div>
     </div>
   );
 
-  if (isModal) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-slate-950/70 dark:bg-black/85 backdrop-blur-md"
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 my-auto w-full max-w-lg max-h-[90vh] overflow-y-auto ambient-card rounded-3xl"
-        >
-          {content}
-        </motion.div>
-      </div>
-    );
-  }
-
   return (
-    <section id="give" className="pt-6 pb-12 sm:pt-8 sm:pb-16 md:pt-10 md:pb-20 scroll-mt-20 relative overflow-hidden bg-slate-100/40 dark:bg-obsidian-900/30">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
-              Stewardship & Worship
-            </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight uppercase text-balance">
-              Faithful Stewardship for the Lord's Work
-            </h2>
-            <p className="text-base text-slate-600 dark:text-slate-300 leading-[1.68] text-pretty">
-              At IFBBC, giving is an act of joyful obedience and worship. Your tithes and love offerings sustain our weekly services, support mission fields in Batangas, equip youth and children, and care for church families in need.
-            </p>
-
-            <div className="space-y-4 pt-4">
-              <div className="flex items-start gap-3 text-xs text-slate-600 dark:text-slate-300 font-mono leading-relaxed">
-                <span className="text-royal-500 dark:text-cobalt-400 font-bold">•</span>
-                <span>Direct bank transfer via BPI (Bank of the Philippine Islands) online or over-the-counter.</span>
+    <>
+      {isModal ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-slate-950/70 dark:bg-black/85 backdrop-blur-md"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="relative z-10 my-auto w-full max-w-xl max-h-[90vh] overflow-y-auto ambient-card rounded-3xl"
+          >
+            {content}
+          </motion.div>
+        </div>
+      ) : (
+        <section id="give" className="pt-2 pb-12 sm:pt-4 sm:pb-16 md:pt-6 md:pb-20 scroll-mt-20 relative overflow-hidden bg-slate-100/40 dark:bg-obsidian-900/30">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-16 items-center">
+              <div className="lg:col-span-6 space-y-6">
+                <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
+                  Stewardship & Worship
+                </span>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight uppercase text-balance">
+                  Faithful Stewardship for the Lord's Work
+                </h2>
+                <p className="text-base text-slate-600 dark:text-slate-300 leading-[1.68] text-pretty">
+                  At IFBBC, giving is an act of joyful obedience and worship. Your tithes and love offerings sustain our weekly services, support mission fields in Batangas, equip youth and children, and care for church families in need.
+                </p>
               </div>
-              <div className="flex items-start gap-3 text-xs text-slate-600 dark:text-slate-300 font-mono leading-relaxed">
-                <span className="text-royal-500 dark:text-cobalt-400 font-bold">•</span>
-                <span>Financial transparency and accountability overseen by our church pastors and leadership council.</span>
+
+              <div className="lg:col-span-6">
+                {content}
               </div>
             </div>
           </div>
+        </section>
+      )}
 
-          <div className="lg:col-span-6">
-            {content}
+      {/* ── High-Resolution QR Lightbox Modal ── */}
+      <AnimatePresence>
+        {isQRExpanded && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsQRExpanded(false)}
+              className="fixed inset-0 bg-slate-950/80 dark:bg-black/90 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 12 }}
+              className="relative z-10 w-full max-w-sm bg-slate-900 border border-white/15 rounded-3xl p-6 sm:p-8 text-center shadow-2xl space-y-4"
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center gap-2 text-royal-400 font-mono text-xs font-bold uppercase">
+                  <QrCode className="w-4 h-4" />
+                  <span>BPI InstaPay QR</span>
+                </div>
+                <button
+                  onClick={() => setIsQRExpanded(false)}
+                  className="p-1 rounded-full text-slate-400 hover:text-white bg-slate-800 transition-colors"
+                  aria-label="Close QR Modal"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* QR Image Container */}
+              <div className="p-4 bg-white rounded-2xl inline-block shadow-lg mx-auto">
+                <img
+                  src="/ifbbc-bpi-qr.png"
+                  alt="IFBBC BPI InstaPay QR Code"
+                  className="w-56 h-56 sm:w-64 sm:h-64 object-contain rounded-lg"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <span className="font-mono text-xs text-slate-300 block font-semibold">
+                  IFBBC Bank • Account ending in 214
+                </span>
+                <span className="text-[11px] font-mono text-slate-400 block">
+                  Scan via BPI, GCash, Maya, or any InstaPay app
+                </span>
+              </div>
+
+              <div className="pt-2 flex items-center justify-center gap-3">
+                <a
+                  href="/ifbbc-bpi-qr.png"
+                  download="IFBBC-BPI-InstaPay-QR.png"
+                  className="px-4 py-2 rounded-full bg-royal-600 hover:bg-royal-500 text-white font-mono text-xs font-bold flex items-center gap-2 shadow-lg transition-all"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download QR</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setIsQRExpanded(false)}
+                  className="px-4 py-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-bold transition-colors"
+                >
+                  Done
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      </div>
-    </section>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
-

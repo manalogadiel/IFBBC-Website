@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Check, X, Mail, Facebook } from 'lucide-react';
+import { Check, X, Mail, Facebook, ArrowRight, User } from 'lucide-react';
 
 interface Leader {
   name: string;
@@ -13,7 +13,252 @@ interface Leader {
   email: string;
   facebookName: string;
   facebookUrl: string;
+  portrait?: string;
 }
+
+interface LeaderCardProps {
+  leader: Leader;
+  onContact: (name: string) => void;
+}
+
+const LeaderProfileCard: React.FC<LeaderCardProps> = ({ leader, onContact }) => {
+  const cardRef = React.useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const [isSettling, setIsSettling] = useState(false);
+  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsCoarsePointer(window.matchMedia('(pointer: coarse)').matches);
+    }
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isCoarsePointer || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    // Normalize coordinates to [-1, 1] relative to center
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    setMousePos({ x, y });
+  };
+
+  const handleMouseEnter = () => {
+    if (!isCoarsePointer) setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setMousePos({ x: 0, y: 0 });
+  };
+
+  const handlePortraitClick = () => {
+    setIsSettling(true);
+    setTimeout(() => setIsSettling(false), 450);
+  };
+
+  // Parallax offsets (small, smooth shifts, not dramatic tilts)
+  const bgOffsetX = isHovered ? mousePos.x * 2 : 0;
+  const bgOffsetY = isHovered ? mousePos.y * 2 : 0;
+
+  const glowOffsetX = isHovered ? mousePos.x * 8 : 0;
+  const glowOffsetY = isHovered ? mousePos.y * 8 : 0;
+
+  const portraitOffsetX = isHovered ? mousePos.x * 16 : 0;
+  const portraitOffsetY = isHovered ? mousePos.y * 14 : 0;
+
+  // Mask image for waist-level crop dissolving into background glow:
+  // Visible from stomach up, natural waistline softly feathering down
+  const waistMaskStyle: React.CSSProperties = {
+    WebkitMaskImage:
+      'linear-gradient(to bottom, black 0%, black 55%, rgba(0,0,0,0.85) 68%, rgba(0,0,0,0.3) 84%, transparent 100%)',
+    maskImage:
+      'linear-gradient(to bottom, black 0%, black 55%, rgba(0,0,0,0.85) 68%, rgba(0,0,0,0.3) 84%, transparent 100%)',
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="group relative rounded-3xl bg-[#060913] border border-white/10 p-6 sm:p-8 md:p-10 lg:p-12 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] transition-all duration-500 overflow-hidden lg:overflow-visible"
+      style={{
+        transform: `translate3d(${bgOffsetX}px, ${bgOffsetY}px, 0)`,
+      }}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12 items-center">
+        {/* ── Mobile Layout (Contained full-width portrait above text block) ── */}
+        <div className="order-1 lg:hidden w-full">
+          {leader.portrait ? (
+            <div
+              onClick={handlePortraitClick}
+              className={`relative w-full aspect-[4/5] sm:aspect-[3/4] max-w-sm mx-auto flex items-end justify-center rounded-2xl overflow-hidden bg-gradient-to-b from-[#080d1e] to-[#060913] border border-white/5 cursor-pointer select-none transition-transform duration-500 ${
+                isSettling ? 'scale-[0.985]' : 'scale-100'
+              }`}
+            >
+              {/* Stage Lighting Glow behind subject */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(circle at 50% 45%, rgba(37,99,235,0.35) 0%, rgba(30,58,138,0.12) 50%, transparent 75%)',
+                }}
+              />
+
+              {/* Contained portrait with waist-level dissolve and lighting */}
+              <div className="relative z-10 w-full h-full flex items-end justify-center" style={waistMaskStyle}>
+                <img
+                  src={leader.portrait}
+                  alt={leader.name}
+                  className="w-auto h-[95%] max-h-[380px] object-contain object-bottom pointer-events-none select-none"
+                  style={{
+                    filter:
+                      'drop-shadow(0 0 1px rgba(255,255,255,0.22)) drop-shadow(-3px -3px 14px rgba(37,99,235,0.35)) drop-shadow(2px 18px 24px rgba(0,0,0,0.9))',
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            /* Mobile Fallback: Plain dark silhouette, no glow */
+            <div className="w-full aspect-[4/5] max-w-sm mx-auto rounded-2xl bg-[#0a0f20] border border-white/5 flex flex-col items-center justify-center p-8 text-center text-slate-500">
+              <div className="w-16 h-16 rounded-full bg-slate-800/80 flex items-center justify-center mb-3">
+                <User className="w-8 h-8 text-slate-500" />
+              </div>
+              <span className="font-mono text-xs uppercase tracking-wider text-slate-500 font-bold">
+                Leadership Profile
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* ── Left Editorial Text Block ── */}
+        <div className="order-2 lg:order-1 lg:col-span-7 flex flex-col justify-between space-y-6 relative z-20">
+          <div>
+            {/* Pastor Name */}
+            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase leading-[1.08]">
+              {leader.name}
+            </h3>
+
+            {/* Role in Electric Blue */}
+            <span className="font-mono text-xs sm:text-sm font-bold uppercase tracking-wider text-[#2563eb] block mt-2">
+              {leader.role}
+            </span>
+
+            {/* Bio with comfortable line spacing and contrast >= 4.5:1 */}
+            <p className="text-sm sm:text-base text-slate-300 font-normal leading-[1.75] text-pretty mt-4 sm:mt-5">
+              {leader.bio}
+            </p>
+
+            {/* Scripture Quote (Translucent glass panel with subtle blue vertical accent line) */}
+            <div className="p-4 sm:p-5 rounded-r-2xl bg-white/[0.03] backdrop-blur-md border-l-2 border-[#2563eb] border-y border-r border-white/5 my-6">
+              <p className="text-xs sm:text-sm italic text-slate-300 leading-relaxed font-normal">
+                {leader.quote}
+              </p>
+            </div>
+          </div>
+
+          {/* Contact Section (Minimal, Bottom of Card) */}
+          <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-2.5">
+              {/* Email channel */}
+              <div>
+                <a
+                  href={`mailto:${leader.email}`}
+                  className="group/mail inline-flex items-center gap-2.5 text-xs font-mono text-slate-300 hover:text-[#2563eb] transition-colors"
+                  title={`Send email to ${leader.name}`}
+                >
+                  <span className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center shrink-0 group-hover/mail:border-[#2563eb] group-hover/mail:text-[#2563eb] transition-colors">
+                    <Mail className="w-3 h-3" />
+                  </span>
+                  <span className="truncate">{leader.email}</span>
+                </a>
+              </div>
+
+              {/* Facebook channel */}
+              <div>
+                <a
+                  href={leader.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/fb inline-flex items-center gap-2.5 text-xs font-mono text-slate-300 hover:text-[#2563eb] transition-colors"
+                  title={`Open Facebook profile for ${leader.facebookName}`}
+                >
+                  <span className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center shrink-0 group-hover/fb:border-[#2563eb] group-hover/fb:text-[#2563eb] transition-colors">
+                    <Facebook className="w-3 h-3" />
+                  </span>
+                  <span className="truncate font-semibold">{leader.facebookName}</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Refined Contact Button with Arrow Icon and Hover-only Blue Glow */}
+            <button
+              onClick={() => onContact(leader.name)}
+              className="px-5 py-2.5 rounded-full bg-slate-900 border border-white/15 text-white text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 group/btn hover:border-[#2563eb] hover:bg-[#2563eb] hover:shadow-[0_0_22px_rgba(37,99,235,0.45)] self-start sm:self-center shrink-0"
+            >
+              <span>CONTACT</span>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
+            </button>
+          </div>
+        </div>
+
+        {/* ── Desktop Portrait (Positioned Right, Depth Extension, 3D Parallax Layers) ── */}
+        <div className="hidden lg:flex lg:col-span-5 relative overflow-visible lg:-mr-8 xl:-mr-12 lg:-my-8 xl:-my-12 items-end justify-center z-10 min-h-[440px] xl:min-h-[500px]">
+          {leader.portrait ? (
+            <div
+              onClick={handlePortraitClick}
+              className={`relative w-full h-[460px] xl:h-[520px] flex items-end justify-center cursor-pointer select-none transition-transform duration-500 ${
+                isSettling ? 'scale-[0.985]' : 'scale-100'
+              }`}
+            >
+              {/* Layer 1: Stage Lighting Radial Blue Glow (shifts at medium speed, expands on hover) */}
+              <div
+                className="absolute inset-0 -z-10 pointer-events-none rounded-full blur-3xl transition-all duration-500 ease-out"
+                style={{
+                  transform: `translate3d(${glowOffsetX}px, ${glowOffsetY}px, 0) scale(${isHovered ? 1.18 : 1})`,
+                  opacity: isHovered ? 0.42 : 0.28,
+                  background:
+                    'radial-gradient(circle at 50% 50%, rgba(37,99,235,0.8) 0%, rgba(30,58,138,0.35) 45%, transparent 72%)',
+                }}
+              />
+
+              {/* Layer 2 & 3: Portrait Cutout Layer (shifts fastest for 3D parallax) */}
+              <div
+                className="relative z-10 w-full h-full flex items-end justify-center transition-transform duration-300 ease-out"
+                style={{
+                  transform: `translate3d(${portraitOffsetX}px, ${portraitOffsetY}px, 0)`,
+                  ...waistMaskStyle,
+                }}
+              >
+                {/* Real photo portrait with luminous rim light & deep downward directional shadow */}
+                <img
+                  src={leader.portrait}
+                  alt={leader.name}
+                  className="w-auto h-full max-h-[480px] xl:max-h-[540px] object-contain object-bottom pointer-events-none select-none"
+                  style={{
+                    filter:
+                      'drop-shadow(0 0 1px rgba(255,255,255,0.22)) drop-shadow(-3px -3px 16px rgba(37,99,235,0.38)) drop-shadow(2px 20px 28px rgba(0,0,0,0.85)) drop-shadow(4px 38px 52px rgba(0,0,0,0.65))',
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            /* Desktop Fallback: Plain dark silhouette, no glow */
+            <div className="w-full aspect-[3/4] max-w-sm mx-auto rounded-2xl bg-[#0a0f20] border border-white/5 flex flex-col items-center justify-center p-8 text-center text-slate-500">
+              <div className="w-20 h-20 rounded-full bg-slate-800/80 flex items-center justify-center mb-3">
+                <User className="w-10 h-10 text-slate-500" />
+              </div>
+              <span className="font-mono text-xs uppercase tracking-wider text-slate-500 font-bold">
+                Leadership Profile
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const LeadershipSection: React.FC = () => {
   const [counselingModalOpen, setCounselingModalOpen] = useState(false);
@@ -32,6 +277,7 @@ export const LeadershipSection: React.FC = () => {
       email: 'iffbc2021@gmail.com',
       facebookName: 'Jiffy Pallones',
       facebookUrl: 'https://www.facebook.com/jiffy.pallones',
+      portrait: '/pastor-hinahon-cutout.png',
     },
     {
       name: 'Ptr. Edwin Sebastian Lualhati',
@@ -44,6 +290,7 @@ export const LeadershipSection: React.FC = () => {
       email: 'iffbc2021@gmail.com',
       facebookName: 'Edwin Luahati',
       facebookUrl: 'https://www.facebook.com/elualhati1',
+      portrait: '/pastor-edwin-cutout.png',
     },
   ];
 
@@ -60,9 +307,9 @@ export const LeadershipSection: React.FC = () => {
     <section id="leadership" className="pt-6 pb-12 sm:pt-8 sm:pb-16 md:pt-10 md:pb-20 scroll-mt-20 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 md:mb-10 gap-4 sm:gap-6 pb-4 sm:pb-6 border-b border-slate-200/80 dark:border-white/5">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 md:mb-14 gap-4 sm:gap-6 pb-4 sm:pb-6 border-b border-slate-200/80 dark:border-white/5">
           <div>
-            <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block mb-2">
+            <span className="font-mono text-xs uppercase tracking-widest text-blue-500 font-bold block mb-2">
               Our Pastors
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-white uppercase text-balance">
@@ -74,77 +321,17 @@ export const LeadershipSection: React.FC = () => {
           </p>
         </div>
 
-        {/* 2 Pastoral Feature Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        {/* Pastoral Profile Cards */}
+        <div className="space-y-12 sm:space-y-16 lg:space-y-20 mb-12">
           {leaders.map((leader) => (
-            <div
+            <LeaderProfileCard
               key={leader.name}
-              className="ambient-card rounded-3xl p-8 sm:p-12 space-y-6 relative flex flex-col justify-between"
-            >
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
-                    {leader.name}
-                  </h3>
-                  <span className="text-xs sm:text-sm font-mono text-royal-500 dark:text-cobalt-400 block mt-1 font-bold uppercase tracking-wider">
-                    {leader.title}
-                  </span>
-                </div>
-
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-[1.68] text-pretty">
-                  {leader.bio}
-                </p>
-
-                {/* Quote Box */}
-                <div className="p-5 bg-slate-50/80 dark:bg-obsidian-850 rounded-2xl border-l-2 border-royal-500 dark:border-cobalt-400">
-                  <p className="text-xs italic text-slate-700 dark:text-slate-300 leading-[1.68]">
-                    {leader.quote}
-                  </p>
-                </div>
-              </div>
-
-              {/* Action & Contact Channels */}
-              <div className="pt-6 border-t border-slate-100 dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="space-y-2">
-                  {/* Email Channel */}
-                  <a
-                    href={`mailto:${leader.email}`}
-                    className="group/mail inline-flex items-center gap-2.5 text-xs font-mono text-slate-600 dark:text-slate-400 hover:text-royal-500 dark:hover:text-cobalt-400 transition-colors"
-                    title={`Send email to ${leader.name}`}
-                  >
-                    <span className="w-6 h-6 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center shrink-0 group-hover/mail:border-royal-500 group-hover/mail:text-royal-500 dark:group-hover/mail:border-cobalt-400 dark:group-hover/mail:text-cobalt-400 transition-colors">
-                      <Mail className="w-3 h-3" />
-                    </span>
-                    <span className="truncate">{leader.email}</span>
-                  </a>
-
-                  {/* Facebook Channel */}
-                  <a
-                    href={leader.facebookUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group/fb flex items-center gap-2.5 text-xs font-mono text-slate-600 dark:text-slate-400 hover:text-royal-500 dark:hover:text-cobalt-400 transition-colors"
-                    title={`Open Facebook profile for ${leader.facebookName}`}
-                  >
-                    <span className="w-6 h-6 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center shrink-0 group-hover/fb:border-royal-500 group-hover/fb:text-royal-500 dark:group-hover/fb:border-cobalt-400 dark:group-hover/fb:text-cobalt-400 transition-colors">
-                      <Facebook className="w-3 h-3" />
-                    </span>
-                    <span className="truncate font-semibold">{leader.facebookName}</span>
-                  </a>
-                </div>
-
-                <button
-                  onClick={() => {
-                    setSelectedPastor(leader.name);
-                    setCounselingModalOpen(true);
-                  }}
-                  className="px-4 py-2 bg-royal-500 hover:bg-royal-600 dark:bg-cobalt-500 dark:hover:bg-cobalt-400 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 self-start sm:self-center shrink-0"
-                >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>Contact</span>
-                </button>
-              </div>
-            </div>
+              leader={leader}
+              onContact={(name) => {
+                setSelectedPastor(name);
+                setCounselingModalOpen(true);
+              }}
+            />
           ))}
         </div>
       </div>

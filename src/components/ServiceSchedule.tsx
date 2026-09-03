@@ -118,21 +118,34 @@ const ScheduleCard3D: React.FC<ScheduleCard3DProps> = ({
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsTouchDevice(window.matchMedia('(pointer: coarse)').matches);
+      setPrefersReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    }
+  }, []);
 
   // Mouse coords (-0.5 to 0.5)
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  // Responsive, noticeable 3D tilt angles for the carousel card
-  const springConfig = { stiffness: 220, damping: 20, mass: 0.6 };
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [14, -14]), springConfig);
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-16, 16]), springConfig);
+  // Responsive, noticeable 3D tilt angles: maximum 8–10° (9° calibrated)
+  const springConfig = { stiffness: 240, damping: 22, mass: 0.65 };
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [9, -9]), springConfig);
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-9, 9]), springConfig);
+
+  // Dynamic floating shadow shifting in opposition to tilt
+  const shadowX = useSpring(useTransform(x, [-0.5, 0.5], [14, -14]), springConfig);
+  const shadowY = useSpring(useTransform(y, [-0.5, 0.5], [14, -14]), springConfig);
 
   // Dynamic cursor spotlight position for unclicked card
   const [cursorPos, setCursorPos] = useState({ x: 50, y: 50 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    if (isTouchDevice || prefersReducedMotion || !cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const relX = (e.clientX - rect.left) / rect.width;
     const relY = (e.clientY - rect.top) / rect.height;
@@ -142,11 +155,13 @@ const ScheduleCard3D: React.FC<ScheduleCard3DProps> = ({
   };
 
   const handleMouseEnter = () => {
+    if (isTouchDevice || prefersReducedMotion) return;
     setIsHovered(true);
     onHoverChange(true);
   };
 
   const handleMouseLeave = () => {
+    if (isTouchDevice || prefersReducedMotion) return;
     setIsHovered(false);
     onHoverChange(false);
     x.set(0);
@@ -154,8 +169,20 @@ const ScheduleCard3D: React.FC<ScheduleCard3DProps> = ({
     setCursorPos({ x: 50, y: 50 });
   };
 
+  // Subtle static floating animation on mobile
+  const mobileFloatingAnimation =
+    isTouchDevice && !prefersReducedMotion
+      ? {
+          y: [0, -6, 0],
+          transition: { duration: 4.5, repeat: Infinity, ease: 'easeInOut' as const },
+        }
+      : {
+          y: isHovered ? -10 : 0,
+          scale: isHovered ? 1.025 : 1,
+        };
+
   return (
-    <div style={{ perspective: 1200 }} className="h-full w-full select-none">
+    <div style={{ perspective: 1000 }} className="h-full w-full select-none">
       <motion.div
         ref={cardRef}
         role="button"
@@ -171,15 +198,15 @@ const ScheduleCard3D: React.FC<ScheduleCard3DProps> = ({
             onExpand(service);
           }
         }}
-        animate={{
-          y: isHovered ? -12 : 0,
-          scale: isHovered ? 1.03 : 1,
-        }}
+        animate={mobileFloatingAnimation}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         style={{
-          rotateX,
-          rotateY,
+          rotateX: prefersReducedMotion ? 0 : rotateX,
+          rotateY: prefersReducedMotion ? 0 : rotateY,
           transformStyle: 'preserve-3d',
+          boxShadow: isHovered
+            ? `${shadowX.get()}px ${shadowY.get() + 24}px 40px -6px rgba(0,0,0,0.4), 0 0 20px -3px rgba(37,99,235,0.2)`
+            : '0 10px 25px -5px rgba(0,0,0,0.2)',
         }}
         className={`group relative w-full aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer border transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-royal-500/50 ${isToday
           ? 'border-royal-500/70 dark:border-cobalt-400/80 shadow-[0_15px_35px_-5px_rgba(59,130,246,0.4)]'

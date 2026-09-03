@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Image as ImageIcon } from 'lucide-react';
 import { GlassLogoBadge } from './ui/GlassLogoBadge';
+import { AnnouncementModal3D } from './ui/AnnouncementModal3D';
 import churchLogo from '../assets/logo-hd.png';
 import knowTheGospelPoster from '../assets/adelphoi-know-the-gospel.png';
 
@@ -388,91 +388,22 @@ export const CoreGroupsSection: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      {/* Poster Lightbox Modal */}
+      {/* Poster Lightbox Modal with 3D Interactive Tilt */}
       <AnimatePresence>
         {selectedPoster && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex min-h-full items-center justify-center p-3 sm:p-6 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedPoster(null)}
-              className="fixed inset-0 bg-slate-950/70 dark:bg-black/85 backdrop-blur-md"
+              className="fixed inset-0 bg-slate-950/75 dark:bg-black/85 backdrop-blur-md"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl ambient-card rounded-3xl p-8 sm:p-10 z-10 my-8 overflow-hidden max-h-[90vh] overflow-y-auto"
-            >
-              <div className="flex items-center justify-between pb-5 mb-6 border-b border-slate-100 dark:border-white/5">
-                <div>
-                  <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
-                    Event Poster | {activeGroup.name}
-                  </span>
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 uppercase">
-                    {selectedPoster.title}
-                  </h3>
-                </div>
-                <button
-                  onClick={() => setSelectedPoster(null)}
-                  className="w-9 h-9 rounded-full bg-slate-100 dark:bg-obsidian-800 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors shrink-0"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Poster Image or Clean Visual Placeholder */}
-              {selectedPoster.image ? (
-                <div className="relative w-full rounded-2xl overflow-hidden bg-slate-950 mb-6 border border-slate-800 shadow-lg flex items-center justify-center p-2 sm:p-4">
-                  <img
-                    src={selectedPoster.image}
-                    alt={selectedPoster.title}
-                    className="w-auto max-w-full max-h-[65vh] object-contain rounded-xl mx-auto shadow-2xl"
-                  />
-                </div>
-              ) : (
-                <div className="w-full rounded-2xl border border-dashed border-slate-300 dark:border-white/10 bg-slate-50/70 dark:bg-white/[0.02] p-10 sm:p-12 flex flex-col items-center justify-center text-center mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-royal-500/10 dark:bg-cobalt-400/10 text-royal-500 dark:text-cobalt-400 flex items-center justify-center mb-3">
-                    <ImageIcon className="w-7 h-7" />
-                  </div>
-                  <h5 className="text-base font-bold text-slate-900 dark:text-white">
-                    Official Event Poster
-                  </h5>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm font-mono">
-                    Official event poster graphic will be published here soon
-                  </p>
-                </div>
-              )}
-
-              {/* Event Details Card */}
-              <div className="p-6 bg-slate-900 text-white rounded-2xl space-y-5 relative overflow-hidden">
-                <div className="space-y-1">
-                  <h4 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
-                    {selectedPoster.title}
-                  </h4>
-                  <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
-                    {selectedPoster.subtitle}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800 font-mono text-xs">
-                  <div>
-                    <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Date & Time</span>
-                    <span className="font-bold text-white block">{selectedPoster.date}</span>
-                    <span className="text-slate-400 text-[10px] block">{selectedPoster.time}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Venue</span>
-                    <span className="font-bold text-white block">{selectedPoster.venue}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Theme Scripture</span>
-                    <span className="font-bold text-royal-400 block">{selectedPoster.scripture}</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+            <AnnouncementModal3D
+              poster={selectedPoster}
+              groupName={activeGroup.name}
+              onClose={() => setSelectedPoster(null)}
+            />
           </div>
         )}
       </AnimatePresence>
