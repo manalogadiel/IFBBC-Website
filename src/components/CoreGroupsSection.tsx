@@ -61,7 +61,7 @@ export const CoreGroupsSection: React.FC = () => {
           scripture: '',
           themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
           tag: 'Seminar',
-          image: '/music-beyond.png',
+          image: '/music-beyond.jpg',
         }
       ],
     },
@@ -112,7 +112,7 @@ export const CoreGroupsSection: React.FC = () => {
           scripture: '',
           themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
           tag: 'Seminar',
-          image: '/music-beyond.png',
+          image: '/music-beyond.jpg',
         }
       ],
     },
@@ -130,38 +130,17 @@ export const CoreGroupsSection: React.FC = () => {
       accentHex: '#3b82f6',
       posters: [
         {
-          id: 'caya-summit',
-          title: 'CAYA WORKPLACE & FAITH SUMMIT',
-          subtitle: 'Vocation as Calling: Excellence, Ethics & the Kingdom',
-          date: 'Date To Be Announced',
-          time: 'Full Day',
-          venue: 'IFBBC Campus',
-          scripture: 'Colossians 3:23-24',
-          themeColor: 'from-cyan-500/20 to-blue-500/10 text-cyan-500',
-          tag: 'Annual Conference',
-        },
-        {
-          id: 'caya-table',
-          title: 'THE FRIDAY ROUNDTABLE: ETHICS & APOLOGETICS',
-          subtitle: 'Navigating Culture, Career Ambition & Christian Dating',
-          date: 'First & Third Fridays',
-          time: '7:00 PM – 9:00 PM',
-          venue: 'IFBBC Fellowship Hall',
-          scripture: '1 Peter 3:15',
-          themeColor: 'from-emerald-500/20 to-teal-500/10 text-emerald-400',
-          tag: 'Bi-Weekly Forum',
-        },
-        {
-          id: 'caya-retreat',
-          title: 'CAYA LEADERSHIP WEEKEND RETREAT',
-          subtitle: 'Rest, Spiritual Renewal & Long-term Vision Alignment',
-          date: 'Date To Be Announced',
-          time: 'Weekend Getaway',
-          venue: 'Venue To Be Announced',
-          scripture: 'Proverbs 3:5-6',
-          themeColor: 'from-amber-500/20 to-yellow-500/10 text-amber-400',
-          tag: 'Rest & Retreat',
-        },
+          id: 'music-beyond',
+          title: 'Music & Beyond',
+          subtitle: 'Worship Ministry Seminar',
+          date: 'September 13, 2026',
+          time: '2:00 PM',
+          venue: 'IFBBC',
+          scripture: '',
+          themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
+          tag: 'Seminar',
+          image: '/music-beyond.jpg',
+        }
       ],
     },
     {
@@ -187,7 +166,7 @@ export const CoreGroupsSection: React.FC = () => {
           scripture: '',
           themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
           tag: 'Seminar',
-          image: '/music-beyond.png',
+          image: '/music-beyond.jpg',
         }
       ],
     },
@@ -214,7 +193,7 @@ export const CoreGroupsSection: React.FC = () => {
           scripture: '',
           themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
           tag: 'Seminar',
-          image: '/music-beyond.png',
+          image: '/music-beyond.jpg',
         }
       ],
     },
@@ -346,7 +325,7 @@ export const CoreGroupsSection: React.FC = () => {
             <div>
               <div className="mb-8">
                 <h4 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                  {activeGroup.name} Event Poster Gallery
+                  {activeGroup.name} Event Poster Announcements
                 </h4>
               </div>
 
@@ -429,7 +408,7 @@ export const CoreGroupsSection: React.FC = () => {
               <div className="flex items-center justify-between pb-5 mb-6 border-b border-slate-100 dark:border-white/5">
                 <div>
                   <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block">
-                    Official Event Poster // {activeGroup.name}
+                    Event Poster | {activeGroup.name}
                   </span>
                   <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 uppercase">
                     {selectedPoster.title}

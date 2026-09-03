@@ -184,8 +184,8 @@ const ScheduleCard3D: React.FC<ScheduleCard3DProps> = ({
           transformStyle: 'preserve-3d',
         }}
         className={`group relative w-full aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer border transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-royal-500/50 ${isToday
-            ? 'border-royal-500/70 dark:border-cobalt-400/80 shadow-[0_15px_35px_-5px_rgba(59,130,246,0.4)]'
-            : 'border-slate-200/80 dark:border-white/10 hover:border-royal-500/60 dark:hover:border-cobalt-400/60 hover:shadow-[0_20px_45px_rgba(0,0,0,0.35)]'
+          ? 'border-royal-500/70 dark:border-cobalt-400/80 shadow-[0_15px_35px_-5px_rgba(59,130,246,0.4)]'
+          : 'border-slate-200/80 dark:border-white/10 hover:border-royal-500/60 dark:hover:border-cobalt-400/60 hover:shadow-[0_20px_45px_rgba(0,0,0,0.35)]'
           }`}
       >
         {/* Full Landscape Event Poster */}
@@ -227,41 +227,29 @@ const ScheduleCard3D: React.FC<ScheduleCard3DProps> = ({
           style={{ transform: 'translateZ(26px)' }}
           className="relative z-[2] p-4 sm:p-5 md:p-6 h-full flex flex-col justify-between"
         >
-          {/* Top Row: Day & Time Pill + Today Badge */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/15 text-white shadow-sm">
-              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-royal-400 dark:text-cobalt-400">
-                {service.day}
-              </span>
-              <span className="font-mono text-[11px] font-bold text-slate-200">
-                {service.time}
-              </span>
-            </div>
-
-            {isToday ? (
+          {/* Top Row: Today Badge if active (time on top and weekly removed) */}
+          <div className="flex items-center justify-end min-h-[26px]">
+            {isToday && (
               <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-royal-500 text-white font-mono text-[10px] font-black uppercase tracking-widest shadow-lg animate-pulse">
                 Today
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-white/80 font-mono text-[10px] font-semibold uppercase tracking-wider">
-                {service.frequency}
               </span>
             )}
           </div>
 
-          {/* Bottom Row: Title & Location / Expand */}
-          <div className="space-y-1 sm:space-y-1.5">
-            <h3 className="text-lg sm:text-xl font-black text-white tracking-tight uppercase line-clamp-1 group-hover:text-sky-300 transition-colors duration-300">
+          {/* Bottom Content: Name & Time (Without Border, Location Removed) */}
+          <div className="space-y-1">
+            <h3 className="text-lg sm:text-xl font-black text-white tracking-tight uppercase line-clamp-1 group-hover:text-sky-300 transition-colors duration-300 drop-shadow-md">
               {service.service}
             </h3>
 
-            <div className="flex items-center justify-between pt-1 text-slate-300 text-xs">
-              <span className="flex items-center gap-1 text-[11px] truncate max-w-[70%]">
-                <MapPin className="w-3 h-3 text-sky-400 shrink-0" />
-                <span className="truncate">{service.location}</span>
+            <div className="flex items-center justify-between text-xs pt-0.5">
+              <span className="font-mono text-[11px] sm:text-xs text-slate-200 drop-shadow-sm flex items-center gap-1.5">
+                <span className="text-royal-400 dark:text-cobalt-400 font-bold uppercase">{service.day}</span>
+                <span className="text-slate-400 opacity-70">•</span>
+                <span className="font-medium text-slate-100">{service.time}</span>
               </span>
 
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-400 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-2.5 py-0.5 rounded-full shadow-sm">
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-2.5 py-0.5 rounded-full shadow-sm">
                 <span>Expand</span>
                 <Maximize2 className="w-2.5 h-2.5" />
               </span>
@@ -330,10 +318,10 @@ const ExpandedPosterInteractive: React.FC<ExpandedPosterInteractiveProps> = ({
           transformStyle: 'preserve-3d',
         }}
         className={`group relative w-full aspect-[16/9] rounded-2xl overflow-hidden border transition-all duration-700 cursor-crosshair ${isHovered
-            ? 'shadow-[0_25px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(56,189,248,0.3)] border-sky-400/40'
-            : isToday
-              ? 'shadow-[0_15px_35px_rgba(0,0,0,0.3),0_0_30px_rgba(59,130,246,0.3)] border-royal-500/50'
-              : 'shadow-xl border-slate-200/80 dark:border-white/10'
+          ? 'shadow-[0_25px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(56,189,248,0.3)] border-sky-400/40'
+          : isToday
+            ? 'shadow-[0_15px_35px_rgba(0,0,0,0.3),0_0_30px_rgba(59,130,246,0.3)] border-royal-500/50'
+            : 'shadow-xl border-slate-200/80 dark:border-white/10'
           }`}
       >
         {/* High-Resolution Landscape Poster Image with Slow Cinematic Scale */}
@@ -513,10 +501,10 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit })
                       setExpandedService(s);
                     }}
                     className={`group cursor-pointer transition-all duration-300 ${isTodayEvent
-                        ? 'bg-royal-500/15 dark:bg-cobalt-500/20 shadow-[0_0_20px_-3px_rgba(59,130,246,0.35)] ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 rounded-xl'
-                        : isSelected
-                          ? 'bg-slate-100/80 dark:bg-obsidian-800/80 rounded-xl'
-                          : 'hover:bg-slate-100/60 dark:hover:bg-obsidian-800/60 hover:-translate-y-0.5'
+                      ? 'bg-royal-500/15 dark:bg-cobalt-500/20 shadow-[0_0_20px_-3px_rgba(59,130,246,0.35)] ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 rounded-xl'
+                      : isSelected
+                        ? 'bg-slate-100/80 dark:bg-obsidian-800/80 rounded-xl'
+                        : 'hover:bg-slate-100/60 dark:hover:bg-obsidian-800/60 hover:-translate-y-0.5'
                       }`}
                   >
                     <td className="py-3 px-3 sm:px-4 font-bold font-mono text-left whitespace-nowrap first:rounded-l-xl">
@@ -551,9 +539,6 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit })
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs uppercase tracking-wider font-bold text-slate-900 dark:text-white">
                 Interactive Schedule Gallery
-              </span>
-              <span className="text-xs font-mono text-slate-400 dark:text-slate-500">
-                (3 Visible Cards • Click to Expand)
               </span>
             </div>
 
@@ -631,8 +616,8 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit })
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
                 className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${currentIndex === idx
-                    ? 'w-8 bg-royal-500 dark:bg-cobalt-400 shadow-sm'
-                    : 'w-2 bg-slate-300 dark:bg-obsidian-700 hover:bg-slate-400'
+                  ? 'w-8 bg-royal-500 dark:bg-cobalt-400 shadow-sm'
+                  : 'w-2 bg-slate-300 dark:bg-obsidian-700 hover:bg-slate-400'
                   }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />
