@@ -8,6 +8,8 @@ export default defineConfig({
     port: 3000,
     open: false,
     watch: {
+      usePolling: true,
+      interval: 800,
       ignored: ['**/.agents/**', '**/dist/**', '**/node_modules/**', '**/*.mp4', '**/*.mov']
     }
   }

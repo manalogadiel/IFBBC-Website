@@ -666,7 +666,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPrayer, onScrollToSermons }) =
       </div>
 
       {/* ── Foreground Interactive Content: Scrolls normally over pinned canvas background ── */}
-      <div className="relative z-10 -mt-[100vh] w-full pt-28 sm:pt-32 md:pt-32 pb-24 sm:pb-32 lg:pb-40">
+      <div className="relative z-10 -mt-[100vh] w-full pt-24 sm:pt-28 md:pt-28 pb-10 sm:pb-14 md:pb-16">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 w-full">
           {/* Top Architectural Metadata Strip */}
           <motion.div

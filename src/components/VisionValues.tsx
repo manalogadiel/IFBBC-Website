@@ -263,10 +263,10 @@ export const VisionValues: React.FC = () => {
   const currentVal = coreValues[currentIndex];
 
   return (
-    <section id="vision-values" className="pt-16 pb-20 md:pt-24 md:pb-32 scroll-mt-24 relative overflow-hidden select-none bg-chalk-50 dark:bg-obsidian-950 border-t border-slate-200/60 dark:border-white/5">
+    <section id="vision-values" className="pt-6 pb-12 sm:pt-8 sm:pb-16 md:pt-10 md:pb-20 scroll-mt-20 relative overflow-hidden select-none bg-chalk-50 dark:bg-obsidian-950 border-t border-slate-200/60 dark:border-white/5">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 md:mb-16 gap-4 sm:gap-6 md:gap-8 pb-6 sm:pb-8 md:pb-12 border-b border-slate-200/80 dark:border-white/5">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 md:mb-10 gap-4 sm:gap-6 pb-4 sm:pb-6 border-b border-slate-200/80 dark:border-white/5">
           <div>
             <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block mb-2">
               Foundation
@@ -281,7 +281,7 @@ export const VisionValues: React.FC = () => {
         </div>
 
         {/* Vision & Purpose Dual Architectural Banners + Full-Width Visual Showcase */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 mb-8 sm:mb-12 md:mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 mb-6 sm:mb-8 md:mb-10">
           {/* Vision Banner — 6 Columns */}
           <div className="lg:col-span-6 ambient-card rounded-3xl p-8 sm:p-10 space-y-5 flex flex-col justify-between">
             <div className="space-y-3">

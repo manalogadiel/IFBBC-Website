@@ -273,7 +273,7 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
   }
 
   return (
-    <section id="give" className="pt-12 pb-16 md:pt-16 md:pb-24 scroll-mt-24 relative overflow-hidden bg-slate-100/40 dark:bg-obsidian-900/30">
+    <section id="give" className="pt-6 pb-12 sm:pt-8 sm:pb-16 md:pt-10 md:pb-20 scroll-mt-20 relative overflow-hidden bg-slate-100/40 dark:bg-obsidian-900/30">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           <div className="lg:col-span-6 space-y-6">

@@ -52,16 +52,17 @@ export const CoreGroupsSection: React.FC = () => {
       accentHex: '#10b981',
       posters: [
         {
-          id: 'vbs-2026',
-          title: 'VACATION BIBLE SCHOOL',
-          subtitle: 'The Champions of Faith: Running the Race with Jesus',
-          date: 'Date To Be Announced',
-          time: 'Morning Session',
-          venue: 'IFBBC Campus',
-          scripture: 'Hebrews 12:1-2',
-          themeColor: 'from-amber-500/20 to-orange-500/10 text-amber-500',
-          tag: 'Annual Major Event',
-        },
+          id: 'music-beyond',
+          title: 'Music & Beyond',
+          subtitle: 'Worship Ministry Seminar',
+          date: 'September 13, 2026',
+          time: '2:00 PM',
+          venue: 'IFBBC',
+          scripture: '',
+          themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
+          tag: 'Seminar',
+          image: '/music-beyond.png',
+        }
       ],
     },
     {
@@ -100,8 +101,19 @@ export const CoreGroupsSection: React.FC = () => {
           themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
           tag: 'Weekly Fellowship',
           image: '/campus-plus.png',
+        },
+        {
+          id: 'music-beyond',
+          title: 'Music & Beyond',
+          subtitle: 'Worship Ministry Seminar',
+          date: 'September 13, 2026',
+          time: '2:00 PM',
+          venue: 'IFBBC',
+          scripture: '',
+          themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
+          tag: 'Seminar',
+          image: '/music-beyond.png',
         }
-
       ],
     },
     {
@@ -166,38 +178,17 @@ export const CoreGroupsSection: React.FC = () => {
       accentHex: '#64748b',
       posters: [
         {
-          id: 'amen-breakfast',
-          title: 'A-MEN ANNUAL MEN’S CONVOCATION',
-          subtitle: 'Courageous Faith: Protecting, Providing & Pastoring the Home',
-          date: 'Date To Be Announced',
-          time: 'Morning to Afternoon',
-          venue: 'IFBBC Worship Hall',
-          scripture: '1 Corinthians 16:13',
-          themeColor: 'from-slate-700/30 to-slate-800/20 text-slate-300',
-          tag: 'Annual Convocation',
-        },
-        {
-          id: 'amen-prayer',
-          title: 'BAND OF BROTHERS: DAWN PRAYER & EXPOSITION',
-          subtitle: 'Fervent Intercession for Families, Church & Missions',
-          date: 'Every 1st Saturday of the Month',
-          time: '6:30 AM – 8:00 AM',
-          venue: 'IFBBC Campus',
-          scripture: '1 Timothy 2:8',
-          themeColor: 'from-blue-600/20 to-slate-700/10 text-royal-400',
-          tag: 'Monthly Prayer',
-        },
-        {
-          id: 'amen-service',
-          title: 'COMMUNITY HOME REPAIR & MERCY MISSION',
-          subtitle: 'Practical service projects for the community',
-          date: 'Quarterly Saturday Project',
-          time: '7:00 AM – 1:00 PM',
-          venue: 'Bauan Community Area',
-          scripture: 'Galatians 6:10',
-          themeColor: 'from-amber-600/20 to-orange-600/10 text-amber-500',
-          tag: 'Mercy Action',
-        },
+          id: 'music-beyond',
+          title: 'Music & Beyond',
+          subtitle: 'Worship Ministry Seminar',
+          date: 'September 13, 2026',
+          time: '2:00 PM',
+          venue: 'IFBBC',
+          scripture: '',
+          themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
+          tag: 'Seminar',
+          image: '/music-beyond.png',
+        }
       ],
     },
     {
@@ -214,38 +205,17 @@ export const CoreGroupsSection: React.FC = () => {
       accentHex: '#ec4899',
       posters: [
         {
-          id: 'womisso-conference',
-          title: 'WOMISSO ANNUAL WOMEN’S CONFERENCE',
-          subtitle: 'Clothed with Strength & Dignity: Joy in Holy Living',
-          date: 'Date To Be Announced',
-          time: 'Full Day',
-          venue: 'IFBBC Campus',
-          scripture: 'Proverbs 31:25-30',
-          themeColor: 'from-rose-500/20 to-pink-500/10 text-rose-400',
-          tag: 'Annual Conference',
-        },
-        {
-          id: 'womisso-titus2',
-          title: 'TITUS 2 MENTORSHIP & COTTAGE TEA',
-          subtitle: 'Older Women Teaching the Younger in Grace and Wisdom',
-          date: 'Every 3rd Saturday',
-          time: '2:30 PM – 4:30 PM',
-          venue: 'IFBBC Campus',
-          scripture: 'Titus 2:3-5',
-          themeColor: 'from-purple-500/20 to-pink-500/10 text-purple-400',
-          tag: 'Mentorship Tea',
-        },
-        {
-          id: 'womisso-care',
-          title: 'MOTHER’S BASKET OF MERCY PROJECT',
-          subtitle: 'Assembling food and care packages for mothers in need',
-          date: 'Monthly Community Initiative',
-          time: '1:00 PM – 4:00 PM',
-          venue: 'IFBBC Campus',
-          scripture: 'Acts 9:36',
-          themeColor: 'from-emerald-500/20 to-teal-500/10 text-emerald-400',
-          tag: 'Mercy Ministry',
-        },
+          id: 'music-beyond',
+          title: 'Music & Beyond',
+          subtitle: 'Worship Ministry Seminar',
+          date: 'September 13, 2026',
+          time: '2:00 PM',
+          venue: 'IFBBC',
+          scripture: '',
+          themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
+          tag: 'Seminar',
+          image: '/music-beyond.png',
+        }
       ],
     },
   ];
@@ -253,10 +223,10 @@ export const CoreGroupsSection: React.FC = () => {
   const activeGroup = coreGroups.find((g) => g.id === activeGroupId) || coreGroups[0];
 
   return (
-    <section id="core-groups" className="pt-12 pb-16 md:pt-16 md:pb-24 scroll-mt-24 relative overflow-hidden bg-slate-100/50 dark:bg-obsidian-900/40">
+    <section id="core-groups" className="pt-6 pb-12 sm:pt-8 sm:pb-16 md:pt-10 md:pb-20 scroll-mt-20 relative overflow-hidden bg-slate-100/50 dark:bg-obsidian-900/40">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 md:mb-16 gap-4 sm:gap-6 md:gap-8 pb-6 sm:pb-8 md:pb-12 border-b border-slate-200/80 dark:border-white/5">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 md:mb-10 gap-4 sm:gap-6 pb-4 sm:pb-6 border-b border-slate-200/80 dark:border-white/5">
           <div>
             <span className="font-mono text-xs uppercase tracking-widest text-royal-500 dark:text-cobalt-400 font-bold block mb-2">
               GET INVOLVED
@@ -271,7 +241,7 @@ export const CoreGroupsSection: React.FC = () => {
         </div>
 
         {/* 5 Core Group Selector Tabs */}
-        <div className="flex flex-wrap items-center gap-3 mb-12">
+        <div className="flex flex-wrap items-center gap-3 mb-8">
           {coreGroups.map((group) => {
             const isActive = group.id === activeGroupId;
             return (
