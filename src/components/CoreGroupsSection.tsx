@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Image as ImageIcon } from 'lucide-react';
 import { GlassLogoBadge } from './ui/GlassLogoBadge';
 import churchLogo from '../assets/logo-hd.png';
+import knowTheGospelPoster from '../assets/adelphoi-know-the-gospel.png';
 
 interface EventPoster {
   id: string;
@@ -86,7 +87,20 @@ export const CoreGroupsSection: React.FC = () => {
           scripture: '1 Cor 15:1-4',
           themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
           tag: 'Monthly Fellowship',
+          image: knowTheGospelPoster,
         },
+        {
+          id: 'campus',
+          title: 'Campus Plus',
+          subtitle: 'Students of Batangas Fellowship',
+          date: 'Every Friday',
+          time: '5:00 PM',
+          venue: 'Community Park, Kumintang, Batangas',
+          scripture: 'As per Devotion Leader',
+          themeColor: 'from-royal-500/20 to-blue-600/10 text-royal-500',
+          tag: 'Weekly Fellowship',
+          image: '/campus-plus.png',
+        }
 
       ],
     },
@@ -375,24 +389,37 @@ export const CoreGroupsSection: React.FC = () => {
                     onClick={() => setSelectedPoster(poster)}
                     className="ambient-card rounded-3xl p-8 space-y-5 cursor-pointer group relative overflow-hidden"
                   >
-                    {/* Decorative Top Accent */}
-                    <div className={`p-4 rounded-2xl bg-gradient-to-br ${poster.themeColor} space-y-1`}>
-                      <span className="font-mono text-xs block font-bold text-slate-900 dark:text-white">
-                        {poster.date}
-                      </span>
-                      <span className="font-mono text-[11px] block font-medium text-slate-600 dark:text-slate-300">
-                        {poster.time}
-                      </span>
-                    </div>
-
-                    {/* Poster Thumbnail (shown when image is provided) */}
-                    {poster.image && (
-                      <div className="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-950">
+                    {/* Poster Thumbnail (shown when image is provided) with Date & Time overlay */}
+                    {poster.image ? (
+                      <div className="relative w-full aspect-[4/5] sm:aspect-[3/4] max-h-72 rounded-2xl overflow-hidden bg-slate-950 border border-slate-200/50 dark:border-white/10 shadow-md">
                         <img
                           src={poster.image}
                           alt={poster.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
                         />
+                        {/* Gradient overlay for readability */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/30 pointer-events-none" />
+
+                        {/* Date & Time Text Over the Image */}
+                        <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 z-10 space-y-0.5">
+                          <span className="font-mono text-xs block font-bold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
+                            {poster.date}
+                          </span>
+                          <span className="font-mono text-[11px] block font-medium text-slate-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+                            {poster.time}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Decorative Top Accent for posters without image */
+                      <div className={`p-4 rounded-2xl bg-gradient-to-br ${poster.themeColor} space-y-1`}>
+                        <span className="font-mono text-xs block font-bold text-slate-900 dark:text-white">
+                          {poster.date}
+                        </span>
+                        <span className="font-mono text-[11px] block font-medium text-slate-600 dark:text-slate-300">
+                          {poster.time}
+                        </span>
                       </div>
                     )}
 
@@ -448,11 +475,11 @@ export const CoreGroupsSection: React.FC = () => {
 
               {/* Poster Image or Clean Visual Placeholder */}
               {selectedPoster.image ? (
-                <div className="relative w-full rounded-2xl overflow-hidden bg-slate-950 mb-6 border border-slate-800 shadow-lg">
+                <div className="relative w-full rounded-2xl overflow-hidden bg-slate-950 mb-6 border border-slate-800 shadow-lg flex items-center justify-center p-2 sm:p-4">
                   <img
                     src={selectedPoster.image}
                     alt={selectedPoster.title}
-                    className="w-full max-h-[460px] object-contain mx-auto"
+                    className="w-auto max-w-full max-h-[65vh] object-contain rounded-xl mx-auto shadow-2xl"
                   />
                 </div>
               ) : (
