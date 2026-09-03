@@ -145,8 +145,6 @@ export const ActivePillarModal: React.FC<ActivePillarModalProps> = ({
     };
   }, [pillar, allPillars, onClose, onSelect, handlePointerMove, handlePointerLeave, updatePhysics]);
 
-  const currentIndex = allPillars.findIndex((p) => p.title === pillar.title);
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -196,12 +194,6 @@ export const ActivePillarModal: React.FC<ActivePillarModalProps> = ({
             }}
           />
 
-          {/* Top Pill Indicator */}
-          <div className="absolute top-4 left-4 sm:top-5 sm:left-5 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/25 text-white font-mono text-[11px] font-bold uppercase tracking-wider shadow-lg">
-            <span className="w-2 h-2 rounded-full bg-cobalt-400 animate-pulse" />
-            <span>Active Pillar</span>
-            <span className="text-cobalt-400">#{currentIndex + 1}</span>
-          </div>
 
           {/* Bottom Title on Mobile preview */}
           <div className="md:hidden absolute bottom-4 left-4 right-4 z-10">
@@ -235,26 +227,13 @@ export const ActivePillarModal: React.FC<ActivePillarModalProps> = ({
               {pillar.description}
             </p>
 
-            <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 space-y-1">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-cobalt-400 font-bold block">
-                Church Expression
-              </span>
-              <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                Anchored in the Word of God to build a spiritually vibrant, discipleship-multiplying church in Bauan, Batangas.
-              </p>
-            </div>
           </div>
 
           {/* Quick Switcher across all 6 Pillars with Individual Backgrounds */}
           <div className="pt-4 border-t border-white/10 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
-                All 6 Pillars
-              </span>
-              <span className="font-mono text-[10px] text-slate-500 hidden sm:inline">
-                ← → to cycle • Esc
-              </span>
-            </div>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-slate-400 block">
+              All 6 Pillars
+            </span>
 
             <div className="grid grid-cols-3 gap-1.5 font-mono text-[10px]">
               {allPillars.map((p) => {
