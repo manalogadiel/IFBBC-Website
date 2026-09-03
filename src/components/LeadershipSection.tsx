@@ -419,7 +419,7 @@ export const LeadershipSection: React.FC = () => {
       name: 'Ptr. Edwin Sebastian Lualhati',
       role: 'Youth Pastor',
       title: 'Youth Pastor',
-      demographic: 'Adelphoi Youth, Campus Outreach & Young Adults',
+      demographic: 'Adelphoi Adviser, Campus, & Outreach Ministry',
       bio: 'Ptr. Edwin Sebastian Lualhati leads the NextGen ministries of IFBBC, passionate about raising a generation of young people who are unashamed of the Gospel, biblically grounded, and active in ministry leadership.',
       focus: ['Adelphoi Youth Fellowship', 'Collegiate & High School Discipleship', 'Youth Music & Worship', 'Evangelistic Camps'],
       quote: '“Discipling youth and young people to be unashamed of the Gospel, rooted in the Scriptures, and shining as lights in their generation.” — Romans 1:16',

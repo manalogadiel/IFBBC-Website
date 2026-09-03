@@ -48,8 +48,8 @@ export const CoreGroupsSection: React.FC = () => {
       schedule: 'Every Sunday - 9:00 AM',
       targetAges: 'Toddlers to Grade 6',
       coordinator: 'Tr. Ericah S. Lualhati',
-      logo: churchLogo,
-      accentHex: '#10b981',
+      logo: '/logo-kiddos.png',
+      accentHex: '#0284c7',
       posters: [
         {
           id: 'music-beyond',
@@ -126,8 +126,8 @@ export const CoreGroupsSection: React.FC = () => {
       schedule: 'Bi-Weekly Friday Dinners @ 7:00 PM & Sunday 9:00 AM Life Group',
       targetAges: 'Ages 22–35 (Single Professionals & Career Starters)',
       coordinator: 'Engr. Atreo Xyrus I. Gamilla',
-      logo: churchLogo,
-      accentHex: '#3b82f6',
+      logo: '/logo-caya.png',
+      accentHex: '#2563eb',
       posters: [
         {
           id: 'music-beyond',
@@ -153,8 +153,8 @@ export const CoreGroupsSection: React.FC = () => {
       schedule: 'Monthly Saturday Breakfast @ 7:00 AM & Weekly Band of Brothers',
       targetAges: 'Men (30+, Married & Family Heads)',
       coordinator: 'Bro. Ivan Lendl I. Gamilla',
-      logo: churchLogo,
-      accentHex: '#64748b',
+      logo: '/logo-amen.png',
+      accentHex: '#ea580c',
       posters: [
         {
           id: 'music-beyond',
@@ -180,8 +180,8 @@ export const CoreGroupsSection: React.FC = () => {
       schedule: 'Every 2nd Saturday Fellowship @ 2:00 PM & Weekly Prayer Circle',
       targetAges: 'Women (30+, Married, Mothers & Seniors)',
       coordinator: 'Sis. Raquel Ilagan',
-      logo: churchLogo,
-      accentHex: '#ec4899',
+      logo: '/logo-womisso.png',
+      accentHex: '#a855f7',
       posters: [
         {
           id: 'music-beyond',
