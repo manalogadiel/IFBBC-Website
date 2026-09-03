@@ -8,9 +8,7 @@ import {
   X,
   Pause,
   Play,
-  Clock,
 } from 'lucide-react';
-import { MagneticButton } from './ui/MagneticButton';
 
 interface ServiceScheduleProps {
   onOpenVisit: (serviceTime?: string) => void;
@@ -57,7 +55,7 @@ const weeklyServices: WeeklyServiceItem[] = [
   {
     id: 'sun-prayer-fasting',
     day: 'Sunday',
-    time: '11:30 AM',
+    time: '10:00 AM',
     service: 'Prayer & Fasting Service (Quarterly)',
     category: 'Quarterly Consecration',
     description: 'A dedicated quarterly season of church-wide prayer, fasting, personal confession, spiritual renewal, and seeking God’s guidance for our mission fields and outreaches.',
@@ -236,7 +234,7 @@ const ScheduleCard3D: React.FC<ScheduleCard3DProps> = ({
             )}
           </div>
 
-          {/* Bottom Content: Name & Time (Without Border, Location Removed) */}
+          {/* Bottom Content: Name & Time */}
           <div className="space-y-1">
             <h3 className="text-lg sm:text-xl font-black text-white tracking-tight uppercase line-clamp-1 group-hover:text-sky-300 transition-colors duration-300 drop-shadow-md">
               {service.service}
@@ -245,13 +243,11 @@ const ScheduleCard3D: React.FC<ScheduleCard3DProps> = ({
             <div className="flex items-center justify-between text-xs pt-0.5">
               <span className="font-mono text-[11px] sm:text-xs text-slate-200 drop-shadow-sm flex items-center gap-1.5">
                 <span className="text-royal-400 dark:text-cobalt-400 font-bold uppercase">{service.day}</span>
-                <span className="text-slate-400 opacity-70">•</span>
                 <span className="font-medium text-slate-100">{service.time}</span>
               </span>
 
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-2.5 py-0.5 rounded-full shadow-sm">
-                <span>Expand</span>
-                <Maximize2 className="w-2.5 h-2.5" />
+              <span className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm flex items-center justify-center text-white shadow-sm opacity-0 group-hover:opacity-100 hover:scale-110 transition-all duration-300 shrink-0">
+                <Maximize2 className="w-3.5 h-3.5" />
               </span>
             </div>
           </div>
@@ -373,7 +369,7 @@ const ExpandedPosterInteractive: React.FC<ExpandedPosterInteractiveProps> = ({
   );
 };
 
-export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit }) => {
+export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _onOpenVisit }) => {
   // Determine today's day of week
   const todayDayName = useMemo(() => {
     return new Date().toLocaleDateString('en-US', { weekday: 'long' });
@@ -538,7 +534,7 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit })
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs uppercase tracking-wider font-bold text-slate-900 dark:text-white">
-                Interactive Schedule Gallery
+                Schedule Gallery
               </span>
             </div>
 
@@ -685,9 +681,8 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit })
                   {/* Schedule Meta Badges */}
                   <div className="flex flex-wrap items-center gap-2.5">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 font-mono text-xs font-bold uppercase tracking-wider border border-royal-500/20">
-                      <Clock className="w-3.5 h-3.5" />
                       <span>
-                        {expandedService.day} @ {expandedService.time}
+                        {expandedService.day} {expandedService.time}
                       </span>
                     </div>
 
@@ -708,21 +703,6 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit })
                   <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed text-pretty">
                     {expandedService.description}
                   </p>
-
-                  {/* Modal Action Buttons */}
-                  <div className="flex items-center justify-start pt-3 border-t border-slate-200/80 dark:border-white/10">
-                    <MagneticButton
-                      variant="primary"
-                      size="sm"
-                      onClick={() => {
-                        setExpandedService(null);
-                        onOpenVisit(expandedService.time);
-                      }}
-                    >
-                      <span>Plan to Attend</span>
-                      <MapPin className="w-3.5 h-3.5 ml-1" />
-                    </MagneticButton>
-                  </div>
                 </div>
               </motion.div>
             </div>
