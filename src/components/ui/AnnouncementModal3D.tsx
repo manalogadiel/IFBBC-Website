@@ -295,83 +295,85 @@ export const AnnouncementModal3D: React.FC<AnnouncementModal3DProps> = ({
         </motion.div>
       </div>
 
-      {/* ── Immersive Full Screen Event Poster Lightbox ── */}
+      {/* ── Immersive Full Screen Event Poster Lightbox (UI Pro Max) ── */}
       <AnimatePresence>
         {isPosterFullScreen && poster.image && (
-          <div className="fixed inset-0 z-[120] h-[100dvh] max-h-[100dvh] flex flex-col justify-between p-3 sm:p-6 overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsPosterFullScreen(false)}
-              className="fixed inset-0 bg-slate-950/95 dark:bg-black/95 backdrop-blur-xl cursor-zoom-out"
+              className="fixed inset-0 bg-slate-950/90 dark:bg-black/95 backdrop-blur-2xl cursor-zoom-out"
             />
 
-            {/* Top Bar */}
-            <div className="relative z-10 w-full max-w-4xl mx-auto flex items-center justify-between shrink-0 mb-2">
-              <div className="flex items-center gap-2.5 sm:gap-3">
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-royal-600/20 border border-royal-400/30 flex items-center justify-center text-royal-400 shrink-0">
-                  <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-royal-400 block">
-                    Event Poster | {groupName}
+            {/* Modal Content Container */}
+            <div className="relative z-10 w-full max-w-2xl my-auto flex flex-col items-center">
+              {/* Minimalist Top Bar */}
+              <div className="w-full flex items-center justify-between shrink-0 mb-3 px-1 sm:px-2">
+                <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 pr-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wider uppercase bg-royal-500/15 border border-royal-400/25 text-royal-400 dark:text-cobalt-400 shrink-0">
+                    {groupName}
                   </span>
-                  <h3 className="text-white font-black text-xs sm:text-base tracking-tight uppercase line-clamp-1">
+                  <h3 className="text-white font-bold text-sm sm:text-base tracking-tight truncate drop-shadow-sm">
                     {poster.title}
                   </h3>
                 </div>
+
+                {/* Single Clean Close Button (Redundant top download button removed) */}
+                <button
+                  type="button"
+                  onClick={() => setIsPosterFullScreen(false)}
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white/80 hover:text-white transition-all flex items-center justify-center backdrop-blur-md border border-white/15 shrink-0 cursor-pointer shadow-lg"
+                  aria-label="Close full screen"
+                  title="Close (Esc)"
+                >
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsPosterFullScreen(false)}
-                className="p-2 sm:p-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-white/10 shrink-0 cursor-pointer"
-                aria-label="Close full screen"
-                title="Close (Esc)"
-              >
-                <X className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-            </div>
-
-            {/* Central Full-Screen Poster Display */}
-            <div
-              className="relative z-10 flex-1 min-h-0 flex items-center justify-center py-2 sm:py-4 w-full"
-              onClick={() => setIsPosterFullScreen(false)}
-            >
+              {/* Central Full-Screen Poster Display with ambient backlight */}
               <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
+                initial={{ scale: 0.94, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+                exit={{ scale: 0.94, opacity: 0 }}
+                transition={{ type: 'spring', damping: 28, stiffness: 320 }}
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center max-w-[94vw] max-h-[68dvh] sm:max-h-[76dvh] shrink"
+                className="relative flex items-center justify-center w-full shrink"
               >
+                {/* Soft ambient color reflection */}
+                <div className="absolute -inset-4 bg-royal-500/20 blur-3xl -z-10 rounded-3xl opacity-60 pointer-events-none" />
+
                 <img
                   src={poster.image}
                   alt={poster.title}
-                  className="w-auto h-auto max-w-[92vw] sm:max-w-2xl max-h-[64dvh] sm:max-h-[72dvh] object-contain rounded-2xl shadow-2xl border border-white/10 select-none"
+                  className="w-auto h-auto max-w-[92vw] sm:max-w-xl max-h-[58dvh] sm:max-h-[66dvh] object-contain rounded-2xl shadow-2xl shadow-black/90 ring-1 ring-white/15 select-none"
                 />
               </motion.div>
-            </div>
 
-            {/* Bottom Controls Bar (Permanently visible across all mobile viewports) */}
-            <div className="relative z-10 w-full max-w-md mx-auto flex items-center justify-center gap-2.5 sm:gap-3 shrink-0 pt-2 pb-1">
-              <a
-                href={poster.image}
-                download={`${poster.title.replace(/\s+/g, '-')}-Poster`}
-                className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-royal-600 hover:bg-royal-500 text-white font-mono text-xs sm:text-sm font-bold flex items-center gap-2 shadow-lg transition-all"
+              {/* Bottom Floating Glass Action Dock */}
+              <motion.div
+                initial={{ y: 12, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.08, duration: 0.22 }}
+                className="inline-flex items-center p-1.5 rounded-full bg-slate-900/85 dark:bg-black/80 backdrop-blur-2xl border border-white/15 shadow-2xl shadow-black/80 gap-1.5 sm:gap-2 mt-3.5 sm:mt-4 shrink-0"
               >
-                <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span>Download Poster</span>
-              </a>
-              <button
-                type="button"
-                onClick={() => setIsPosterFullScreen(false)}
-                className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs sm:text-sm font-mono font-bold transition-colors border border-white/10 cursor-pointer"
-              >
-                Close Full Screen
-              </button>
+                <a
+                  href={poster.image}
+                  download={`${poster.title.replace(/\s+/g, '-')}-Poster`}
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-royal-600 via-royal-500 to-blue-600 hover:from-royal-500 hover:to-blue-500 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-royal-600/30 hover:shadow-royal-500/50 active:scale-95 transition-all"
+                >
+                  <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+                  <span>Download Poster</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setIsPosterFullScreen(false)}
+                  className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                >
+                  Close
+                </button>
+              </motion.div>
             </div>
           </div>
         )}

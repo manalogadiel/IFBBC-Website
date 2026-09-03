@@ -6,11 +6,11 @@ import { MagneticButton } from './ui/MagneticButton';
 import churchLogo from '../assets/logo-hd.png';
 
 interface NavbarProps {
-  onOpenVisit: () => void;
+  onOpenVisit?: () => void;
   onOpenPrayer: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit, onOpenPrayer }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit: _onOpenVisit, onOpenPrayer }) => {
   const { theme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -143,23 +143,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit, onOpenPrayer }) => 
               </AnimatePresence>
             </button>
 
-            {/* Prayer Wall Action Button */}
-            <button
-              type="button"
-              onClick={onOpenPrayer}
-              className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 hover:text-royal-500 dark:hover:text-cobalt-400 px-3 py-2 flex items-center transition-colors cursor-pointer whitespace-nowrap bg-slate-100/70 hover:bg-slate-200/70 dark:bg-obsidian-850 dark:hover:bg-obsidian-800 rounded-full"
-            >
-              <span>Prayer Wall</span>
-            </button>
-
-            {/* Plan a Visit Magnetic Action */}
+            {/* Prayer Wall Action Button (Primary Blue) */}
             <MagneticButton
               variant="primary"
               size="sm"
-              onClick={onOpenVisit}
+              onClick={onOpenPrayer}
             >
-              <span className="whitespace-nowrap">Plan a Visit</span>
-              <ArrowUpRight className="w-3.5 h-3.5 ml-0.5" />
+              <span className="whitespace-nowrap">Prayer Wall</span>
             </MagneticButton>
           </div>
 
@@ -214,20 +204,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit, onOpenPrayer }) => 
                   setMobileMenuOpen(false);
                   onOpenPrayer();
                 }}
-                className="w-full py-3.5 bg-royal-500/10 hover:bg-royal-500/20 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-colors"
-              >
-                <span>Open Community Prayer Wall</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenVisit();
-                }}
                 className="w-full py-4 bg-royal-500 hover:bg-royal-600 dark:bg-cobalt-500 dark:hover:bg-cobalt-400 text-white rounded-2xl text-xs font-bold uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
-                <span>Plan Your Sunday Visit</span>
-                <ArrowUpRight className="w-4 h-4" />
+                <span>Open Community Prayer Wall</span>
               </button>
             </div>
           </motion.div>

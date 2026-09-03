@@ -73,7 +73,7 @@ export const Footer: React.FC = () => {
                 <Youtube className="w-4 h-4" />
               </a>
               <a
-                href="mailto:iffbc2021@gmail.com"
+                href="mailto:ifbbc2021@gmail.com"
                 aria-label="Email"
                 className="w-9 h-9 rounded-full bg-white dark:bg-obsidian-850 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-royal-500 dark:hover:text-cobalt-400 shadow-sm transition-transform hover:scale-105"
               >
