@@ -35,69 +35,17 @@ export interface PrayerItem {
 
 const DEFAULT_PRAYERS: PrayerItem[] = [
   {
-    id: 'p-1',
-    category: 'missions',
-    categoryLabel: 'Missions & Outreach',
-    request: 'Pray for our Saturday mission field Bible studies and the outreach teams sharing the Gospel across Batangas communities.',
-    author: 'Pastor Hinahon Pallones',
+    id: 'p-aircon-provision',
+    category: 'general',
+    categoryLabel: 'Church Provision',
+    request: 'Aircon Provision for IFBBC — Earnestly praying and trusting the Lord for the provision of air conditioning units in our IFBBC worship hall and sanctuary, creating a comfortable, welcoming, and conducive environment for all worshippers, families, and guests as they hear the Word of God.',
+    author: 'IFBBC',
     isAnonymous: false,
     duration: '365d',
     durationLabel: '1 Year',
-    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 3,
-    expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 362,
-    prayedCount: 38,
-  },
-  {
-    id: 'p-2',
-    category: 'healing',
-    categoryLabel: 'Healing & Health',
-    request: 'Praying for healing, strength, and complete recovery for church members and family facing sickness and medical difficulties.',
-    author: 'Anonymous Believer',
-    isAnonymous: true,
-    duration: '7d',
-    durationLabel: '1 Week',
-    createdAt: Date.now() - 1000 * 60 * 60 * 12,
-    expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 6.5,
-    prayedCount: 24,
-  },
-  {
-    id: 'p-3',
-    category: 'spiritual',
-    categoryLabel: 'Spiritual Growth',
-    request: 'Seeking earnest prayer for wisdom, spiritual discernment, and boldness in sharing Christ with coworkers and neighbors in Bauan.',
-    author: 'Anonymous Believer',
-    isAnonymous: true,
-    duration: '30d',
-    durationLabel: '1 Month',
     createdAt: Date.now() - 1000 * 60 * 60 * 24 * 2,
-    expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 28,
-    prayedCount: 19,
-  },
-  {
-    id: 'p-4',
-    category: 'family',
-    categoryLabel: 'Family & NextGen',
-    request: 'Please uphold our Adelphoi youth ministry and young people as they navigate school and studies. May their hearts remain steadfast in God\u2019s Word.',
-    author: 'Ptr. Edwin Sebastian Lualhati',
-    isAnonymous: false,
-    duration: '30d',
-    durationLabel: '1 Month',
-    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 5,
-    expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 25,
-    prayedCount: 42,
-  },
-  {
-    id: 'p-5',
-    category: 'thanksgiving',
-    categoryLabel: 'Thanksgiving',
-    request: 'Praising the Lord for His faithfulness, answered prayers in our home, financial provision, and the fellowship of our church family!',
-    author: 'Anonymous Believer',
-    isAnonymous: true,
-    duration: '7d',
-    durationLabel: '1 Week',
-    createdAt: Date.now() - 1000 * 60 * 60 * 8,
-    expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 6.7,
-    prayedCount: 31,
+    expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 363,
+    prayedCount: 24,
   },
 ];
 
@@ -108,7 +56,8 @@ interface PrayerWallModalProps {
 
 export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClose }) => {
   const [prayers, setPrayers] = useState<PrayerItem[]>(() => {
-    const saved = localStorage.getItem('ifbbc-prayer-wall-v1');
+    localStorage.removeItem('ifbbc-prayer-wall-v1');
+    const saved = localStorage.getItem('ifbbc-prayer-wall-v2');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -133,7 +82,7 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
 
   // Sync to localStorage
   useEffect(() => {
-    localStorage.setItem('ifbbc-prayer-wall-v1', JSON.stringify(prayers));
+    localStorage.setItem('ifbbc-prayer-wall-v2', JSON.stringify(prayers));
   }, [prayers]);
 
   if (!isOpen) return null;
@@ -528,6 +477,7 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
                   {[
                     { id: 'all', label: 'All Prayers' },
+                    { id: 'general', label: 'Church Needs' },
                     { id: 'spiritual', label: 'Spiritual Growth' },
                     { id: 'healing', label: 'Healing & Health' },
                     { id: 'family', label: 'Family & NextGen' },

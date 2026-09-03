@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GlassLogoBadge } from './ui/GlassLogoBadge';
 import { AnnouncementModal3D } from './ui/AnnouncementModal3D';
-import churchLogo from '../assets/logo-hd.png';
 import knowTheGospelPoster from '../assets/adelphoi-know-the-gospel.png';
 
 interface EventPoster {
@@ -29,6 +28,7 @@ interface CoreGroup {
   targetAges: string;
   coordinator: string;
   logo?: string;
+  logoClassName?: string;
   accentHex?: string;
   posters: EventPoster[];
 }
@@ -123,10 +123,11 @@ export const CoreGroupsSection: React.FC = () => {
       demographic: 'Young Professionals',
       tagline: 'Christian Adults in Youthful Action',
       description: 'Equipping marketplace ambassadors, corporate leaders, and young entrepreneurs to live out biblical integrity, financial stewardship, and gospel intentionality in the workplace.',
-      schedule: 'Bi-Weekly Friday Dinners @ 7:00 PM & Sunday 9:00 AM Life Group',
+      schedule: 'Sunday 9:00 AM Life Group',
       targetAges: 'Ages 22–35 (Single Professionals & Career Starters)',
       coordinator: 'Engr. Atreo Xyrus I. Gamilla',
       logo: '/logo-caya.png',
+      logoClassName: '-translate-y-2.5 sm:-translate-y-3',
       accentHex: '#2563eb',
       posters: [
         {
@@ -150,7 +151,7 @@ export const CoreGroupsSection: React.FC = () => {
       demographic: 'Men',
       tagline: 'Able Men: Spiritual Heads of Homes & Community',
       description: 'Strengthening adult men through mutual accountability, biblical manhood, leadership development, marriage encouragement, and active church service.',
-      schedule: 'Monthly Saturday Breakfast @ 7:00 AM & Weekly Band of Brothers',
+      schedule: 'Sunday Life Group - 9:00 AM',
       targetAges: 'Men (30+, Married & Family Heads)',
       coordinator: 'Bro. Ivan Lendl I. Gamilla',
       logo: '/logo-amen.png',
@@ -177,7 +178,7 @@ export const CoreGroupsSection: React.FC = () => {
       demographic: 'Women',
       tagline: 'Women in Mission & Service for our Sovereign God',
       description: 'Nurturing godly womanhood, Titus 2 mentoring, fervent prayer, hospitality, and compassionate outreach across all families of the church.',
-      schedule: 'Every 2nd Saturday Fellowship @ 2:00 PM & Weekly Prayer Circle',
+      schedule: 'Sunday Life Group - 9:00 AM',
       targetAges: 'Women (30+, Married, Mothers & Seniors)',
       coordinator: 'Sis. Raquel Ilagan',
       logo: '/logo-womisso.png',
@@ -269,8 +270,8 @@ export const CoreGroupsSection: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Center Column: Gathering Details & Pastoral Oversight Box */}
-                <div className="lg:col-span-4 space-y-4 text-xs pt-6 lg:pt-6 border-t border-slate-200/80 dark:border-white/10 lg:border-t-0 lg:bg-slate-50/80 lg:dark:bg-white/[0.03] lg:border lg:border-slate-200/80 lg:dark:border-white/10 lg:p-6 lg:rounded-2xl">
+                {/* Center Column: Gathering Details & Pastoral Oversight */}
+                <div className="lg:col-span-4 space-y-4 text-xs">
                   <div>
                     <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
                       Regular Gathering
@@ -316,6 +317,7 @@ export const CoreGroupsSection: React.FC = () => {
                     altText={`${activeGroup.name} Emblem`}
                     groupName={activeGroup.name}
                     accentColor={activeGroup.accentHex || '#00a2ea'}
+                    imgClassName={activeGroup.logoClassName}
                   />
                 </div>
               </div>

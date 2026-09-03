@@ -7,6 +7,7 @@ interface GlassLogoBadgeProps {
   groupName: string;
   accentColor?: string;
   className?: string;
+  imgClassName?: string;
 }
 
 export const GlassLogoBadge: React.FC<GlassLogoBadgeProps> = ({
@@ -15,6 +16,7 @@ export const GlassLogoBadge: React.FC<GlassLogoBadgeProps> = ({
   groupName,
   accentColor = '#00a2ea',
   className = '',
+  imgClassName = '',
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -176,7 +178,7 @@ export const GlassLogoBadge: React.FC<GlassLogoBadgeProps> = ({
             <img
               src={logoSrc}
               alt={altText}
-              className="w-full h-full object-contain filter contrast-[1.08] brightness-[1.01]"
+              className={`w-full h-full object-contain filter contrast-[1.08] brightness-[1.01] transition-transform duration-300 ${imgClassName}`}
               style={{ imageRendering: 'auto' }}
             />
           </motion.div>

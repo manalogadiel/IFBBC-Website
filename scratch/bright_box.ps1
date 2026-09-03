@@ -1,5 +1,6 @@
 Add-Type -AssemblyName System.Drawing
-$b = New-Object System.Drawing.Bitmap 'public/logo.jpg'
+$b = New-Object System.Drawing.Bitmap 'public/logo-caya.png'
+Write-Output "Image dimensions: $($b.Width) x $($b.Height)"
 
 # Let's check brightness in columns and rows
 # Find where the white / high contrast elements are (luminance > 120)
@@ -9,7 +10,7 @@ for ($y = 0; $y -lt $b.Height; $y++) {
     for ($x = 0; $x -lt $b.Width; $x++) {
         $p = $b.GetPixel($x, $y)
         $lum = $p.R * 0.299 + $p.G * 0.587 + $p.B * 0.114
-        if ($lum -gt 130) {
+        if ($p.A -gt 10) {
             if ($x -lt $minX) { $minX = $x }
             if ($x -gt $maxX) { $maxX = $x }
             if ($y -lt $minY) { $minY = $y }
