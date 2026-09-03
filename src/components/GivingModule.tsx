@@ -321,7 +321,7 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
       {/* ── Immersive Full Screen QR Viewer ── */}
       <AnimatePresence>
         {isFullScreen && (
-          <div className="fixed inset-0 z-[100] flex flex-col items-center justify-between p-4 sm:p-6 md:p-8">
+          <div className="fixed inset-0 z-[100] h-[100dvh] max-h-[100dvh] flex flex-col justify-between p-3 sm:p-6 overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -331,16 +331,16 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
             />
 
             {/* Top Bar */}
-            <div className="relative z-10 w-full max-w-4xl flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-royal-600/20 border border-royal-400/30 flex items-center justify-center text-royal-400">
-                  <QrCode className="w-5 h-5" />
+            <div className="relative z-10 w-full max-w-4xl mx-auto flex items-center justify-between shrink-0 mb-2">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-royal-600/20 border border-royal-400/30 flex items-center justify-center text-royal-400 shrink-0">
+                  <QrCode className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div>
-                  <h3 className="text-white font-black text-sm sm:text-base tracking-tight uppercase">
+                  <h3 className="text-white font-black text-xs sm:text-base tracking-tight uppercase">
                     IFBBC Bank Account ending in 214
                   </h3>
-                  <p className="text-xs text-slate-400 font-mono">
+                  <p className="text-[10px] sm:text-xs text-slate-400 font-mono">
                     Scan via BPI, GCash, Maya, Maribank or any InstaPay app
                   </p>
                 </div>
@@ -349,17 +349,17 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
               <button
                 type="button"
                 onClick={() => setIsFullScreen(false)}
-                className="p-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-white/10"
+                className="p-2 sm:p-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-white/10 shrink-0 cursor-pointer"
                 aria-label="Close full screen"
                 title="Close (Esc)"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
 
             {/* Central Full-Screen QR Display */}
             <div
-              className="relative z-10 flex-1 flex items-center justify-center py-4 sm:py-6 w-full"
+              className="relative z-10 flex-1 min-h-0 flex items-center justify-center py-2 sm:py-4 w-full"
               onClick={() => setIsFullScreen(false)}
             >
               <motion.div
@@ -368,30 +368,30 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
                 exit={{ scale: 0.88, opacity: 0 }}
                 transition={{ type: 'spring', damping: 26, stiffness: 320 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white p-5 sm:p-7 md:p-9 rounded-3xl shadow-2xl flex items-center justify-center max-w-[92vw] max-h-[72vh]"
+                className="bg-white p-3.5 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-2xl flex items-center justify-center max-w-[88vw] sm:max-w-[440px] max-h-[50dvh] sm:max-h-[64dvh] shrink"
               >
                 <img
                   src="/ifbbc-bpi-qr.png"
                   alt="IFBBC BPI InstaPay QR Code"
-                  className="w-auto h-auto max-w-[80vw] max-h-[62vh] object-contain rounded-xl select-none"
+                  className="w-auto h-auto max-w-[76vw] sm:max-w-[380px] max-h-[44dvh] sm:max-h-[56dvh] object-contain rounded-xl select-none"
                 />
               </motion.div>
             </div>
 
-            {/* Bottom Controls Bar */}
-            <div className="relative z-10 w-full max-w-md flex items-center justify-center gap-3">
+            {/* Bottom Controls Bar (Permanently visible across all mobile viewports) */}
+            <div className="relative z-10 w-full max-w-md mx-auto flex items-center justify-center gap-2.5 sm:gap-3 shrink-0 pt-2 pb-1">
               <a
                 href="/ifbbc-bpi-qr.png"
                 download="IFBBC-BPI-InstaPay-QR.png"
-                className="px-5 py-2.5 rounded-full bg-royal-600 hover:bg-royal-500 text-white font-mono text-xs sm:text-sm font-bold flex items-center gap-2 shadow-lg transition-all"
+                className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-royal-600 hover:bg-royal-500 text-white font-mono text-xs sm:text-sm font-bold flex items-center gap-2 shadow-lg transition-all"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span>Download QR</span>
               </a>
               <button
                 type="button"
                 onClick={() => setIsFullScreen(false)}
-                className="px-5 py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs sm:text-sm font-mono font-bold transition-colors border border-white/10"
+                className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs sm:text-sm font-mono font-bold transition-colors border border-white/10 cursor-pointer"
               >
                 Close Full Screen
               </button>

@@ -110,6 +110,7 @@ export const AnnouncementCard3D: React.FC<AnnouncementCard3DProps> = ({
   const mobileFloatingAnimation =
     isTouchDevice && !prefersReducedMotion
       ? {
+          opacity: 1,
           y: [0, -7, 0],
           transition: {
             duration: 4.5,
@@ -117,7 +118,7 @@ export const AnnouncementCard3D: React.FC<AnnouncementCard3DProps> = ({
             ease: 'easeInOut' as const,
           },
         }
-      : undefined;
+      : { opacity: 1 };
 
   return (
     <div
