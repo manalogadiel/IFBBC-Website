@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, Mail, ArrowRight, User, Calendar, Clock, MapPin } from 'lucide-react';
+import { Check, X, Mail, Facebook, ArrowRight, User, Calendar } from 'lucide-react';
 
 interface Leader {
   name: string;
@@ -84,9 +84,8 @@ const LeaderProfileCard: React.FC<LeaderCardProps> = ({ leader, onContact }) => 
       onMouseLeave={handleMouseLeave}
       className="group relative rounded-3xl bg-[#060913] border border-white/10 p-6 sm:p-8 md:p-10 lg:p-12 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] transition-all duration-500 overflow-hidden lg:overflow-visible"
       style={{
-        transform: `perspective(1000px) rotateX(${isHovered ? -mousePos.y * 1.5 : 0}deg) rotateY(${
-          isHovered ? mousePos.x * 1.5 : 0
-        }deg)`,
+        transform: `perspective(1000px) rotateX(${isHovered ? -mousePos.y * 1.5 : 0}deg) rotateY(${isHovered ? mousePos.x * 1.5 : 0
+          }deg)`,
         transition: isHovered
           ? 'transform 0.15s ease-out'
           : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -179,9 +178,39 @@ const LeaderProfileCard: React.FC<LeaderCardProps> = ({ leader, onContact }) => 
             </div>
           </div>
           <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5">
+              {/* Email Channel */}
+              <a
+                href={`mailto:${leader.email}`}
+                className="group/mail inline-flex items-center gap-2.5 text-xs font-mono text-slate-300 hover:text-royal-400 transition-colors"
+                title={`Send email to ${leader.name}`}
+              >
+                <span className="w-7 h-7 rounded-full bg-white/5 border border-white/15 flex items-center justify-center shrink-0 group-hover/mail:border-royal-400 group-hover/mail:text-royal-400 transition-colors">
+                  <Mail className="w-3.5 h-3.5" />
+                </span>
+                <span className="truncate">{leader.email}</span>
+              </a>
+
+              {/* Facebook Channel */}
+              {leader.facebookUrl && (
+                <a
+                  href={leader.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/fb inline-flex items-center gap-2.5 text-xs font-mono text-slate-300 hover:text-royal-400 transition-colors"
+                  title={`Open Facebook profile for ${leader.facebookName}`}
+                >
+                  <span className="w-7 h-7 rounded-full bg-white/5 border border-white/15 flex items-center justify-center shrink-0 group-hover/fb:border-royal-400 group-hover/fb:text-royal-400 transition-colors">
+                    <Facebook className="w-3.5 h-3.5" />
+                  </span>
+                  <span className="truncate font-semibold">{leader.facebookName}</span>
+                </a>
+              )}
+            </div>
+
             <button
               onClick={() => onContact(leader.name)}
-              className="px-5 py-2.5 bg-royal-500 hover:bg-royal-600 active:scale-95 text-white rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg shadow-royal-500/20 cursor-pointer self-start sm:self-center"
+              className="px-5 py-2.5 bg-royal-500 hover:bg-royal-600 active:scale-95 text-white rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg shadow-royal-500/20 cursor-pointer self-start sm:self-center shrink-0"
             >
               <Mail className="w-3.5 h-3.5" />
               <span>Contact Pastor</span>
@@ -315,61 +344,36 @@ const PastorsOfficeHoursCard: React.FC<PastorsOfficeHoursProps> = ({ onSchedule 
 
           {/* Structured Details: WHEN, WHERE, BY APPOINTMENT */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
-            <div className="relative p-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-royal-400/35 backdrop-blur-md transition-all duration-300 shadow-sm flex flex-col justify-between group/item">
-              <div>
-                <div className="flex items-center gap-2 mb-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-royal-500/20 border border-royal-400/30 text-royal-400 dark:text-cobalt-400 flex items-center justify-center shrink-0">
-                    <Calendar className="w-3.5 h-3.5 stroke-[2.2]" />
-                  </div>
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-royal-400 dark:text-cobalt-400">
-                    WHEN
-                  </span>
-                </div>
-                <div className="text-sm sm:text-base font-black text-white tracking-tight leading-snug">
-                  Tuesdays & Thursdays
-                </div>
+            <div className="relative p-5 sm:p-6 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-royal-400/35 backdrop-blur-md transition-all duration-300 shadow-sm flex flex-col justify-center group/item">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-royal-400 dark:text-cobalt-400 mb-2 block">
+                WHEN
+              </span>
+              <div className="text-sm sm:text-base font-black text-white tracking-tight leading-snug">
+                Tuesdays & Thursdays
               </div>
-              <div className="mt-3 pt-2.5 border-t border-white/5 font-mono text-xs font-bold text-royal-300 dark:text-cobalt-300">
+              <div className="text-xs sm:text-sm font-semibold text-royal-300 dark:text-cobalt-300 mt-1">
                 09:00 AM – Onwards
               </div>
             </div>
 
-            <div className="relative p-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-royal-400/35 backdrop-blur-md transition-all duration-300 shadow-sm flex flex-col justify-between group/item">
-              <div>
-                <div className="flex items-center gap-2 mb-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-royal-500/20 border border-royal-400/30 text-royal-400 dark:text-cobalt-400 flex items-center justify-center shrink-0">
-                    <MapPin className="w-3.5 h-3.5 stroke-[2.2]" />
-                  </div>
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-royal-400 dark:text-cobalt-400">
-                    WHERE
-                  </span>
-                </div>
-                <div className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug">
-                  Pastor’s Office
-                </div>
+            <div className="relative p-5 sm:p-6 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-royal-400/35 backdrop-blur-md transition-all duration-300 shadow-sm flex flex-col justify-center group/item">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-royal-400 dark:text-cobalt-400 mb-2 block">
+                WHERE
+              </span>
+              <div className="text-sm sm:text-base font-black text-white tracking-tight leading-snug">
+                Pastor’s Office
               </div>
-              <div className="mt-3 pt-2.5 border-t border-white/5 text-[11px] text-slate-400 font-medium truncate">
-                IFBCC Main Sanctuary
+              <div className="text-xs sm:text-sm font-medium text-slate-300 mt-1">
+                IFBCC
               </div>
             </div>
 
-            <div className="relative p-5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-royal-400/35 backdrop-blur-md transition-all duration-300 shadow-sm flex flex-col justify-between group/item">
-              <div>
-                <div className="flex items-center gap-2 mb-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-royal-500/20 border border-royal-400/30 text-royal-400 dark:text-cobalt-400 flex items-center justify-center shrink-0">
-                    <Clock className="w-3.5 h-3.5 stroke-[2.2]" />
-                  </div>
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-royal-400 dark:text-cobalt-400">
-                    BY APPOINTMENT
-                  </span>
-                </div>
-                <div className="text-xs sm:text-sm text-slate-200 font-medium leading-relaxed">
-                  Walk-ins are welcome, or schedule ahead.
-                </div>
-              </div>
-              <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center gap-1.5 text-[10px] text-emerald-400 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Available during hours</span>
+            <div className="relative p-5 sm:p-6 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-royal-400/35 backdrop-blur-md transition-all duration-300 shadow-sm flex flex-col justify-center group/item">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-royal-400 dark:text-cobalt-400 mb-2 block">
+                BY APPOINTMENT
+              </span>
+              <div className="text-xs sm:text-sm text-slate-200 font-medium leading-relaxed">
+                Walk-ins are welcome, or schedule ahead.
               </div>
             </div>
           </div>
@@ -532,7 +536,7 @@ export const LeadershipSection: React.FC = () => {
                       <select
                         value={selectedPastor}
                         onChange={(e) => setSelectedPastor(e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 border border-slate-200 dark:border-white/10 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40"
                       >
                         <option value="Rev. Hinahon B. Pallones">Rev. Hinahon B. Pallones (Senior Pastor)</option>
                         <option value="Ptr. Edwin Sebastian Lualhati">Ptr. Edwin Sebastian Lualhati (Youth Pastor)</option>
@@ -541,38 +545,38 @@ export const LeadershipSection: React.FC = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 font-bold">
+                        <label className="block text-xs font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2 font-bold">
                           Your Name
                         </label>
                         <input
                           type="text"
                           required
                           placeholder="e.g. Simon Peter"
-                          className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40"
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 border border-slate-200 dark:border-white/10 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 font-bold">
+                        <label className="block text-xs font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2 font-bold">
                           Phone / Email
                         </label>
                         <input
                           type="text"
                           required
                           placeholder="e.g. 0917-xxx-xxxx or email@example.com"
-                          className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40"
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 border border-slate-200 dark:border-white/10 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 font-bold">
+                      <label className="block text-xs font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2 font-bold">
                         Purpose of Meeting
                       </label>
                       <textarea
                         rows={3}
                         required
                         placeholder="Pastoral counseling, baptism inquiry, prayer request, or spiritual guidance..."
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40 resize-none"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-obsidian-850 border border-slate-200 dark:border-white/10 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-royal-500/40 resize-none"
                       />
                     </div>
                   </div>

@@ -119,18 +119,18 @@ export const LocationSection: React.FC = () => {
 
           {/* Right Column: Modern Interactive Map Card */}
           <div className="lg:col-span-5">
-            <TiltCard className="ambient-card bg-slate-950 text-white rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl border border-white/10">
+            <TiltCard className="ambient-card rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-xl border border-slate-200/90 dark:border-white/10">
               {/* Header with Title & Active Status */}
-              <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800/80 gap-3">
+              <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200/80 dark:border-slate-800/80 gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-royal-500/20 border border-royal-400/30 text-royal-400 flex items-center justify-center shrink-0 shadow-inner">
+                  <div className="w-10 h-10 rounded-xl bg-royal-500/15 dark:bg-royal-500/20 border border-royal-400/30 text-royal-600 dark:text-royal-400 flex items-center justify-center shrink-0 shadow-inner">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div className="min-w-0">
-                    <span className="text-base sm:text-lg font-bold uppercase tracking-tight text-white block truncate">
+                    <span className="text-base sm:text-lg font-bold uppercase tracking-tight text-slate-900 dark:text-white block truncate">
                       IFBBC MAP
                     </span>
-                    <span className="text-xs sm:text-sm text-slate-400 font-medium block">
+                    <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium block">
                       Inicbulan, Bauan
                     </span>
                   </div>
@@ -138,13 +138,13 @@ export const LocationSection: React.FC = () => {
               </div>
 
               {/* Modern View Mode Selector Pills */}
-              <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-900/90 border border-white/10 mb-3.5 font-mono text-[11px]">
+              <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 mb-3.5 font-mono text-[11px]">
                 <button
                   type="button"
                   onClick={() => setMapMode('map')}
                   className={`py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all font-semibold cursor-pointer ${mapMode === 'map'
                     ? 'bg-royal-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-white/5'
                     }`}
                 >
                   <MapPin className="w-3.5 h-3.5" />
@@ -155,7 +155,7 @@ export const LocationSection: React.FC = () => {
                   onClick={() => setMapMode('satellite')}
                   className={`py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all font-semibold cursor-pointer ${mapMode === 'satellite'
                     ? 'bg-royal-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-white/5'
                     }`}
                 >
                   <Layers className="w-3.5 h-3.5" />
@@ -166,7 +166,7 @@ export const LocationSection: React.FC = () => {
                   onClick={() => setMapMode('streetview')}
                   className={`py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all font-semibold cursor-pointer ${mapMode === 'streetview'
                     ? 'bg-royal-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-white/5'
                     }`}
                 >
                   <Camera className="w-3.5 h-3.5" />
@@ -251,56 +251,56 @@ export const LocationSection: React.FC = () => {
               </div>
 
               {/* Campus Schedule & Coordinates Breakdown */}
-              <div className="space-y-3 text-xs text-slate-400 pt-4 mt-4 border-t border-slate-800">
+              <div className="space-y-3 text-xs pt-4 mt-4 border-t border-slate-200/80 dark:border-slate-800">
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-slate-300 font-medium">
-                    <Clock className="w-3.5 h-3.5 text-royal-400" />
+                  <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium">
+                    <Clock className="w-3.5 h-3.5 text-royal-500 dark:text-royal-400" />
                     Sunday Life Group
                   </span>
-                  <span className="font-mono font-bold text-white">9:00 AM</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-white">9:00 AM</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-slate-300 font-medium">
-                    <Clock className="w-3.5 h-3.5 text-royal-400" />
+                  <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium">
+                    <Clock className="w-3.5 h-3.5 text-royal-500 dark:text-royal-400" />
                     Sunday Worship Service
                   </span>
-                  <span className="font-mono font-bold text-emerald-400">10:00 AM</span>
+                  <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">10:00 AM</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-slate-300 font-medium">
-                    <Compass className="w-3.5 h-3.5 text-royal-400" />
+                  <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium">
+                    <Compass className="w-3.5 h-3.5 text-royal-500 dark:text-royal-400" />
                     Barangay / Municipality
                   </span>
-                  <span className="font-mono text-slate-300">Inicbulan, Bauan, Batangas</span>
+                  <span className="font-mono text-slate-600 dark:text-slate-300">Inicbulan, Bauan, Batangas</span>
                 </div>
               </div>
 
               {/* Navigation App Shortcuts Dock */}
-              <div className="grid grid-cols-3 gap-2 pt-4 mt-4 border-t border-slate-800">
+              <div className="grid grid-cols-3 gap-2 pt-4 mt-4 border-t border-slate-200/80 dark:border-slate-800">
                 <a
                   href={googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl bg-white/[0.05] hover:bg-royal-600/30 border border-white/10 hover:border-royal-400/40 text-white font-mono text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all text-center"
+                  className="p-2.5 rounded-xl bg-slate-100/90 hover:bg-royal-50 dark:bg-white/[0.05] dark:hover:bg-royal-600/30 border border-slate-200/90 hover:border-royal-400/40 dark:border-white/10 text-slate-800 hover:text-royal-600 dark:text-white font-mono text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all text-center"
                 >
-                  <Navigation className="w-3.5 h-3.5 text-royal-400" />
+                  <Navigation className="w-3.5 h-3.5 text-royal-500 dark:text-royal-400" />
                   <span>Google Maps</span>
                 </a>
                 <a
                   href={wazeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl bg-white/[0.05] hover:bg-royal-600/30 border border-white/10 hover:border-royal-400/40 text-white font-mono text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all text-center"
+                  className="p-2.5 rounded-xl bg-slate-100/90 hover:bg-royal-50 dark:bg-white/[0.05] dark:hover:bg-royal-600/30 border border-slate-200/90 hover:border-royal-400/40 dark:border-white/10 text-slate-800 hover:text-royal-600 dark:text-white font-mono text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all text-center"
                 >
-                  <Car className="w-3.5 h-3.5 text-sky-400" />
+                  <Car className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400" />
                   <span>Waze App</span>
                 </a>
                 <button
                   type="button"
                   onClick={handleCopyCoords}
-                  className="p-2.5 rounded-xl bg-white/[0.05] hover:bg-royal-600/30 border border-white/10 hover:border-royal-400/40 text-white font-mono text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  className="p-2.5 rounded-xl bg-slate-100/90 hover:bg-royal-50 dark:bg-white/[0.05] dark:hover:bg-royal-600/30 border border-slate-200/90 hover:border-royal-400/40 dark:border-white/10 text-slate-800 hover:text-royal-600 dark:text-white font-mono text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                 >
-                  {copiedCoords ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Crosshair className="w-3.5 h-3.5 text-royal-400" />}
+                  {copiedCoords ? <Check className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> : <Crosshair className="w-3.5 h-3.5 text-royal-500 dark:text-royal-400" />}
                   <span>{copiedCoords ? 'Copied!' : 'Copy GPS'}</span>
                 </button>
               </div>

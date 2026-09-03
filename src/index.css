@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --bg-chalk: #FAFBFD;
+    --bg-chalk: #F0F2F6;
     --bg-chalk-surface: #FFFFFF;
     --accent-royal: #0047FF;
   }
@@ -38,20 +38,24 @@
 /* AMBIENT SOFT SHADOWS (ANTI-BOX SYSTEM) */
 .ambient-card {
   background-color: var(--bg-chalk-surface);
-  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.035), 0 1px 3px rgba(0, 0, 0, 0.02);
-  transition: box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.07), 0 2px 8px -1px rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  transition: box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
 }
 
 .dark .ambient-card {
   background-color: #0E1118;
+  border-color: rgba(255, 255, 255, 0.05);
   box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .ambient-card:hover {
-  box-shadow: 0 16px 40px -8px rgba(0, 71, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 16px 36px -6px rgba(0, 71, 255, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+  border-color: rgba(0, 71, 255, 0.25);
 }
 
 .dark .ambient-card:hover {
+  border-color: rgba(41, 121, 255, 0.3);
   box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(41, 121, 255, 0.08);
 }
 

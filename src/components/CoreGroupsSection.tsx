@@ -151,7 +151,7 @@ export const CoreGroupsSection: React.FC = () => {
       tagline: 'Able Men: Spiritual Heads of Homes & Community',
       description: 'Strengthening adult men through mutual accountability, biblical manhood, leadership development, marriage encouragement, and active church service.',
       schedule: 'Monthly Saturday Breakfast @ 7:00 AM & Weekly Band of Brothers',
-      targetAges: 'Men (30+ / Married & Family Heads)',
+      targetAges: 'Men (30+, Married & Family Heads)',
       coordinator: 'Bro. Ivan Lendl I. Gamilla',
       logo: churchLogo,
       accentHex: '#64748b',
@@ -178,7 +178,7 @@ export const CoreGroupsSection: React.FC = () => {
       tagline: 'Women in Mission & Service for our Sovereign God',
       description: 'Nurturing godly womanhood, Titus 2 mentoring, fervent prayer, hospitality, and compassionate outreach across all families of the church.',
       schedule: 'Every 2nd Saturday Fellowship @ 2:00 PM & Weekly Prayer Circle',
-      targetAges: 'Women (30+ / Married, Mothers & Senior Saints)',
+      targetAges: 'Women (30+, Married, Mothers & Seniors)',
       coordinator: 'Sis. Raquel Ilagan',
       logo: churchLogo,
       accentHex: '#ec4899',
@@ -252,7 +252,7 @@ export const CoreGroupsSection: React.FC = () => {
             className="space-y-12"
           >
             {/* Primary Overview Container with Interactive 3D Glass Logo Badge */}
-            <div className="ambient-card rounded-3xl p-8 sm:p-12 relative overflow-hidden">
+            <div className="ambient-card rounded-3xl p-6 sm:p-8 lg:p-12 relative overflow-hidden">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left Column: Group Demographics & Mission Statement */}
                 <div className="lg:col-span-5 space-y-3 pt-1">
@@ -270,7 +270,7 @@ export const CoreGroupsSection: React.FC = () => {
                 </div>
 
                 {/* Center Column: Gathering Details & Pastoral Oversight Box */}
-                <div className="lg:col-span-4 bg-slate-50 dark:bg-obsidian-850 p-6 rounded-2xl space-y-4 text-xs">
+                <div className="lg:col-span-4 space-y-4 text-xs pt-6 lg:pt-6 border-t border-slate-200/80 dark:border-white/10 lg:border-t-0 lg:bg-slate-50/80 lg:dark:bg-white/[0.03] lg:border lg:border-slate-200/80 lg:dark:border-white/10 lg:p-6 lg:rounded-2xl">
                   <div>
                     <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
                       Regular Gathering

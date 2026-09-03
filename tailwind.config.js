@@ -9,12 +9,12 @@ export default {
     extend: {
       colors: {
         chalk: {
-          50: '#FAFBFD',
-          100: '#F4F5F8',
-          200: '#E9ECF2',
-          300: '#DCE1EB',
-          400: '#C8D0E0',
-          500: '#A0ADC5',
+          50: '#F0F2F6',
+          100: '#E6E9F0',
+          200: '#D9DFE8',
+          300: '#CCD3E1',
+          400: '#BAC4D6',
+          500: '#94A3B8',
           900: '#0B0F19',
         },
         obsidian: {

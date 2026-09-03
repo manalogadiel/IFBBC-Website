@@ -173,13 +173,13 @@ const ScheduleCard3D: React.FC<ScheduleCard3DProps> = ({
   const mobileFloatingAnimation =
     isTouchDevice && !prefersReducedMotion
       ? {
-          y: [0, -6, 0],
-          transition: { duration: 4.5, repeat: Infinity, ease: 'easeInOut' as const },
-        }
+        y: [0, -6, 0],
+        transition: { duration: 4.5, repeat: Infinity, ease: 'easeInOut' as const },
+      }
       : {
-          y: isHovered ? -10 : 0,
-          scale: isHovered ? 1.025 : 1,
-        };
+        y: isHovered ? -10 : 0,
+        scale: isHovered ? 1.025 : 1,
+      };
 
   return (
     <div style={{ perspective: 1000 }} className="h-full w-full select-none">
@@ -501,58 +501,110 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
           </p>
         </div>
 
-        {/* Compact & Flush Schedule Summary Table */}
-        <div className="ambient-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 mb-12 max-w-2xl mx-auto overflow-hidden shadow-lg border border-slate-200/80 dark:border-white/10">
-          <table className="w-full text-xs sm:text-sm border-separate border-spacing-y-1">
-            <thead>
-              <tr className="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                <th className="pb-2 px-3 sm:px-4 font-bold text-left">Day</th>
-                <th className="pb-2 px-3 sm:px-4 font-bold text-center">Time</th>
-                <th className="pb-2 px-3 sm:px-4 font-bold text-right">Service / Gathering</th>
-              </tr>
-            </thead>
-            <tbody>
-              {weeklyServices.map((s) => {
-                const isTodayEvent = hasEventToday && s.day.toLowerCase() === todayDayName.toLowerCase();
-                const isSelected = activeTableId === s.id;
+        {/* Adaptive Schedule Summary (Mobile Stacked List + Desktop Table) */}
+        <div className="ambient-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 mb-12 max-w-2xl mx-auto shadow-lg border border-slate-200/80 dark:border-white/10">
+          {/* Mobile Adaptive View (< 640px) */}
+          <div className="sm:hidden flex flex-col divide-y divide-slate-200/60 dark:divide-white/5">
+            {weeklyServices.map((s) => {
+              const isTodayEvent = hasEventToday && s.day.toLowerCase() === todayDayName.toLowerCase();
+              const isSelected = activeTableId === s.id;
 
-                return (
-                  <tr
-                    key={s.id}
-                    onClick={() => {
-                      setActiveTableId(isSelected ? null : s.id);
-                      setExpandedService(s);
-                    }}
-                    className={`group cursor-pointer transition-all duration-300 ${isTodayEvent
-                      ? 'bg-royal-500/15 dark:bg-cobalt-500/20 shadow-[0_0_20px_-3px_rgba(59,130,246,0.35)] ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 rounded-xl'
+              return (
+                <div
+                  key={s.id}
+                  onClick={() => {
+                    setActiveTableId(isSelected ? null : s.id);
+                    setExpandedService(s);
+                  }}
+                  className={`p-3.5 rounded-xl transition-all duration-200 cursor-pointer ${
+                    isTodayEvent
+                      ? 'bg-royal-500/15 dark:bg-cobalt-500/20 ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 shadow-sm my-1'
                       : isSelected
-                        ? 'bg-slate-100/80 dark:bg-obsidian-800/80 rounded-xl'
-                        : 'hover:bg-slate-100/60 dark:hover:bg-obsidian-800/60 hover:-translate-y-0.5'
-                      }`}
-                  >
-                    <td className="py-3 px-3 sm:px-4 font-bold font-mono text-left whitespace-nowrap first:rounded-l-xl">
-                      <div className="flex items-center gap-2">
-                        <span className={isTodayEvent ? 'text-royal-600 dark:text-cobalt-400 font-black' : 'text-slate-900 dark:text-white'}>
-                          {s.day}
+                        ? 'bg-slate-100 dark:bg-obsidian-800 my-0.5'
+                        : 'hover:bg-slate-100/70 dark:hover:bg-obsidian-800/70'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className={`font-mono text-xs font-bold ${isTodayEvent ? 'text-royal-600 dark:text-cobalt-400 font-black' : 'text-slate-900 dark:text-white'}`}>
+                        {s.day}
+                      </span>
+                      {isTodayEvent && (
+                        <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-royal-500 text-white uppercase tracking-wider shadow-sm">
+                          Today
                         </span>
-                        {isTodayEvent && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-royal-500 text-white uppercase tracking-wider shadow-sm">
-                            Today
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-3 px-3 sm:px-4 font-bold text-royal-500 dark:text-cobalt-400 font-mono text-center whitespace-nowrap">
+                      )}
+                    </div>
+                    <span className="font-mono text-xs font-bold text-royal-600 dark:text-cobalt-400 bg-royal-50 dark:bg-cobalt-950/60 px-2 py-0.5 rounded-md border border-royal-200/50 dark:border-cobalt-800/40">
                       {s.time}
-                    </td>
-                    <td className="py-3 px-3 sm:px-4 font-extrabold text-slate-900 dark:text-slate-100 text-right whitespace-nowrap last:rounded-r-xl">
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 leading-snug">
                       {s.service}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </h4>
+                    <span className="text-[11px] font-mono text-slate-400 dark:text-slate-500 shrink-0">
+                      Details →
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop & Tablet Table View (>= 640px) */}
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full text-xs sm:text-sm border-separate border-spacing-y-1">
+              <thead>
+                <tr className="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  <th className="pb-2 px-3 sm:px-4 font-bold text-left">Day</th>
+                  <th className="pb-2 px-3 sm:px-4 font-bold text-center">Time</th>
+                  <th className="pb-2 px-3 sm:px-4 font-bold text-right">Service / Gathering</th>
+                </tr>
+              </thead>
+              <tbody>
+                {weeklyServices.map((s) => {
+                  const isTodayEvent = hasEventToday && s.day.toLowerCase() === todayDayName.toLowerCase();
+                  const isSelected = activeTableId === s.id;
+
+                  return (
+                    <tr
+                      key={s.id}
+                      onClick={() => {
+                        setActiveTableId(isSelected ? null : s.id);
+                        setExpandedService(s);
+                      }}
+                      className={`group cursor-pointer transition-all duration-300 ${isTodayEvent
+                        ? 'bg-royal-500/15 dark:bg-cobalt-500/20 shadow-[0_0_20px_-3px_rgba(59,130,246,0.35)] ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 rounded-xl'
+                        : isSelected
+                          ? 'bg-slate-100/80 dark:bg-obsidian-800/80 rounded-xl'
+                          : 'hover:bg-slate-100/60 dark:hover:bg-obsidian-800/60 hover:-translate-y-0.5'
+                        }`}
+                    >
+                      <td className="py-3 px-3 sm:px-4 font-bold font-mono text-left whitespace-nowrap first:rounded-l-xl">
+                        <div className="flex items-center gap-2">
+                          <span className={isTodayEvent ? 'text-royal-600 dark:text-cobalt-400 font-black' : 'text-slate-900 dark:text-white'}>
+                            {s.day}
+                          </span>
+                          {isTodayEvent && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-royal-500 text-white uppercase tracking-wider shadow-sm">
+                              Today
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3 px-3 sm:px-4 font-bold text-royal-500 dark:text-cobalt-400 font-mono text-center whitespace-nowrap">
+                        {s.time}
+                      </td>
+                      <td className="py-3 px-3 sm:px-4 font-extrabold text-slate-900 dark:text-slate-100 text-right whitespace-normal sm:whitespace-nowrap last:rounded-r-xl">
+                        {s.service}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* ── Interactive Horizontal Carousel (3 Rectangular Cards Visible at a Time) ── */}
