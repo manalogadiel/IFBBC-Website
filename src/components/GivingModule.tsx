@@ -56,9 +56,6 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
                 Official Bank Account
               </span>
             </div>
-            <span className="text-[10px] bg-slate-800 text-emerald-400 px-2 py-0.5 rounded font-mono font-bold">
-              Verified BPI Account
-            </span>
           </div>
 
           <div className="space-y-0.5">
@@ -139,13 +136,13 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
             {/* Information & Eyebrow Label */}
             <div className="flex-1 text-center sm:text-left space-y-2">
               <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-royal-400 dark:text-cobalt-400 font-bold block">
-                SCAN TO GIVE • SUPPORT THE MINISTRY
+                SCAN TO GIVE & SUPPORT THE MINISTRY
               </span>
               <h4 className="text-base sm:text-lg font-extrabold text-white tracking-tight">
                 InstaPay & BPI QR Transfer
               </h4>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Scan directly using BPI, GCash, Maya, or any InstaPay-compliant banking app for instant, fee-free tithes and love offerings.
+                Scan directly using BPI, GCash, Maya, Maribank or any InstaPay-compliant banking app for instant, fee-free tithes and love offerings.
               </p>
 
               <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2">
@@ -262,10 +259,10 @@ export const GivingModule: React.FC<GivingModuleProps> = ({ isModal = false, onC
 
               <div className="space-y-1">
                 <span className="font-mono text-xs text-slate-300 block font-semibold">
-                  IFBBC Bank • Account ending in 214
+                  IFBBC Bank Account ending in 214
                 </span>
                 <span className="text-[11px] font-mono text-slate-400 block">
-                  Scan via BPI, GCash, Maya, or any InstaPay app
+                  Scan via BPI, GCash, Maya, Maribank or any InstaPay app
                 </span>
               </div>
 
