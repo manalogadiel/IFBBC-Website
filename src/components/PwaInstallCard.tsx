@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Monitor, Smartphone, CheckCircle2 } from 'lucide-react';
-import { IosInstallModal } from './IosInstallModal';
+import { DeviceInstallModal, PlatformType } from './DeviceInstallModal';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -11,7 +11,8 @@ export const PwaInstallCard: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isStandalone, setIsStandalone] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [showIosModal, setShowIosModal] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<PlatformType>('pc');
 
   useEffect(() => {
     // Check if running in standalone mode (already installed)
@@ -35,6 +36,7 @@ export const PwaInstallCard: React.FC = () => {
     const handleAppInstalled = () => {
       setIsInstalled(true);
       setDeferredPrompt(null);
+      setModalOpen(false);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -46,30 +48,35 @@ export const PwaInstallCard: React.FC = () => {
     };
   }, []);
 
-  const handleInstallClick = async (target: 'pc' | 'ios' | 'android') => {
-    if (target === 'ios') {
-      setShowIosModal(true);
-      return;
-    }
-
+  const triggerNativePrompt = async () => {
     if (deferredPrompt) {
       try {
         await deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
         if (choice.outcome === 'accepted') {
           setIsInstalled(true);
+          setModalOpen(false);
         }
         setDeferredPrompt(null);
       } catch (err) {
         console.warn('[PWA] Prompt error:', err);
       }
+    }
+  };
+
+  const handleInstallClick = async (target: PlatformType) => {
+    setSelectedPlatform(target);
+
+    if (target === 'ios') {
+      setModalOpen(true);
+      return;
+    }
+
+    if (deferredPrompt) {
+      await triggerNativePrompt();
     } else {
-      // Fallback guidance if prompt event already passed or handled by browser
-      if (target === 'pc') {
-        alert('To install on PC / Mac: Look for the Install icon (⊕ or computer with download arrow) on the right side of your browser address bar in Chrome/Edge, or open browser Menu (⋮) → "Install IFBBC".');
-      } else {
-        alert('To install on Android: Tap the three dots (⋮) in the top-right of your browser and select "Add to Home screen" or "Install app".');
-      }
+      // If browser doesn't offer prompt or it was already dismissed, show step-by-step UI guide
+      setModalOpen(true);
     }
   };
 
@@ -77,15 +84,12 @@ export const PwaInstallCard: React.FC = () => {
     <div className="lg:col-span-4 space-y-4">
       <div className="flex items-center gap-2">
         <span className="font-mono text-xs uppercase tracking-widest text-royal-600 dark:text-cobalt-400 font-bold block">
-          PWA • App Experience
-        </span>
-        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400">
-          Fast & Offline
+          Add us on your device!
         </span>
       </div>
 
       <p className="text-xs text-slate-600 dark:text-slate-400 leading-[1.68] text-pretty">
-        Add IFBBC to your Home Screen or Desktop to view Sunday livestreams, sermons, and prayer requests as a standalone app with no browser address bar.
+        Add IFBBC to your Home Screen or Desktop to view Sunday livestreams, sermons, and prayer requests directly on your device.
       </p>
 
       {/* Main Standalone Status / Quick Platform Buttons */}
@@ -135,10 +139,13 @@ export const PwaInstallCard: React.FC = () => {
         </div>
       )}
 
-      {/* iOS Modal */}
-      <IosInstallModal
-        isOpen={showIosModal}
-        onClose={() => setShowIosModal(false)}
+      {/* Comprehensive Multi-Device Guide Modal */}
+      <DeviceInstallModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        initialPlatform={selectedPlatform}
+        hasNativePrompt={Boolean(deferredPrompt)}
+        onNativeInstall={triggerNativePrompt}
       />
     </div>
   );
