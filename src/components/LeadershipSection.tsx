@@ -187,7 +187,7 @@ const LeaderProfileCard: React.FC<LeaderCardProps> = ({ leader, onContact }) => 
                 <span className="w-7 h-7 rounded-full bg-white/5 border border-white/15 flex items-center justify-center shrink-0 group-hover/mail:border-royal-400 group-hover/mail:text-royal-400 transition-colors">
                   <Mail className="w-3.5 h-3.5" />
                 </span>
-                <span className="truncate">{leader.email}</span>
+                <span className="truncate lowercase">{leader.email}</span>
               </a>
 
               {/* Facebook Channel */}

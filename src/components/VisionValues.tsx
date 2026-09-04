@@ -405,7 +405,7 @@ export const VisionValues: React.FC = () => {
             <div
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              className="relative min-h-[460px] sm:min-h-[420px] flex items-center justify-center overflow-hidden py-4"
+              className="relative min-h-[460px] sm:min-h-[420px] flex items-center justify-center overflow-hidden py-4 sm:px-14"
             >
               <AnimatePresence initial={false} custom={direction} mode="wait">
                 <motion.div
@@ -428,7 +428,7 @@ export const VisionValues: React.FC = () => {
                       paginate(-1);
                     }
                   }}
-                  className="w-full max-w-3xl ambient-card rounded-3xl p-8 sm:p-12 cursor-grab active:cursor-grabbing relative overflow-hidden"
+                  className="w-full max-w-3xl ambient-card rounded-3xl p-6 sm:p-12 cursor-grab active:cursor-grabbing relative overflow-hidden"
                 >
                   {/* Subtle ambient gradient accent */}
                   <div className="absolute top-0 right-0 w-80 h-80 bg-royal-500/5 dark:bg-cobalt-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
@@ -470,10 +470,10 @@ export const VisionValues: React.FC = () => {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Side Floating Navigation Buttons */}
+              {/* Side Floating Navigation Buttons (Hidden on mobile to avoid overlapping card text) */}
               <button
                 onClick={() => paginate(-1)}
-                className="absolute left-2 sm:left-4 z-10 w-11 h-11 sm:w-12 sm:h-12 rounded-full ambient-card flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-royal-500 hover:text-white dark:hover:bg-cobalt-500 transition-all active:scale-95 shadow-md"
+                className="hidden sm:flex absolute left-2 sm:left-4 z-10 w-11 h-11 sm:w-12 sm:h-12 rounded-full ambient-card items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-royal-500 hover:text-white dark:hover:bg-cobalt-500 transition-all active:scale-95 shadow-md"
                 aria-label="Previous Value"
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -481,10 +481,31 @@ export const VisionValues: React.FC = () => {
 
               <button
                 onClick={() => paginate(1)}
-                className="absolute right-2 sm:right-4 z-10 w-11 h-11 sm:w-12 sm:h-12 rounded-full ambient-card flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-royal-500 hover:text-white dark:hover:bg-cobalt-500 transition-all active:scale-95 shadow-md"
+                className="hidden sm:flex absolute right-2 sm:right-4 z-10 w-11 h-11 sm:w-12 sm:h-12 rounded-full ambient-card items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-royal-500 hover:text-white dark:hover:bg-cobalt-500 transition-all active:scale-95 shadow-md"
                 aria-label="Next Value"
               >
                 <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Mobile Navigation Bar (Prev / Next cleanly positioned below the card) */}
+            <div className="flex sm:hidden items-center justify-between gap-3 mt-3 px-1">
+              <button
+                onClick={() => paginate(-1)}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl ambient-card text-xs font-semibold text-slate-700 dark:text-slate-200 active:scale-95 shadow-sm"
+                aria-label="Previous Value"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Prev</span>
+              </button>
+
+              <button
+                onClick={() => paginate(1)}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl ambient-card text-xs font-semibold text-slate-700 dark:text-slate-200 active:scale-95 shadow-sm"
+                aria-label="Next Value"
+              >
+                <span>Next</span>
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 

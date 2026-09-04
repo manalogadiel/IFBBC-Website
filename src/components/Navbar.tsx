@@ -84,7 +84,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit: _onOpenVisit, onOpe
               <img
                 src={churchLogo}
                 alt="IFBBC Logo"
-                className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
               {/* Shiny Specular Shimmer Ray */}
               <div className="absolute -inset-full top-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-nav-shine pointer-events-none" />

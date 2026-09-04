@@ -108,10 +108,10 @@ export const LocationSection: React.FC = () => {
               <div className="pt-8 mt-8 border-t border-slate-100 dark:border-white/5 flex flex-wrap items-center gap-4">
                 <a
                   href="mailto:ifbbc2021@gmail.com"
-                  className="px-6 py-3.5 bg-slate-100 dark:bg-obsidian-850 hover:bg-royal-50 dark:hover:bg-royal-950/40 border border-slate-200/80 dark:border-white/10 hover:border-royal-400/40 text-slate-800 dark:text-slate-200 hover:text-royal-600 dark:hover:text-cobalt-400 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2.5 shadow-sm transition-all cursor-pointer group"
+                  className="px-6 py-3.5 bg-slate-100 dark:bg-obsidian-850 hover:bg-royal-50 dark:hover:bg-royal-950/40 border border-slate-200/80 dark:border-white/10 hover:border-royal-400/40 text-slate-800 dark:text-slate-200 hover:text-royal-600 dark:hover:text-cobalt-400 rounded-full text-xs font-bold flex items-center gap-2.5 shadow-sm transition-all cursor-pointer group"
                 >
                   <Mail className="w-4 h-4 text-royal-500 dark:text-cobalt-400 group-hover:scale-110 transition-transform" />
-                  <span>ifbbc2021@gmail.com</span>
+                  <span className="lowercase font-mono text-xs font-semibold tracking-normal">ifbbc2021@gmail.com</span>
                 </a>
               </div>
             </div>
