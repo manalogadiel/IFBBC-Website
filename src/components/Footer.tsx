@@ -1,22 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, ArrowRight, Check, Facebook, Youtube, Mail, MapPin } from 'lucide-react';
+import { BookOpen, Facebook, Youtube, Mail, MapPin } from 'lucide-react';
 import churchLogo from '../assets/logo-hd.png';
+import { PwaInstallCard } from './PwaInstallCard';
 
 export const Footer: React.FC = () => {
   const [creedOpen, setCreedOpen] = useState(false);
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setTimeout(() => {
-        setEmail('');
-      }, 3000);
-    }
-  };
 
   return (
     <footer className="bg-slate-100/60 dark:bg-obsidian-950 pt-28 pb-16 transition-colors duration-500">
@@ -170,39 +159,8 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Weekly Gazette Newsletter (Span 4) */}
-          <div className="lg:col-span-4 space-y-4">
-            <span className="font-mono text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold block">
-              Weekly Liturgical Gazette
-            </span>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-[1.68] text-pretty">
-              Receive Sunday liturgical scripture readings, sermon outlines, and community announcements every Friday morning.
-            </p>
-
-            <form onSubmit={handleSubscribe} className="pt-2">
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  required
-                  placeholder="name@domain.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 bg-white dark:bg-obsidian-850 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-royal-500/40"
-                />
-                <button
-                  type="submit"
-                  className="px-5 py-3 bg-royal-500 hover:bg-royal-600 dark:bg-cobalt-500 dark:hover:bg-cobalt-400 text-white rounded-xl text-xs font-bold shrink-0 transition-all shadow-sm flex items-center gap-1"
-                >
-                  {subscribed ? <Check className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
-                </button>
-              </div>
-              {subscribed && (
-                <span className="font-mono text-[11px] text-emerald-500 mt-2 block font-semibold">
-                  ✓ Subscribed to Weekly Liturgical Gazette
-                </span>
-              )}
-            </form>
-          </div>
+          {/* PWA App Experience & Install Hub (Span 4) */}
+          <PwaInstallCard />
         </div>
 
         {/* Bottom Bar */}
