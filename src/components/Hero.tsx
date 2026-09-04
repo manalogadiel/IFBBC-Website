@@ -112,7 +112,7 @@ export const WEEKLY_GATHERINGS: WeeklyGathering[] = [
     location: 'Mission Outreaches',
     topBarText: '2:00 PM Missions',
     scheduleItems: [
-      { time: '2:00 PM', service: 'Missions Outreach', location: 'Batangas Outreaches', isPrimary: true },
+      { time: '2:00 PM', service: 'Missions', location: 'Calumpang & Cupang', isPrimary: true },
     ],
   },
 ];
@@ -138,15 +138,41 @@ export const getNextGathering = (now: Date): NextGatheringState => {
     const target = new Date(now);
     const dayDiff = (g.day - now.getDay() + 7) % 7;
     target.setDate(now.getDate() + dayDiff);
-    target.setHours(g.hour, g.min, 0, 0);
+
+    let activeG = g;
+    // Check if the coming Saturday is the 2nd Saturday of the month (dates 8 to 14)
+    if (g.day === 6) {
+      const isSecondSaturday = target.getDate() >= 8 && target.getDate() <= 14;
+      if (isSecondSaturday) {
+        activeG = {
+          id: 'sat-paraiso',
+          day: 6,
+          dayName: 'Saturday',
+          hour: 11,
+          min: 0,
+          endHour: 13,
+          endMin: 0,
+          time: '11:00 AM',
+          name: 'Paraiso Mission',
+          category: 'Evangelistic Outreach',
+          location: 'Paraiso',
+          topBarText: '11:00 AM Paraiso Mission',
+          scheduleItems: [
+            { time: '11:00 AM', service: 'Paraiso Mission', location: 'Paraiso', isPrimary: true },
+          ],
+        };
+      }
+    }
+
+    target.setHours(activeG.hour, activeG.min, 0, 0);
 
     const end = new Date(now);
     end.setDate(now.getDate() + dayDiff);
-    end.setHours(g.endHour, g.endMin, 0, 0);
+    end.setHours(activeG.endHour, activeG.endMin, 0, 0);
 
     // If currently between service start and finish
     if (now >= target && now < end) {
-      inSessionGathering = g;
+      inSessionGathering = activeG;
       inSessionTarget = target;
       break;
     }
@@ -154,12 +180,37 @@ export const getNextGathering = (now: Date): NextGatheringState => {
     // If service has already finished today, shift target to next week
     if (now >= end) {
       target.setDate(target.getDate() + 7);
+      if (g.day === 6) {
+        const isNextSecondSaturday = target.getDate() >= 8 && target.getDate() <= 14;
+        if (isNextSecondSaturday) {
+          activeG = {
+            id: 'sat-paraiso',
+            day: 6,
+            dayName: 'Saturday',
+            hour: 11,
+            min: 0,
+            endHour: 13,
+            endMin: 0,
+            time: '11:00 AM',
+            name: 'Paraiso Mission',
+            category: 'Evangelistic Outreach',
+            location: 'Paraiso',
+            topBarText: '11:00 AM Paraiso Mission',
+            scheduleItems: [
+              { time: '11:00 AM', service: 'Paraiso Mission', location: 'Paraiso', isPrimary: true },
+            ],
+          };
+        } else {
+          activeG = g;
+        }
+        target.setHours(activeG.hour, activeG.min, 0, 0);
+      }
     }
 
     const diff = target.getTime() - now.getTime();
     if (diff > 0 && diff < minDiff) {
       minDiff = diff;
-      upcomingGathering = g;
+      upcomingGathering = activeG;
       upcomingTarget = target;
     }
   }
