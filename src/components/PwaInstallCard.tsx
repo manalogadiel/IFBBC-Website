@@ -105,11 +105,11 @@ export const PwaInstallCard: React.FC = () => {
   return (
     <div className="lg:col-span-4 space-y-4">
       <div className="flex items-center gap-3">
-        <div className="relative w-11 h-11 rounded-2xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center shrink-0 bg-slate-900">
+        <div className="relative w-14 h-14 rounded-2xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center shrink-0 bg-slate-900">
           <img
             src={churchLogo}
             alt="IFBBC App Logo"
-            className="w-full h-full object-contain p-1"
+            className="w-full h-full object-cover scale-125"
           />
           {/* Shiny Specular Shimmer Ray */}
           <div className="absolute -inset-full top-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-nav-shine pointer-events-none" />

@@ -15,11 +15,11 @@ export const Footer: React.FC = () => {
           {/* Brand & Mission Statement (Span 4) */}
           <div className="lg:col-span-4 space-y-5">
             <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 rounded-2xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center shrink-0 bg-slate-900">
+              <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center shrink-0 bg-slate-900">
                 <img
                   src={churchLogo}
                   alt="IFBBC Logo"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover scale-110"
                 />
                 {/* Shiny Specular Shimmer Ray */}
                 <div className="absolute -inset-full top-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-nav-shine pointer-events-none" />

@@ -80,11 +80,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit: _onOpenVisit, onOpe
             className="flex items-center gap-3 group focus:outline-none shrink-0"
           >
             {/* Logo Badge (Clean, fixed framing, shiny animation, smooth curved sides) */}
-            <div className="relative w-10 h-10 rounded-2xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center transition-all duration-500 group-hover:scale-105 shrink-0 bg-slate-900">
+            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center transition-all duration-500 group-hover:scale-105 shrink-0 bg-slate-900">
               <img
                 src={churchLogo}
                 alt="IFBBC Logo"
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-full object-cover scale-110 transition-transform duration-300 group-hover:scale-120"
               />
               {/* Shiny Specular Shimmer Ray */}
               <div className="absolute -inset-full top-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-nav-shine pointer-events-none" />
