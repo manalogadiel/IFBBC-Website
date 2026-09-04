@@ -1,17 +1,17 @@
 -- ==============================================================================
--- IFBBC REAL-TIME PRAYER WALL SCHEMA & REALTIME SETUP
+-- IFBBC REAL-TIME PRAYER WALL SCHEMA & REALTIME SETUP (IDEMPOTENT & SAFE TO RE-RUN)
 -- Run this script in the Supabase SQL Editor (https://supabase.com/dashboard)
 -- ==============================================================================
 
--- 1. Create Prayers Table
+-- 1. Create Prayers Table if it doesn't exist
 CREATE TABLE IF NOT EXISTS public.prayers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  category TEXT NOT NULL CHECK (category IN ('spiritual', 'healing', 'family', 'missions', 'thanksgiving', 'general')),
+  category TEXT NOT NULL,
   category_label TEXT NOT NULL,
   request TEXT NOT NULL,
   author TEXT NOT NULL,
   is_anonymous BOOLEAN DEFAULT false NOT NULL,
-  duration TEXT NOT NULL DEFAULT '30d' CHECK (duration IN ('7d', '30d', '365d')),
+  duration TEXT NOT NULL DEFAULT '30d',
   duration_label TEXT NOT NULL DEFAULT '1 Month',
   created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
   expires_at TIMESTAMPTZ NOT NULL,
@@ -19,11 +19,20 @@ CREATE TABLE IF NOT EXISTS public.prayers (
   is_approved BOOLEAN DEFAULT true NOT NULL
 );
 
--- 2. Create index for efficient querying
+-- 2. Safely ensure category & duration check constraints
+ALTER TABLE public.prayers DROP CONSTRAINT IF EXISTS prayers_category_check;
+ALTER TABLE public.prayers ADD CONSTRAINT prayers_category_check 
+  CHECK (category IN ('church', 'provision', 'spiritual', 'healing', 'family', 'missions', 'thanksgiving', 'general'));
+
+ALTER TABLE public.prayers DROP CONSTRAINT IF EXISTS prayers_duration_check;
+ALTER TABLE public.prayers ADD CONSTRAINT prayers_duration_check 
+  CHECK (duration IN ('7d', '30d', '365d'));
+
+-- 3. Create index for efficient querying
 CREATE INDEX IF NOT EXISTS idx_prayers_approved_expires 
   ON public.prayers (is_approved, expires_at DESC, created_at DESC);
 
--- 3. Atomic RPC function to increment / decrement prayer intercession counter
+-- 4. Atomic RPC function to increment / decrement prayer intercession counter
 CREATE OR REPLACE FUNCTION public.increment_prayed_count(prayer_id UUID, delta INTEGER)
 RETURNS INTEGER AS $$
 DECLARE
@@ -38,24 +47,36 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 4. Enable Row Level Security (RLS)
+-- 5. Enable Row Level Security (RLS)
 ALTER TABLE public.prayers ENABLE ROW LEVEL SECURITY;
 
--- 5. Policies for public prayer wall
--- Allow all visitors to view approved, active prayers
+-- 6. Drop existing policies if they already exist (prevents Error 42710)
+DROP POLICY IF EXISTS "Public can view active prayers" ON public.prayers;
+DROP POLICY IF EXISTS "Public can insert prayer requests" ON public.prayers;
+
+-- Recreate policies cleanly
 CREATE POLICY "Public can view active prayers"
   ON public.prayers FOR SELECT
   USING (is_approved = true AND expires_at > now());
 
--- Allow visitors to submit prayer requests
 CREATE POLICY "Public can insert prayer requests"
   ON public.prayers FOR INSERT
   WITH CHECK (true);
 
--- 6. Enable Realtime updates broadcast for the prayers table
-ALTER PUBLICATION supabase_realtime ADD TABLE public.prayers;
+-- 7. Safely enable Realtime updates broadcast (without duplicate error)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' 
+    AND schemaname = 'public' 
+    AND tablename = 'prayers'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.prayers;
+  END IF;
+END $$;
 
--- 7. Insert the initial Church Provision prayer if not already present
+-- 8. Insert the initial Church Provision prayer if not already present
 INSERT INTO public.prayers (
   category,
   category_label,
@@ -70,7 +91,7 @@ INSERT INTO public.prayers (
   is_approved
 ) 
 SELECT 
-  'general',
+  'church',
   'Church Provision',
   'Aircon Provision for IFBBC — Earnestly praying and trusting the Lord for the provision of air conditioning units in our IFBBC worship hall and sanctuary, creating a comfortable, welcoming, and conducive environment for all worshippers, families, and guests as they hear the Word of God.',
   'IFBBC',

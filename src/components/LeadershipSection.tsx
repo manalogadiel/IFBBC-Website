@@ -160,7 +160,6 @@ const LeaderProfileCard: React.FC<LeaderCardProps> = ({ leader, onContact }) => 
               <span className="font-mono text-xs uppercase tracking-widest text-royal-400 font-bold">
                 {leader.title}
               </span>
-              <span className="text-slate-600 dark:text-slate-500">•</span>
               <span className="text-xs text-slate-400 font-mono tracking-wide">
                 {leader.demographic}
               </span>

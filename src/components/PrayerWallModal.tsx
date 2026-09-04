@@ -14,7 +14,6 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { MagneticButton } from './ui/MagneticButton';
-import { isSupabaseConfigured } from '../lib/supabase';
 import {
   getPrayers,
   submitPrayer,
@@ -25,7 +24,7 @@ import {
 
 export interface PrayerItem {
   id: string;
-  category: 'spiritual' | 'healing' | 'family' | 'missions' | 'thanksgiving' | 'general';
+  category: 'church' | 'provision' | 'spiritual' | 'healing' | 'family' | 'missions' | 'thanksgiving' | 'general';
   categoryLabel: string;
   request: string;
   author: string;
@@ -53,7 +52,7 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
   // Form State
-  const [formCategory, setFormCategory] = useState<'spiritual' | 'healing' | 'family' | 'missions' | 'thanksgiving' | 'general'>('spiritual');
+  const [formCategory, setFormCategory] = useState<'church' | 'provision' | 'spiritual' | 'healing' | 'family' | 'missions' | 'thanksgiving' | 'general'>('church');
   const [formRequest, setFormRequest] = useState<string>('');
   const [formName, setFormName] = useState<string>('');
   const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
@@ -128,12 +127,14 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
     const durationLabel = formDuration === '7d' ? '1 Week' : formDuration === '30d' ? '1 Month' : '1 Year';
 
     const categoryLabels: Record<string, string> = {
+      church: 'Church Provision',
+      provision: 'Church Provision',
       spiritual: 'Spiritual Growth',
       healing: 'Healing & Health',
       family: 'Family & NextGen',
       missions: 'Missions & Outreach',
       thanksgiving: 'Thanksgiving',
-      general: 'General Petition',
+      general: 'Other Requests',
     };
 
     try {
@@ -274,20 +275,21 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                     {[
+                      { id: 'church', label: 'Church Provision' },
                       { id: 'spiritual', label: 'Spiritual Growth' },
                       { id: 'healing', label: 'Healing & Health' },
                       { id: 'family', label: 'Family & NextGen' },
                       { id: 'missions', label: 'Missions & Outreach' },
                       { id: 'thanksgiving', label: 'Thanksgiving' },
-                      { id: 'general', label: 'General Petition' },
+                      { id: 'general', label: 'Other Requests' },
                     ].map((cat) => (
                       <button
                         key={cat.id}
                         type="button"
                         onClick={() => setFormCategory(cat.id as any)}
                         className={`p-3 rounded-2xl text-xs font-bold transition-all text-left flex items-center justify-between cursor-pointer ${formCategory === cat.id
-                            ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 ring-2 ring-royal-500 dark:ring-cobalt-400'
-                            : 'bg-slate-50 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-obsidian-800'
+                          ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 ring-2 ring-royal-500 dark:ring-cobalt-400'
+                          : 'bg-slate-50 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-obsidian-800'
                           }`}
                       >
                         <span>{cat.label}</span>
@@ -330,8 +332,8 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                         type="button"
                         onClick={() => setIsAnonymous(false)}
                         className={`p-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${!isAnonymous
-                            ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 ring-2 ring-royal-500'
-                            : 'bg-slate-50 dark:bg-obsidian-850 text-slate-500'
+                          ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 ring-2 ring-royal-500'
+                          : 'bg-slate-50 dark:bg-obsidian-850 text-slate-500'
                           }`}
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -341,8 +343,8 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                         type="button"
                         onClick={() => setIsAnonymous(true)}
                         className={`p-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${isAnonymous
-                            ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 ring-2 ring-royal-500'
-                            : 'bg-slate-50 dark:bg-obsidian-850 text-slate-500'
+                          ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 ring-2 ring-royal-500'
+                          : 'bg-slate-50 dark:bg-obsidian-850 text-slate-500'
                           }`}
                       >
                         <EyeOff className="w-3.5 h-3.5" />
@@ -389,8 +391,8 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                         type="button"
                         onClick={() => setFormDuration(dur.id as any)}
                         className={`p-3.5 rounded-2xl text-left transition-all cursor-pointer ${formDuration === dur.id
-                            ? 'bg-royal-500/10 dark:bg-cobalt-500/20 ring-2 ring-royal-500 dark:ring-cobalt-400 text-royal-600 dark:text-cobalt-400'
-                            : 'bg-slate-50 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-obsidian-800'
+                          ? 'bg-royal-500/10 dark:bg-cobalt-500/20 ring-2 ring-royal-500 dark:ring-cobalt-400 text-royal-600 dark:text-cobalt-400'
+                          : 'bg-slate-50 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-obsidian-800'
                           }`}
                       >
                         <div className="flex items-center justify-between mb-1">
@@ -461,19 +463,20 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
                   {[
                     { id: 'all', label: 'All Prayers' },
-                    { id: 'general', label: 'Church Needs' },
+                    { id: 'church', label: 'Church Provision' },
                     { id: 'spiritual', label: 'Spiritual Growth' },
                     { id: 'healing', label: 'Healing & Health' },
                     { id: 'family', label: 'Family & NextGen' },
                     { id: 'missions', label: 'Missions' },
                     { id: 'thanksgiving', label: 'Thanksgiving' },
+                    { id: 'general', label: 'Other Requests' },
                   ].map((cat) => (
                     <button
                       key={cat.id}
                       onClick={() => setActiveCategory(cat.id)}
                       className={`px-3 py-1.5 rounded-full font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${activeCategory === cat.id
-                          ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm'
-                          : 'bg-slate-100 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-obsidian-800'
+                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm'
+                        : 'bg-slate-100 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-obsidian-800'
                         }`}
                     >
                       {cat.label}
@@ -556,8 +559,8 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                               type="button"
                               onClick={() => handlePrayClick(prayer.id)}
                               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${isUserPrayed
-                                  ? 'bg-rose-500 text-white shadow-sm scale-105'
-                                  : 'bg-slate-100 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/20 dark:hover:text-rose-400'
+                                ? 'bg-rose-500 text-white shadow-sm scale-105'
+                                : 'bg-slate-100 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/20 dark:hover:text-rose-400'
                                 }`}
                               title={isUserPrayed ? 'You prayed for this' : 'Click to pray with this request'}
                             >

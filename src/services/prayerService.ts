@@ -4,7 +4,7 @@ import { PrayerItem } from '../components/PrayerWallModal';
 export const DEFAULT_PRAYERS: PrayerItem[] = [
   {
     id: 'p-aircon-provision',
-    category: 'general',
+    category: 'church',
     categoryLabel: 'Church Provision',
     request: 'Aircon Provision for IFBBC — Earnestly praying and trusting the Lord for the provision of air conditioning units in our IFBBC worship hall and sanctuary, creating a comfortable, welcoming, and conducive environment for all worshippers, families, and guests as they hear the Word of God.',
     author: 'IFBBC',
@@ -147,7 +147,7 @@ export async function submitPrayer(newPrayer: {
         duration_label: newPrayer.durationLabel,
         created_at: new Date(now).toISOString(),
         expires_at: new Date(expiresAt).toISOString(),
-        prayed_count: 1, // Author starts with 1 prayer count
+        prayed_count: 0,
         is_approved: true,
       };
 
@@ -162,8 +162,6 @@ export async function submitPrayer(newPrayer: {
       }
 
       if (data) {
-        userPrayedSet.add(data.id);
-        saveLocalUserPrayedIds(userPrayedSet);
         return mapRowToPrayer(data, userPrayedSet);
       }
     } catch (err) {
@@ -183,12 +181,9 @@ export async function submitPrayer(newPrayer: {
     durationLabel: newPrayer.durationLabel,
     createdAt: now,
     expiresAt,
-    prayedCount: 1,
-    hasUserPrayed: true,
+    prayedCount: 0,
+    hasUserPrayed: false,
   };
-
-  userPrayedSet.add(fallbackItem.id);
-  saveLocalUserPrayedIds(userPrayedSet);
 
   return fallbackItem;
 }
