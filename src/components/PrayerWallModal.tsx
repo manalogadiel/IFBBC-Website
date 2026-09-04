@@ -14,6 +14,14 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { MagneticButton } from './ui/MagneticButton';
+import { isSupabaseConfigured } from '../lib/supabase';
+import {
+  getPrayers,
+  submitPrayer,
+  togglePrayedCount,
+  subscribeToPrayers,
+  DEFAULT_PRAYERS,
+} from '../services/prayerService';
 
 export interface PrayerItem {
   id: string;
@@ -30,41 +38,15 @@ export interface PrayerItem {
   hasUserPrayed?: boolean;
 }
 
-const DEFAULT_PRAYERS: PrayerItem[] = [
-  {
-    id: 'p-aircon-provision',
-    category: 'general',
-    categoryLabel: 'Church Provision',
-    request: 'Aircon Provision for IFBBC — Earnestly praying and trusting the Lord for the provision of air conditioning units in our IFBBC worship hall and sanctuary, creating a comfortable, welcoming, and conducive environment for all worshippers, families, and guests as they hear the Word of God.',
-    author: 'IFBBC',
-    isAnonymous: false,
-    duration: '365d',
-    durationLabel: '1 Year',
-    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 2,
-    expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 363,
-    prayedCount: 0,
-  },
-];
-
 interface PrayerWallModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClose }) => {
-  const [prayers, setPrayers] = useState<PrayerItem[]>(() => {
-    localStorage.removeItem('ifbbc-prayer-wall-v1');
-    localStorage.removeItem('ifbbc-prayer-wall-v2');
-    const saved = localStorage.getItem('ifbbc-prayer-wall-v3');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return DEFAULT_PRAYERS;
-      }
-    }
-    return DEFAULT_PRAYERS;
-  });
+  const [prayers, setPrayers] = useState<PrayerItem[]>(DEFAULT_PRAYERS);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -78,35 +60,71 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
   const [formDuration, setFormDuration] = useState<'7d' | '30d' | '365d'>('30d');
   const [submittedToast, setSubmittedToast] = useState<boolean>(false);
 
-  // Sync to localStorage
+  // Initial load and real-time subscription
   useEffect(() => {
-    localStorage.setItem('ifbbc-prayer-wall-v3', JSON.stringify(prayers));
-  }, [prayers]);
+    let isMounted = true;
+
+    getPrayers().then((items) => {
+      if (isMounted) {
+        setPrayers(items);
+        setIsLoading(false);
+      }
+    });
+
+    const unsubscribe = subscribeToPrayers(
+      (newPrayer) => {
+        setPrayers((prev) => {
+          if (prev.some((p) => p.id === newPrayer.id)) return prev;
+          return [newPrayer, ...prev];
+        });
+      },
+      (updated) => {
+        setPrayers((prev) =>
+          prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p))
+        );
+      },
+      (deletedId) => {
+        setPrayers((prev) => prev.filter((p) => p.id !== deletedId));
+      }
+    );
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, []);
 
   if (!isOpen) return null;
 
-  const handlePrayClick = (id: string) => {
+  const handlePrayClick = async (id: string) => {
+    const currentItem = prayers.find((p) => p.id === id);
+    if (!currentItem) return;
+
+    const alreadyPrayed = !!currentItem.hasUserPrayed;
+
+    // Optimistic UI update
     setPrayers((prev) =>
       prev.map((item) => {
         if (item.id === id) {
-          const alreadyPrayed = item.hasUserPrayed;
           return {
             ...item,
-            prayedCount: alreadyPrayed ? item.prayedCount - 1 : item.prayedCount + 1,
+            prayedCount: alreadyPrayed ? Math.max(0, item.prayedCount - 1) : item.prayedCount + 1,
             hasUserPrayed: !alreadyPrayed,
           };
         }
         return item;
       })
     );
+
+    // Sync to backend / service
+    await togglePrayedCount(id, alreadyPrayed);
   };
 
-  const handleSubmitRequest = (e: React.FormEvent) => {
+  const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formRequest.trim()) return;
+    if (!formRequest.trim() || isSubmitting) return;
 
-    const now = Date.now();
-    const durationDays = formDuration === '7d' ? 7 : formDuration === '30d' ? 30 : 365;
+    setIsSubmitting(true);
     const durationLabel = formDuration === '7d' ? '1 Week' : formDuration === '30d' ? '1 Month' : '1 Year';
 
     const categoryLabels: Record<string, string> = {
@@ -118,28 +136,33 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
       general: 'General Petition',
     };
 
-    const newPrayer: PrayerItem = {
-      id: `p-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      category: formCategory,
-      categoryLabel: categoryLabels[formCategory],
-      request: formRequest.trim(),
-      author: isAnonymous ? 'Anonymous Believer' : formName.trim() || 'Church Member',
-      isAnonymous,
-      duration: formDuration,
-      durationLabel,
-      createdAt: now,
-      expiresAt: now + 1000 * 60 * 60 * 24 * durationDays,
-      prayedCount: 1,
-      hasUserPrayed: true,
-    };
+    try {
+      const created = await submitPrayer({
+        category: formCategory,
+        categoryLabel: categoryLabels[formCategory],
+        request: formRequest.trim(),
+        author: isAnonymous ? 'Anonymous Believer' : formName.trim() || 'Church Member',
+        isAnonymous,
+        duration: formDuration,
+        durationLabel,
+      });
 
-    setPrayers([newPrayer, ...prayers]);
-    setFormRequest('');
-    setFormName('');
-    setIsAnonymous(false);
-    setShowAddForm(false);
-    setSubmittedToast(true);
-    setTimeout(() => setSubmittedToast(false), 4000);
+      setPrayers((prev) => {
+        if (prev.some((p) => p.id === created.id)) return prev;
+        return [created, ...prev];
+      });
+
+      setFormRequest('');
+      setFormName('');
+      setIsAnonymous(false);
+      setShowAddForm(false);
+      setSubmittedToast(true);
+      setTimeout(() => setSubmittedToast(false), 4000);
+    } catch (err) {
+      console.error('Error submitting prayer:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getRemainingTimeText = (expiresAt: number) => {
@@ -186,9 +209,24 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
         <div className="p-6 sm:p-8 border-b border-slate-100 dark:border-white/5 shrink-0 bg-slate-50/50 dark:bg-obsidian-950/50">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
-                IFBBC Prayer Wall
-              </h2>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
+                  IFBBC Prayer Wall
+                </h2>
+                {isSupabaseConfigured ? (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Live Cloud Sync
+                  </span>
+                ) : (
+                  <span
+                    title="Connect Supabase credentials in .env to enable real-time sync across devices"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
+                  >
+                    Local Storage Mode
+                  </span>
+                )}
+              </div>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-xl text-pretty">
                 "Bear ye one another's burdens, and so fulfil the law of Christ." — <span className="font-serif italic">Galatians 6:2</span>
               </p>
@@ -395,8 +433,9 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                     variant="primary"
                     size="md"
                     type="submit"
+                    disabled={isSubmitting}
                   >
-                    <span>Post Prayer Request</span>
+                    <span>{isSubmitting ? 'Posting...' : 'Post Prayer Request'}</span>
                     <Send className="w-3.5 h-3.5 ml-1" />
                   </MagneticButton>
                 </div>
@@ -461,7 +500,14 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                 </div>
 
                 {/* Prayer Cards Grid */}
-                {filteredPrayers.length === 0 ? (
+                {isLoading && prayers.length === 0 ? (
+                  <div className="py-16 text-center space-y-3 bg-slate-50/50 dark:bg-obsidian-850/50 rounded-3xl border border-dashed border-slate-200 dark:border-white/5">
+                    <div className="w-6 h-6 border-2 border-royal-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      Connecting to Prayer Wall...
+                    </p>
+                  </div>
+                ) : filteredPrayers.length === 0 ? (
                   <div className="py-12 text-center space-y-3 bg-slate-50/50 dark:bg-obsidian-850/50 rounded-3xl border border-dashed border-slate-200 dark:border-white/5">
                     <MessageCircle className="w-8 h-8 text-slate-400 mx-auto opacity-60" />
                     <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
