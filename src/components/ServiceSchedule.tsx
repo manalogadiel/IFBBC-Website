@@ -46,7 +46,7 @@ const weeklyServices: WeeklyServiceItem[] = [
     time: '10:00 AM',
     service: 'Worship Service',
     category: 'Corporate Lord\'s Day Gathering',
-    description: 'Our primary congregational gathering featuring reverent praise, corporate prayer, congregational singing, and solid verse-by-verse expository preaching from the King James / Open Bible.',
+    description: 'Our primary congregational gathering featuring reverent praise, corporate prayer, congregational singing, and solid verse-by-verse expository preaching from the word of God',
     location: 'Worship Hall',
     frequency: 'Weekly',
     features: ['Expository Preaching', 'Corporate Hymns & Praise', 'Communion & Tithes', 'Nursery Care'],
@@ -70,7 +70,7 @@ const weeklyServices: WeeklyServiceItem[] = [
     time: '6:00 PM',
     service: 'Prayer Meeting',
     category: 'Midweek Spiritual Anchor',
-    description: 'Midweek gathering for biblical exhortation and intensive prayer for sick members, church families, pastoral guidance, local government, and worldwide missions.',
+    description: 'Midweek gathering for devotion and prayer for sick members, church families, pastoral guidance, local government, and worldwide missions.',
     location: 'Worship Hall',
     frequency: 'Weekly',
     features: ['Pastoral Exhortation', 'Corporate Prayer Requests', 'Testimony Sharing', 'Family Intercession'],
@@ -82,7 +82,7 @@ const weeklyServices: WeeklyServiceItem[] = [
     time: '6:00 PM',
     service: 'Cottage Service',
     category: 'Home & Community Fellowship',
-    description: 'Intimate neighborhood home gatherings hosted across various puroks and barangays in Bauan for evangelism, warm fellowship, and grassroots discipleship.',
+    description: 'Intimate neighborhood home gatherings hosted across various puroks and barangays in Bauan for evangelism, warm fellowship, and discipleship.',
     location: 'Designated Member Homes',
     frequency: 'Weekly',
     features: ['Home Fellowship', 'Neighborhood Evangelism', 'Shared Food & Koinonia', 'Personal Testimony'],
@@ -516,13 +516,12 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
                     setActiveTableId(isSelected ? null : s.id);
                     setExpandedService(s);
                   }}
-                  className={`p-3.5 rounded-xl transition-all duration-200 cursor-pointer ${
-                    isTodayEvent
-                      ? 'bg-royal-500/15 dark:bg-cobalt-500/20 ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 shadow-sm my-1'
-                      : isSelected
-                        ? 'bg-slate-100 dark:bg-obsidian-800 my-0.5'
-                        : 'hover:bg-slate-100/70 dark:hover:bg-obsidian-800/70'
-                  }`}
+                  className={`p-3.5 rounded-xl transition-all duration-200 cursor-pointer ${isTodayEvent
+                    ? 'bg-royal-500/15 dark:bg-cobalt-500/20 ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 shadow-sm my-1'
+                    : isSelected
+                      ? 'bg-slate-100 dark:bg-obsidian-800 my-0.5'
+                      : 'hover:bg-slate-100/70 dark:hover:bg-obsidian-800/70'
+                    }`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <div className="flex items-center gap-2">

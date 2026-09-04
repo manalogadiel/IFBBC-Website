@@ -87,8 +87,8 @@ export const DeviceInstallModal: React.FC<DeviceInstallModalProps> = ({
               <button
                 onClick={() => setPlatform('pc')}
                 className={`py-2 px-2.5 rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${platform === 'pc'
-                    ? 'bg-white dark:bg-obsidian-750 text-royal-600 dark:text-cobalt-400 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+                  ? 'bg-white dark:bg-obsidian-750 text-royal-600 dark:text-cobalt-400 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
                   }`}
               >
                 <Monitor className="w-3.5 h-3.5" />
@@ -98,8 +98,8 @@ export const DeviceInstallModal: React.FC<DeviceInstallModalProps> = ({
               <button
                 onClick={() => setPlatform('ios')}
                 className={`py-2 px-2.5 rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${platform === 'ios'
-                    ? 'bg-white dark:bg-obsidian-750 text-royal-600 dark:text-cobalt-400 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+                  ? 'bg-white dark:bg-obsidian-750 text-royal-600 dark:text-cobalt-400 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
                   }`}
               >
                 <Smartphone className="w-3.5 h-3.5" />
@@ -109,8 +109,8 @@ export const DeviceInstallModal: React.FC<DeviceInstallModalProps> = ({
               <button
                 onClick={() => setPlatform('android')}
                 className={`py-2 px-2.5 rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${platform === 'android'
-                    ? 'bg-white dark:bg-obsidian-750 text-royal-600 dark:text-cobalt-400 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+                  ? 'bg-white dark:bg-obsidian-750 text-royal-600 dark:text-cobalt-400 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
                   }`}
               >
                 <Download className="w-3.5 h-3.5" />
@@ -180,18 +180,6 @@ export const DeviceInstallModal: React.FC<DeviceInstallModalProps> = ({
               {/* iOS (iPhone / iPad) Instructions */}
               {platform === 'ios' && (
                 <>
-                  <div className="p-3.5 rounded-2xl bg-royal-500/10 dark:bg-cobalt-500/15 border border-royal-500/20 text-royal-700 dark:text-cobalt-300">
-                    <p className="font-bold text-[11px] uppercase tracking-wider mb-0.5">
-                      Apple iOS Installation
-                    </p>
-                    <p className="text-[11px] leading-relaxed">
-                      Apple does not permit any website to install directly via 1-tap. Apple requires opening Safari and using the <strong>Share</strong> button below.
-                    </p>
-                    <p className="text-[11px] mt-1 text-slate-600 dark:text-slate-400">
-                      Once added, IFBBC automatically runs in <strong>full standalone app mode</strong> with zero Safari navigation bars.
-                    </p>
-                  </div>
-
                   <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-obsidian-850/80 border border-slate-100 dark:border-white/5">
                     <div className="w-7 h-7 rounded-xl bg-royal-500 text-white flex items-center justify-center font-mono font-bold text-xs shrink-0">
                       1
@@ -249,8 +237,7 @@ export const DeviceInstallModal: React.FC<DeviceInstallModalProps> = ({
                     }}
                     className="w-full py-3 px-4 bg-royal-600 hover:bg-royal-700 dark:bg-cobalt-500 dark:hover:bg-cobalt-400 text-white rounded-2xl font-bold text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                   >
-                    <Sparkles className="w-4 h-4" />
-                    <span>Direct 1-Tap Install on Android</span>
+                    <span>Install on Android</span>
                   </button>
 
                   <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-obsidian-850/80 border border-slate-100 dark:border-white/5">
