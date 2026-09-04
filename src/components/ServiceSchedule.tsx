@@ -102,6 +102,74 @@ const weeklyServices: WeeklyServiceItem[] = [
   },
 ];
 
+interface ScheduleTableEntry {
+  id: string;
+  day: string;
+  time: string;
+  service: string;
+  linkedCardId: string;
+  matchDay: string;
+}
+
+const scheduleTableEntries: ScheduleTableEntry[] = [
+  {
+    id: 'sun-lifegroup',
+    day: 'Sunday',
+    time: '9:00 AM',
+    service: 'Life Group',
+    linkedCardId: 'sun-lifegroup',
+    matchDay: 'Sunday',
+  },
+  {
+    id: 'sun-worship',
+    day: 'Sunday',
+    time: '10:00 AM',
+    service: 'Worship Service',
+    linkedCardId: 'sun-worship',
+    matchDay: 'Sunday',
+  },
+  {
+    id: 'sun-prayer-fasting',
+    day: 'Sunday',
+    time: '10:00 AM',
+    service: 'Prayer & Fasting Service (Quarterly)',
+    linkedCardId: 'sun-prayer-fasting',
+    matchDay: 'Sunday',
+  },
+  {
+    id: 'wed-prayer',
+    day: 'Wednesday',
+    time: '6:00 PM',
+    service: 'Prayer Meeting',
+    linkedCardId: 'wed-prayer',
+    matchDay: 'Wednesday',
+  },
+  {
+    id: 'fri-cottage',
+    day: 'Friday',
+    time: '6:00 PM',
+    service: 'Cottage Service',
+    linkedCardId: 'fri-cottage',
+    matchDay: 'Friday',
+  },
+  {
+    id: 'sat-paraiso',
+    day: 'Every 2nd Saturday',
+    time: '11:00 AM',
+    service: 'Paraiso Mission',
+    linkedCardId: 'sat-missions',
+    matchDay: 'Saturday',
+  },
+  {
+    id: 'sat-missions',
+    day: 'Saturday',
+    time: '2:00 PM',
+    service: 'Missions',
+    linkedCardId: 'sat-missions',
+    matchDay: 'Saturday',
+  },
+];
+
 // ── 3D Interactive Rectangular Carousel Card Component ──
 interface ScheduleCard3DProps {
   service: WeeklyServiceItem;
@@ -419,10 +487,28 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
     hasEventToday ? todayServices[0].id : null
   );
 
-  // Carousel State: 3 cards visible at a time
+  // Carousel State: responsive cards visible (1 on mobile, 2 on tablet, 3 on desktop)
+  const [cardsPerView, setCardsPerView] = useState(3);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isHoveringCard, setIsHoveringCard] = useState(false);
+
+  useEffect(() => {
+    const updateCardsPerView = () => {
+      if (typeof window === 'undefined') return;
+      if (window.innerWidth < 640) {
+        setCardsPerView(1);
+      } else if (window.innerWidth < 1024) {
+        setCardsPerView(2);
+      } else {
+        setCardsPerView(3);
+      }
+    };
+
+    updateCardsPerView();
+    window.addEventListener('resize', updateCardsPerView);
+    return () => window.removeEventListener('resize', updateCardsPerView);
+  }, []);
 
   // 3D Tilt for the Clicked/Expanded Modal Card itself
   const modalCardRef = useRef<HTMLDivElement>(null);
@@ -446,8 +532,13 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
     modalMouseY.set(0);
   };
 
-  // Maximum index so exactly 3 cards remain in view at end of line (6 items - 3 visible = maxIndex 3)
-  const maxIndex = Math.max(0, weeklyServices.length - 3);
+  // Maximum index so all cards remain accessible and viewable
+  const maxIndex = Math.max(0, weeklyServices.length - cardsPerView);
+
+  // Keep currentIndex bounded if cardsPerView changes
+  useEffect(() => {
+    setCurrentIndex((prev) => Math.min(prev, maxIndex));
+  }, [maxIndex]);
 
   const handleNext = useCallback(() => {
     setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
@@ -456,6 +547,31 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
   const handlePrev = useCallback(() => {
     setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
   }, [maxIndex]);
+
+  // Touch swipe gesture listeners for mobile & tablet screens
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartXRef.current === null || touchStartYRef.current === null) return;
+    const deltaX = touchStartXRef.current - e.changedTouches[0].clientX;
+    const deltaY = touchStartYRef.current - e.changedTouches[0].clientY;
+
+    if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX > 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
+    }
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+  };
 
   // Relaxed auto-traversing timer (6.5s) that pauses on card hover, modal open, or manual pause
   useEffect(() => {
@@ -505,8 +621,8 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
         <div className="ambient-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 mb-12 max-w-2xl mx-auto shadow-lg border border-slate-200/80 dark:border-white/10">
           {/* Mobile Adaptive View (< 640px) */}
           <div className="sm:hidden flex flex-col divide-y divide-slate-200/60 dark:divide-white/5">
-            {weeklyServices.map((s) => {
-              const isTodayEvent = hasEventToday && s.day.toLowerCase() === todayDayName.toLowerCase();
+            {scheduleTableEntries.map((s) => {
+              const isTodayEvent = hasEventToday && s.matchDay.toLowerCase() === todayDayName.toLowerCase();
               const isSelected = activeTableId === s.id;
 
               return (
@@ -514,7 +630,8 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
                   key={s.id}
                   onClick={() => {
                     setActiveTableId(isSelected ? null : s.id);
-                    setExpandedService(s);
+                    const targetCard = weeklyServices.find((card) => card.id === s.linkedCardId);
+                    if (targetCard) setExpandedService(targetCard);
                   }}
                   className={`p-3.5 rounded-xl transition-all duration-200 cursor-pointer ${isTodayEvent
                     ? 'bg-royal-500/15 dark:bg-cobalt-500/20 ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 shadow-sm my-1'
@@ -562,8 +679,8 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
                 </tr>
               </thead>
               <tbody>
-                {weeklyServices.map((s) => {
-                  const isTodayEvent = hasEventToday && s.day.toLowerCase() === todayDayName.toLowerCase();
+                {scheduleTableEntries.map((s) => {
+                  const isTodayEvent = hasEventToday && s.matchDay.toLowerCase() === todayDayName.toLowerCase();
                   const isSelected = activeTableId === s.id;
 
                   return (
@@ -571,7 +688,8 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
                       key={s.id}
                       onClick={() => {
                         setActiveTableId(isSelected ? null : s.id);
-                        setExpandedService(s);
+                        const targetCard = weeklyServices.find((card) => card.id === s.linkedCardId);
+                        if (targetCard) setExpandedService(targetCard);
                       }}
                       className={`group cursor-pointer transition-all duration-300 ${isTodayEvent
                         ? 'bg-royal-500/15 dark:bg-cobalt-500/20 shadow-[0_0_20px_-3px_rgba(59,130,246,0.35)] ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 rounded-xl'
@@ -647,14 +765,18 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
             </div>
           </div>
 
-          {/* Carousel Viewport (Strictly 3 cards visible) */}
-          <div className="overflow-hidden rounded-3xl py-4 -mx-2 px-2">
+          {/* Carousel Viewport (Responsive cards visible: 1 on mobile, 2 on tablet, 3 on desktop) */}
+          <div
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="overflow-hidden rounded-3xl py-4 -mx-2 px-2 touch-pan-y"
+          >
             <motion.div
               animate={{
-                x: `-${currentIndex * (100 / 3)}%`,
+                x: `-${currentIndex * (100 / cardsPerView)}%`,
               }}
               transition={{
-                duration: 1.05,
+                duration: 0.65,
                 ease: [0.22, 1, 0.36, 1],
               }}
               className="flex"

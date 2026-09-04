@@ -890,28 +890,28 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPrayer, onScrollToSermons }) =
 
                 {/* Dynamic Gathering Schedule Preview */}
                 <div className="bg-slate-50/80 dark:bg-obsidian-850 p-4 sm:p-5 rounded-2xl space-y-2.5 sm:space-y-3">
-                  <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 dark:text-slate-500 pb-1 border-b border-slate-200/60 dark:border-white/5">
-                    <span className="uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">
+                  <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 dark:text-slate-500 pb-1 border-b border-slate-200/60 dark:border-white/5 gap-2">
+                    <span className="uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 whitespace-nowrap shrink-0">
                       {nextGatheringState.gathering.dayName} Schedule
                     </span>
                     {nextGatheringState.gathering.location && (
-                      <span className="truncate max-w-[170px] text-right">
+                      <span className="truncate text-right min-w-0 pr-1 sm:pr-0">
                         {nextGatheringState.gathering.location}
                       </span>
                     )}
                   </div>
 
                   {nextGatheringState.gathering.scheduleItems.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between text-xs gap-3">
+                    <div key={idx} className="flex items-center justify-between text-xs gap-2 sm:gap-3 min-w-0">
                       <span
-                        className={`inline-flex items-center px-3 py-1.5 -ml-2.5 sm:-ml-3 rounded-full font-bold text-xs whitespace-nowrap shrink-0 ${item.isPrimary
+                        className={`inline-flex items-center px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full font-bold text-xs whitespace-nowrap shrink-0 ${item.isPrimary
                           ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400'
                           : 'bg-slate-200/70 dark:bg-obsidian-800 text-slate-600 dark:text-slate-400 font-medium'
                           }`}
                       >
                         {item.time ? `${item.time} - ` : ''}{item.service}
                       </span>
-                      <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500 shrink-0 text-right">
+                      <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500 text-right truncate min-w-0 pr-1.5 sm:pr-0">
                         {item.location}
                       </span>
                     </div>
