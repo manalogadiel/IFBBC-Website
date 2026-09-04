@@ -79,8 +79,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVisit: _onOpenVisit, onOpe
             onClick={(e) => handleNavClick(e, '#')}
             className="flex items-center gap-3 group focus:outline-none shrink-0"
           >
-            {/* Logo Badge (Clean, fixed framing, shiny animation, no glass distortion) */}
-            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center transition-all duration-500 group-hover:scale-105 shrink-0 bg-slate-900">
+            {/* Logo Badge (Clean, fixed framing, shiny animation, smooth curved sides) */}
+            <div className="relative w-10 h-10 rounded-2xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center transition-all duration-500 group-hover:scale-105 shrink-0 bg-slate-900">
               <img
                 src={churchLogo}
                 alt="IFBBC Logo"

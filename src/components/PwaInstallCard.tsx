@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Monitor, Smartphone, CheckCircle2 } from 'lucide-react';
 import { DeviceInstallModal, PlatformType } from './DeviceInstallModal';
+import churchLogo from '../assets/logo-hd.png';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -26,42 +27,60 @@ export const PwaInstallCard: React.FC = () => {
 
     checkStandalone();
 
+    // Check if prompt was already captured globally in index.html
+    if ((window as any).__pwaInstallPrompt) {
+      setDeferredPrompt((window as any).__pwaInstallPrompt);
+    }
+
+    const handlePromptReady = (e: any) => {
+      const p = e.detail || (window as any).__pwaInstallPrompt;
+      if (p) setDeferredPrompt(p);
+    };
+
     // Listen for beforeinstallprompt event (Chrome, Edge, Android)
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
+      (window as any).__pwaInstallPrompt = e;
     };
 
     // Listen for successful installation
     const handleAppInstalled = () => {
       setIsInstalled(true);
       setDeferredPrompt(null);
+      (window as any).__pwaInstallPrompt = null;
       setModalOpen(false);
     };
 
+    window.addEventListener('pwa-prompt-ready', handlePromptReady);
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
+      window.removeEventListener('pwa-prompt-ready', handlePromptReady);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
 
-  const triggerNativePrompt = async () => {
-    if (deferredPrompt) {
+  const triggerNativePrompt = async (): Promise<boolean> => {
+    const promptEvent = deferredPrompt || (window as any).__pwaInstallPrompt;
+    if (promptEvent) {
       try {
-        await deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
+        await promptEvent.prompt();
+        const choice = await promptEvent.userChoice;
         if (choice.outcome === 'accepted') {
           setIsInstalled(true);
           setModalOpen(false);
         }
         setDeferredPrompt(null);
+        (window as any).__pwaInstallPrompt = null;
+        return true;
       } catch (err) {
         console.warn('[PWA] Prompt error:', err);
       }
     }
+    return false;
   };
 
   const handleInstallClick = async (target: PlatformType) => {
@@ -72,20 +91,37 @@ export const PwaInstallCard: React.FC = () => {
       return;
     }
 
-    if (deferredPrompt) {
-      await triggerNativePrompt();
-    } else {
-      // If browser doesn't offer prompt or it was already dismissed, show step-by-step UI guide
-      setModalOpen(true);
+    // Attempt direct native 1-tap installation immediately!
+    const promptEvent = deferredPrompt || (window as any).__pwaInstallPrompt;
+    if (promptEvent) {
+      const success = await triggerNativePrompt();
+      if (success) return;
     }
+
+    // If browser doesn't offer prompt (e.g. Safari, or HTTP local test), show step-by-step guide
+    setModalOpen(true);
   };
 
   return (
     <div className="lg:col-span-4 space-y-4">
-      <div className="flex items-center gap-2">
-        <span className="font-mono text-xs uppercase tracking-widest text-royal-600 dark:text-cobalt-400 font-bold block">
-          Add us on your device!
-        </span>
+      <div className="flex items-center gap-3">
+        <div className="relative w-11 h-11 rounded-2xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center shrink-0 bg-slate-900">
+          <img
+            src={churchLogo}
+            alt="IFBBC App Logo"
+            className="w-full h-full object-cover"
+          />
+          {/* Shiny Specular Shimmer Ray */}
+          <div className="absolute -inset-full top-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-nav-shine pointer-events-none" />
+        </div>
+        <div>
+          <span className="font-mono text-xs uppercase tracking-widest text-royal-600 dark:text-cobalt-400 font-bold block">
+            Add us on your device!
+          </span>
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-medium">
+            IFBBC Web Application
+          </span>
+        </div>
       </div>
 
       <p className="text-xs text-slate-600 dark:text-slate-400 leading-[1.68] text-pretty">
@@ -94,16 +130,11 @@ export const PwaInstallCard: React.FC = () => {
 
       {/* Main Standalone Status / Quick Platform Buttons */}
       {isStandalone || isInstalled ? (
-        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center gap-3">
+        <div className="p-3.5 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
             <CheckCircle2 className="w-4 h-4" />
           </div>
-          <div className="text-xs">
-            <p className="font-bold">App Installed & Active</p>
-            <p className="text-[11px] opacity-80">
-              Running in standalone app mode without browser bars.
-            </p>
-          </div>
+          <p className="font-bold text-xs">App Installed & Active</p>
         </div>
       ) : (
         <div className="pt-1">

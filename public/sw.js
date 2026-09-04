@@ -1,10 +1,13 @@
-const CACHE_NAME = 'ifbbc-pwa-v1';
+const CACHE_NAME = 'ifbbc-pwa-v3';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
+  '/manifest.json',
   '/pwa-192x192.png',
+  '/pwa-maskable-192x192.png',
   '/pwa-512x512.png',
+  '/pwa-maskable-512x512.png',
   '/apple-touch-icon.png',
   '/logo-hd.png'
 ];

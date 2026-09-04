@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
           {/* Brand & Mission Statement (Span 4) */}
           <div className="lg:col-span-4 space-y-5">
             <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center shrink-0 bg-slate-900">
+              <div className="relative w-10 h-10 rounded-2xl overflow-hidden shadow-sm ring-1 ring-royal-500/25 dark:ring-cobalt-400/30 flex items-center justify-center shrink-0 bg-slate-900">
                 <img
                   src={churchLogo}
                   alt="IFBBC Logo"
