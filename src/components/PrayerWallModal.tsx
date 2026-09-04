@@ -213,19 +213,6 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
                   IFBBC Prayer Wall
                 </h2>
-                {isSupabaseConfigured ? (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Live Cloud Sync
-                  </span>
-                ) : (
-                  <span
-                    title="Connect Supabase credentials in .env to enable real-time sync across devices"
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
-                  >
-                    Local Storage Mode
-                  </span>
-                )}
               </div>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-xl text-pretty">
                 "Bear ye one another's burdens, and so fulfil the law of Christ." — <span className="font-serif italic">Galatians 6:2</span>
@@ -298,11 +285,10 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                         key={cat.id}
                         type="button"
                         onClick={() => setFormCategory(cat.id as any)}
-                        className={`p-3 rounded-2xl text-xs font-bold transition-all text-left flex items-center justify-between cursor-pointer ${
-                          formCategory === cat.id
+                        className={`p-3 rounded-2xl text-xs font-bold transition-all text-left flex items-center justify-between cursor-pointer ${formCategory === cat.id
                             ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 ring-2 ring-royal-500 dark:ring-cobalt-400'
                             : 'bg-slate-50 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-obsidian-800'
-                        }`}
+                          }`}
                       >
                         <span>{cat.label}</span>
                         {formCategory === cat.id && <CheckCircle2 className="w-3.5 h-3.5" />}
@@ -343,11 +329,10 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                       <button
                         type="button"
                         onClick={() => setIsAnonymous(false)}
-                        className={`p-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${
-                          !isAnonymous
+                        className={`p-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${!isAnonymous
                             ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 ring-2 ring-royal-500'
                             : 'bg-slate-50 dark:bg-obsidian-850 text-slate-500'
-                        }`}
+                          }`}
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>With Name</span>
@@ -355,11 +340,10 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                       <button
                         type="button"
                         onClick={() => setIsAnonymous(true)}
-                        className={`p-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${
-                          isAnonymous
+                        className={`p-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${isAnonymous
                             ? 'bg-royal-500/10 dark:bg-cobalt-500/20 text-royal-600 dark:text-cobalt-400 ring-2 ring-royal-500'
                             : 'bg-slate-50 dark:bg-obsidian-850 text-slate-500'
-                        }`}
+                          }`}
                       >
                         <EyeOff className="w-3.5 h-3.5" />
                         <span>Anonymous</span>
@@ -404,11 +388,10 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                         key={dur.id}
                         type="button"
                         onClick={() => setFormDuration(dur.id as any)}
-                        className={`p-3.5 rounded-2xl text-left transition-all cursor-pointer ${
-                          formDuration === dur.id
+                        className={`p-3.5 rounded-2xl text-left transition-all cursor-pointer ${formDuration === dur.id
                             ? 'bg-royal-500/10 dark:bg-cobalt-500/20 ring-2 ring-royal-500 dark:ring-cobalt-400 text-royal-600 dark:text-cobalt-400'
                             : 'bg-slate-50 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-obsidian-800'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center justify-between mb-1">
                           <span className="font-mono font-bold text-xs sm:text-sm">{dur.label}</span>
@@ -488,11 +471,10 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                     <button
                       key={cat.id}
                       onClick={() => setActiveCategory(cat.id)}
-                      className={`px-3 py-1.5 rounded-full font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                        activeCategory === cat.id
+                      className={`px-3 py-1.5 rounded-full font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${activeCategory === cat.id
                           ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm'
                           : 'bg-slate-100 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-obsidian-800'
-                      }`}
+                        }`}
                     >
                       {cat.label}
                     </button>
@@ -573,17 +555,15 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                             <button
                               type="button"
                               onClick={() => handlePrayClick(prayer.id)}
-                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                                isUserPrayed
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${isUserPrayed
                                   ? 'bg-rose-500 text-white shadow-sm scale-105'
                                   : 'bg-slate-100 dark:bg-obsidian-850 text-slate-600 dark:text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/20 dark:hover:text-rose-400'
-                              }`}
+                                }`}
                               title={isUserPrayed ? 'You prayed for this' : 'Click to pray with this request'}
                             >
                               <Heart
-                                className={`w-3.5 h-3.5 transition-transform ${
-                                  isUserPrayed ? 'fill-current scale-110' : ''
-                                }`}
+                                className={`w-3.5 h-3.5 transition-transform ${isUserPrayed ? 'fill-current scale-110' : ''
+                                  }`}
                               />
                               <span className="font-mono">{prayer.prayedCount}</span>
                               <span className="hidden sm:inline text-[10px] uppercase font-mono">
