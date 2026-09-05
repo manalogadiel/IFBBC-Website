@@ -94,11 +94,10 @@ export const PlanVisitModal: React.FC<PlanVisitModalProps> = ({
                     key={s.time}
                     type="button"
                     onClick={() => setSelectedService(s.time)}
-                    className={`p-6 rounded-2xl text-left transition-all duration-300 border ${
-                      selectedService === s.time
-                        ? 'bg-royal-500/10 dark:bg-cobalt-500/20 border-royal-500 dark:border-cobalt-400 ring-2 ring-royal-500/40 dark:ring-cobalt-400 shadow-sm'
-                        : 'bg-slate-50/80 dark:bg-obsidian-850 border-slate-200/80 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-obsidian-800'
-                    }`}
+                    className={`p-6 rounded-2xl text-left transition-all duration-300 border ${selectedService === s.time
+                      ? 'bg-royal-500/10 dark:bg-cobalt-500/20 border-royal-500 dark:border-cobalt-400 ring-2 ring-royal-500/40 dark:ring-cobalt-400 shadow-sm'
+                      : 'bg-slate-50/80 dark:bg-obsidian-850 border-slate-200/80 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-obsidian-800'
+                      }`}
                   >
                     <span className="font-mono text-xl font-extrabold text-royal-500 dark:text-cobalt-400 block">
                       {s.time}
@@ -124,11 +123,10 @@ export const PlanVisitModal: React.FC<PlanVisitModalProps> = ({
                     key={idx}
                     type="button"
                     onClick={() => setAttendeeCount(typeof count === 'number' ? count : 6)}
-                    className={`w-11 h-11 rounded-xl font-mono text-sm font-bold transition-all border ${
-                      attendeeCount === (typeof count === 'number' ? count : 6)
-                        ? 'bg-royal-500 dark:bg-cobalt-500 border-royal-500 dark:border-cobalt-400 text-white shadow-sm scale-105'
-                        : 'bg-slate-50 dark:bg-obsidian-850 border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-obsidian-800'
-                    }`}
+                    className={`w-11 h-11 rounded-xl font-mono text-sm font-bold transition-all border ${attendeeCount === (typeof count === 'number' ? count : 6)
+                      ? 'bg-royal-500 dark:bg-cobalt-500 border-royal-500 dark:border-cobalt-400 text-white shadow-sm scale-105'
+                      : 'bg-slate-50 dark:bg-obsidian-850 border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-obsidian-800'
+                      }`}
                   >
                     {count}
                   </button>
