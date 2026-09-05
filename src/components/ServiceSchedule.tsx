@@ -91,7 +91,7 @@ const weeklyServices: WeeklyServiceItem[] = [
   {
     id: 'sat-missions',
     day: 'Saturday',
-    time: '2:00 PM',
+    time: '3:00 PM',
     service: 'Missions',
     category: 'Evangelistic Outreach & Planting',
     description: 'Practical Gospel mobilization, street preaching, Bible distribution, medical/mercy outreaches, and supporting satellite mission points and church plants in Batangas province.',
@@ -163,7 +163,7 @@ const scheduleTableEntries: ScheduleTableEntry[] = [
   {
     id: 'sat-missions',
     day: 'Saturday',
-    time: '2:00 PM',
+    time: '3:00 PM',
     service: 'Missions',
     linkedCardId: 'sat-missions',
     matchDay: 'Saturday',
@@ -485,9 +485,24 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
     return now.getDay() === 6 && now.getDate() >= 8 && now.getDate() <= 14;
   }, []);
 
+  // Check if today is the last Sunday of March, June, September, or December (quarterly Prayer & Fasting)
+  const isQuarterlyPrayerFastingToday = useMemo(() => {
+    const now = new Date();
+    // Sunday is day 0
+    if (now.getDay() !== 0) return false;
+    const month = now.getMonth(); // 0-indexed: 2 = March, 5 = June, 8 = September, 11 = December
+    if (month !== 2 && month !== 5 && month !== 8 && month !== 11) return false;
+    // Check if it's the last Sunday: adding 7 days moves into the next month
+    const nextWeek = new Date(now.getFullYear(), month, now.getDate() + 7);
+    return nextWeek.getMonth() !== month;
+  }, []);
+
   // Helper to determine if a specific schedule entry is active/highlighted today
   const getIsTodayEvent = (entry: ScheduleTableEntry) => {
     if (!hasEventToday) return false;
+    if (entry.id === 'sun-prayer-fasting') {
+      return isQuarterlyPrayerFastingToday;
+    }
     if (todayDayName.toLowerCase() === 'saturday') {
       return isSecondSaturdayToday
         ? entry.id === 'sat-paraiso'
@@ -505,9 +520,10 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
     if (todayDayName.toLowerCase() === 'saturday') {
       return isSecondSaturdayToday ? 'sat-paraiso' : 'sat-missions';
     }
-    const matched = scheduleTableEntries.find(
-      (s) => s.matchDay.toLowerCase() === todayDayName.toLowerCase()
-    );
+    const matched = scheduleTableEntries.find((s) => {
+      if (s.id === 'sun-prayer-fasting') return isQuarterlyPrayerFastingToday;
+      return s.matchDay.toLowerCase() === todayDayName.toLowerCase();
+    });
     return matched ? matched.id : null;
   });
 
@@ -815,7 +831,10 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
             >
               {weeklyServices.map((service) => {
                 const isTodayEvent =
-                  hasEventToday && service.day.toLowerCase() === todayDayName.toLowerCase();
+                  hasEventToday &&
+                  (service.id === 'sun-prayer-fasting'
+                    ? isQuarterlyPrayerFastingToday
+                    : service.day.toLowerCase() === todayDayName.toLowerCase());
 
                 return (
                   <div
