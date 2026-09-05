@@ -13,7 +13,7 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/pwa-192x192.png",
+      "src": "/pwa-pc-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
@@ -25,7 +25,7 @@
       "purpose": "maskable"
     },
     {
-      "src": "/pwa-512x512.png",
+      "src": "/pwa-pc-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
@@ -35,12 +35,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    },
-    {
-      "src": "/logo-hd.png",
-      "sizes": "1024x1024",
-      "type": "image/png",
-      "purpose": "any"
     }
   ],
   "categories": ["lifestyle", "religion", "community"]
