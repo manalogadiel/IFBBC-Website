@@ -479,13 +479,37 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
 
   const hasEventToday = todayServices.length > 0;
 
+  // Check if today is the 2nd Saturday of the month (Saturday, dates 8-14)
+  const isSecondSaturdayToday = useMemo(() => {
+    const now = new Date();
+    return now.getDay() === 6 && now.getDate() >= 8 && now.getDate() <= 14;
+  }, []);
+
+  // Helper to determine if a specific schedule entry is active/highlighted today
+  const getIsTodayEvent = (entry: ScheduleTableEntry) => {
+    if (!hasEventToday) return false;
+    if (todayDayName.toLowerCase() === 'saturday') {
+      return isSecondSaturdayToday
+        ? entry.id === 'sat-paraiso'
+        : entry.id === 'sat-missions';
+    }
+    return entry.matchDay.toLowerCase() === todayDayName.toLowerCase();
+  };
+
   // Selected event for the click-to-expand modal
   const [expandedService, setExpandedService] = useState<WeeklyServiceItem | null>(null);
 
   // Active highlighted row for summary table
-  const [activeTableId, setActiveTableId] = useState<string | null>(
-    hasEventToday ? todayServices[0].id : null
-  );
+  const [activeTableId, setActiveTableId] = useState<string | null>(() => {
+    if (!hasEventToday) return null;
+    if (todayDayName.toLowerCase() === 'saturday') {
+      return isSecondSaturdayToday ? 'sat-paraiso' : 'sat-missions';
+    }
+    const matched = scheduleTableEntries.find(
+      (s) => s.matchDay.toLowerCase() === todayDayName.toLowerCase()
+    );
+    return matched ? matched.id : null;
+  });
 
   // Carousel State: responsive cards visible (1 on mobile, 2 on tablet, 3 on desktop)
   const [cardsPerView, setCardsPerView] = useState(3);
@@ -622,7 +646,7 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
           {/* Mobile Adaptive View (< 640px) */}
           <div className="sm:hidden flex flex-col divide-y divide-slate-200/60 dark:divide-white/5">
             {scheduleTableEntries.map((s) => {
-              const isTodayEvent = hasEventToday && s.matchDay.toLowerCase() === todayDayName.toLowerCase();
+              const isTodayEvent = getIsTodayEvent(s);
               const isSelected = activeTableId === s.id;
 
               return (
@@ -633,11 +657,11 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
                     const targetCard = weeklyServices.find((card) => card.id === s.linkedCardId);
                     if (targetCard) setExpandedService(targetCard);
                   }}
-                  className={`p-3.5 rounded-xl transition-all duration-200 cursor-pointer ${isTodayEvent
-                    ? 'bg-royal-500/15 dark:bg-cobalt-500/20 ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 shadow-sm my-1'
+                  className={`p-3.5 rounded-xl transition-all duration-200 cursor-pointer border ${isTodayEvent
+                    ? 'bg-royal-500/15 dark:bg-cobalt-500/20 border-royal-500/50 dark:border-cobalt-400/50 shadow-sm my-1'
                     : isSelected
-                      ? 'bg-slate-100 dark:bg-obsidian-800 my-0.5'
-                      : 'hover:bg-slate-100/70 dark:hover:bg-obsidian-800/70'
+                      ? 'bg-slate-100 dark:bg-obsidian-800 border-slate-300/80 dark:border-white/15 my-0.5'
+                      : 'border-transparent hover:bg-slate-100/70 dark:hover:bg-obsidian-800/70'
                     }`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1.5">
@@ -669,19 +693,25 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
           </div>
 
           {/* Desktop & Tablet Table View (>= 640px) */}
-          <div className="hidden sm:block overflow-x-auto">
-            <table className="w-full text-xs sm:text-sm border-separate border-spacing-y-1">
+          <div className="hidden sm:block overflow-x-auto p-1.5 sm:p-2 -m-1.5 sm:-m-2">
+            <table className="w-full text-xs sm:text-sm border-separate border-spacing-x-0 border-spacing-y-1.5">
               <thead>
                 <tr className="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                  <th className="pb-2 px-3 sm:px-4 font-bold text-left">Day</th>
-                  <th className="pb-2 px-3 sm:px-4 font-bold text-center">Time</th>
-                  <th className="pb-2 px-3 sm:px-4 font-bold text-right">Service / Gathering</th>
+                  <th className="pb-2.5 px-3 sm:px-4 font-bold text-left">Day</th>
+                  <th className="pb-2.5 px-3 sm:px-4 font-bold text-center">Time</th>
+                  <th className="pb-2.5 px-3 sm:px-4 font-bold text-right">Service / Gathering</th>
                 </tr>
               </thead>
               <tbody>
                 {scheduleTableEntries.map((s) => {
-                  const isTodayEvent = hasEventToday && s.matchDay.toLowerCase() === todayDayName.toLowerCase();
+                  const isTodayEvent = getIsTodayEvent(s);
                   const isSelected = activeTableId === s.id;
+
+                  const cellHighlightBg = isTodayEvent
+                    ? 'bg-royal-500/15 dark:bg-cobalt-500/20 border-royal-500/50 dark:border-cobalt-400/50'
+                    : isSelected
+                      ? 'bg-slate-100/90 dark:bg-obsidian-800/90 border-slate-300/80 dark:border-white/15'
+                      : 'border-transparent group-hover:bg-slate-100/60 dark:group-hover:bg-obsidian-800/60';
 
                   return (
                     <tr
@@ -691,14 +721,13 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
                         const targetCard = weeklyServices.find((card) => card.id === s.linkedCardId);
                         if (targetCard) setExpandedService(targetCard);
                       }}
-                      className={`group cursor-pointer transition-all duration-300 ${isTodayEvent
-                        ? 'bg-royal-500/15 dark:bg-cobalt-500/20 shadow-[0_0_20px_-3px_rgba(59,130,246,0.35)] ring-1 ring-royal-500/40 dark:ring-cobalt-400/50 rounded-xl'
-                        : isSelected
-                          ? 'bg-slate-100/80 dark:bg-obsidian-800/80 rounded-xl'
-                          : 'hover:bg-slate-100/60 dark:hover:bg-obsidian-800/60 hover:-translate-y-0.5'
-                        }`}
+                      className={`group cursor-pointer transition-all duration-200 ${
+                        isTodayEvent
+                          ? 'filter drop-shadow-[0_2px_8px_rgba(59,130,246,0.25)]'
+                          : 'hover:-translate-y-0.5'
+                      }`}
                     >
-                      <td className="py-3 px-3 sm:px-4 font-bold font-mono text-left whitespace-nowrap first:rounded-l-xl">
+                      <td className={`py-3 px-3 sm:px-4 font-bold font-mono text-left whitespace-nowrap border-y border-l rounded-l-xl transition-colors duration-200 ${cellHighlightBg}`}>
                         <div className="flex items-center gap-2">
                           <span className={isTodayEvent ? 'text-royal-600 dark:text-cobalt-400 font-black' : 'text-slate-900 dark:text-white'}>
                             {s.day}
@@ -710,10 +739,10 @@ export const ServiceSchedule: React.FC<ServiceScheduleProps> = ({ onOpenVisit: _
                           )}
                         </div>
                       </td>
-                      <td className="py-3 px-3 sm:px-4 font-bold text-royal-500 dark:text-cobalt-400 font-mono text-center whitespace-nowrap">
+                      <td className={`py-3 px-3 sm:px-4 font-bold text-royal-500 dark:text-cobalt-400 font-mono text-center whitespace-nowrap border-y transition-colors duration-200 ${cellHighlightBg}`}>
                         {s.time}
                       </td>
-                      <td className="py-3 px-3 sm:px-4 font-extrabold text-slate-900 dark:text-slate-100 text-right whitespace-normal sm:whitespace-nowrap last:rounded-r-xl">
+                      <td className={`py-3 px-3 sm:px-4 font-extrabold text-slate-900 dark:text-slate-100 text-right whitespace-normal sm:whitespace-nowrap border-y border-r rounded-r-xl transition-colors duration-200 ${cellHighlightBg}`}>
                         {s.service}
                       </td>
                     </tr>
