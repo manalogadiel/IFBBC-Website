@@ -12,8 +12,11 @@ import {
   CheckCircle2,
   Search,
   MessageCircle,
+  AlertCircle,
+  Lock,
 } from 'lucide-react';
 import { MagneticButton } from './ui/MagneticButton';
+import { TurnstileWidget } from './ui/TurnstileWidget';
 import {
   getPrayers,
   submitPrayer,
@@ -58,6 +61,20 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
   const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
   const [formDuration, setFormDuration] = useState<'7d' | '30d' | '365d'>('30d');
   const [submittedToast, setSubmittedToast] = useState<boolean>(false);
+
+  // Security & Anti-Spam States
+  const [honeypot, setHoneypot] = useState<string>('');
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
+  const [securityError, setSecurityError] = useState<string | null>(null);
+  const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
+
+  useEffect(() => {
+    if (cooldownRemaining <= 0) return;
+    const timer = setInterval(() => {
+      setCooldownRemaining((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldownRemaining]);
 
   // Initial load and real-time subscription
   useEffect(() => {
@@ -121,9 +138,62 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
 
   const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formRequest.trim() || isSubmitting) return;
+    setSecurityError(null);
 
+    // 1. Rate-limiting Cooldown Check (15 seconds)
+    const lastSubmitTime = Number(localStorage.getItem('ifbbc-last-prayer-submit') || 0);
+    const timeSinceLastSubmit = Date.now() - lastSubmitTime;
+    if (timeSinceLastSubmit < 15000) {
+      const waitSeconds = Math.ceil((15000 - timeSinceLastSubmit) / 1000);
+      setCooldownRemaining(waitSeconds);
+      setSecurityError(`Please wait ${waitSeconds}s before posting another request.`);
+      return;
+    }
+
+    // 2. Honeypot Anti-Spam Check
+    // If the invisible honeypot field has any value, an automated bot filled it out
+    if (honeypot.trim() !== '') {
+      console.warn('Bot submission neutralized by honeypot.');
+      // Silently discard without sending to Supabase, but simulate success so bots don't adapt
+      setFormRequest('');
+      setFormName('');
+      setHoneypot('');
+      setIsAnonymous(false);
+      setShowAddForm(false);
+      setSubmittedToast(true);
+      setTimeout(() => setSubmittedToast(false), 4000);
+      return;
+    }
+
+    // 3. Text Sanitization (strip HTML, script tags, javascript: URI)
+    const sanitize = (val: string) =>
+      val
+        .replace(/<[^>]*>?/gm, '')
+        .replace(/javascript:/gi, '')
+        .trim();
+
+    const cleanRequest = sanitize(formRequest);
+    const cleanAuthor = sanitize(isAnonymous ? 'Anonymous Believer' : formName || 'Church Member');
+
+    if (!cleanRequest) {
+      setSecurityError('Please enter a valid prayer request.');
+      return;
+    }
+
+    if (cleanRequest.length > 1000) {
+      setSecurityError('Prayer request must be 1,000 characters or less.');
+      return;
+    }
+
+    // 4. Cloudflare Turnstile Verification Check
+    if (!turnstileToken) {
+      setSecurityError('Please wait for the security verification to complete.');
+      return;
+    }
+
+    if (isSubmitting) return;
     setIsSubmitting(true);
+
     const durationLabel = formDuration === '7d' ? '1 Week' : formDuration === '30d' ? '1 Month' : '1 Year';
 
     const categoryLabels: Record<string, string> = {
@@ -138,15 +208,38 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
     };
 
     try {
+      // 5. Verify Turnstile token via serverless endpoint if available
+      try {
+        const verifyRes = await fetch('/api/verify-turnstile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: turnstileToken }),
+        });
+        if (verifyRes.ok) {
+          const outcome = await verifyRes.json();
+          if (!outcome.success) {
+            setSecurityError(outcome.message || 'Security verification failed. Please refresh and try again.');
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      } catch {
+        // Fallback for local Vite dev where serverless functions are not running locally
+      }
+
       const created = await submitPrayer({
         category: formCategory,
         categoryLabel: categoryLabels[formCategory],
-        request: formRequest.trim(),
-        author: isAnonymous ? 'Anonymous Believer' : formName.trim() || 'Church Member',
+        request: cleanRequest,
+        author: cleanAuthor,
         isAnonymous,
         duration: formDuration,
         durationLabel,
       });
+
+      // Record successful submit time for cooldown
+      localStorage.setItem('ifbbc-last-prayer-submit', String(Date.now()));
+      setCooldownRemaining(15);
 
       setPrayers((prev) => {
         if (prev.some((p) => p.id === created.id)) return prev;
@@ -155,12 +248,14 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
 
       setFormRequest('');
       setFormName('');
+      setHoneypot('');
       setIsAnonymous(false);
       setShowAddForm(false);
       setSubmittedToast(true);
       setTimeout(() => setSubmittedToast(false), 4000);
     } catch (err) {
       console.error('Error submitting prayer:', err);
+      setSecurityError('Failed to submit prayer. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -259,6 +354,23 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                 onSubmit={handleSubmitRequest}
                 className="space-y-6 max-w-2xl mx-auto"
               >
+                {/* Honeypot anti-spam trap: invisible to humans, catches automated crawlers */}
+                <div
+                  className="opacity-0 absolute -top-9999 -left-9999 h-0 w-0 overflow-hidden pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <label htmlFor="church_reference_fax">Leave this field blank</label>
+                  <input
+                    id="church_reference_fax"
+                    type="text"
+                    name="church_reference_fax"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
                 <div className="border-b border-slate-100 dark:border-white/5 pb-4">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     Submit a Prayer Request
@@ -306,12 +418,12 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                       Prayer Request / Praise Item *
                     </label>
                     <span className="font-mono text-[10px] text-slate-400">
-                      {formRequest.length}/500
+                      {formRequest.length}/1000
                     </span>
                   </div>
                   <textarea
                     required
-                    maxLength={500}
+                    maxLength={1000}
                     rows={4}
                     value={formRequest}
                     onChange={(e) => setFormRequest(e.target.value)}
@@ -355,9 +467,16 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
 
                   {/* Name Input (if not anonymous) */}
                   <div className="space-y-2">
-                    <label className="font-mono text-xs uppercase tracking-wider font-bold text-slate-700 dark:text-slate-300 block">
-                      {isAnonymous ? 'Display Mode' : 'Your Name / Family'}
-                    </label>
+                    <div className="flex items-center justify-between">
+                      <label className="font-mono text-xs uppercase tracking-wider font-bold text-slate-700 dark:text-slate-300 block">
+                        {isAnonymous ? 'Display Mode' : 'Your Name / Family'}
+                      </label>
+                      {!isAnonymous && (
+                        <span className="font-mono text-[10px] text-slate-400">
+                          {formName.length}/100
+                        </span>
+                      )}
+                    </div>
                     {isAnonymous ? (
                       <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-obsidian-850 border border-dashed border-slate-200 dark:border-white/10 text-xs text-slate-500 flex items-center gap-2">
                         <Shield className="w-4 h-4 text-royal-500 dark:text-cobalt-400" />
@@ -366,6 +485,7 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                     ) : (
                       <input
                         type="text"
+                        maxLength={100}
                         value={formName}
                         onChange={(e) => setFormName(e.target.value)}
                         placeholder="e.g., Sister Maria / Dela Cruz Family"
@@ -405,6 +525,30 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                   </div>
                 </div>
 
+                {/* Cloudflare Turnstile & Security Verification */}
+                <div className="pt-2 border-t border-slate-100 dark:border-white/5 space-y-2">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1">
+                    <span className="flex items-center gap-1 font-mono">
+                      <Lock className="w-3 h-3 text-emerald-500" />
+                      Anti-Spam Verification
+                    </span>
+                    <span className="font-mono text-[10px] text-slate-400">Cloudflare Turnstile</span>
+                  </div>
+                  <TurnstileWidget
+                    onVerify={(token) => {
+                      setTurnstileToken(token);
+                      setSecurityError(null);
+                    }}
+                    onExpire={() => setTurnstileToken('')}
+                  />
+                  {securityError && (
+                    <div className="flex items-center gap-2 p-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-mono">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{securityError}</span>
+                    </div>
+                  )}
+                </div>
+
                 {/* Submit Actions */}
                 <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
                   <button
@@ -418,9 +562,15 @@ export const PrayerWallModal: React.FC<PrayerWallModalProps> = ({ isOpen, onClos
                     variant="primary"
                     size="md"
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || cooldownRemaining > 0 || !formRequest.trim()}
                   >
-                    <span>{isSubmitting ? 'Posting...' : 'Post Prayer Request'}</span>
+                    <span>
+                      {isSubmitting
+                        ? 'Posting...'
+                        : cooldownRemaining > 0
+                        ? `Wait ${cooldownRemaining}s`
+                        : 'Post Prayer Request'}
+                    </span>
                     <Send className="w-3.5 h-3.5 ml-1" />
                   </MagneticButton>
                 </div>

@@ -28,6 +28,15 @@ ALTER TABLE public.prayers DROP CONSTRAINT IF EXISTS prayers_duration_check;
 ALTER TABLE public.prayers ADD CONSTRAINT prayers_duration_check 
   CHECK (duration IN ('7d', '30d', '365d'));
 
+-- Anti-abuse length constraints (prevents database payload flood attacks)
+ALTER TABLE public.prayers DROP CONSTRAINT IF EXISTS prayers_request_len_check;
+ALTER TABLE public.prayers ADD CONSTRAINT prayers_request_len_check 
+  CHECK (char_length(request) <= 1000);
+
+ALTER TABLE public.prayers DROP CONSTRAINT IF EXISTS prayers_author_len_check;
+ALTER TABLE public.prayers ADD CONSTRAINT prayers_author_len_check 
+  CHECK (char_length(author) <= 100);
+
 -- 3. Create index for efficient querying
 CREATE INDEX IF NOT EXISTS idx_prayers_approved_expires 
   ON public.prayers (is_approved, expires_at DESC, created_at DESC);
